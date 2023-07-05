@@ -1,4 +1,4 @@
-# Freshers Training Modules
+# Training Modules For Backend Development
 
 This repository contains a set of assignments designed to help beginners learn Python programming. The assignments are structured in a learning path that covers key topics such as Git fundamentals, Python fundamentls, working with REST APIs etc.
 
