@@ -16,8 +16,8 @@ Task:
 - Create an HTML file named "index.html" and a JavaScript file named "dom.js."
 - Link the JavaScript file to your HTML file.
 - Use JavaScript to manipulate the DOM by:
-    a. Accessing HTML elements using document.getElementById or other selectors.
-    b. Modifying element properties (e.g., changing text, updating styles, adding/removing classes).
+    - Accessing HTML elements using document.getElementById or other selectors.
+    - Modifying element properties (e.g., changing text, updating styles, adding/removing classes).
 - Handling events (e.g., click, hover, submit).
 - Enhance the previous "index.html" file by adding a form elements.
 - Use JavaScript to read and validate form inputs.
