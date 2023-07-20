@@ -1,4 +1,4 @@
-# Use Case 1: Ticket Management System for Efficient Ticket Handling
+# Use Case 1: Ticket Management System
 
 
 ## Objective:
