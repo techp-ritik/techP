@@ -96,3 +96,18 @@ Here are some additional "good to have" features that could further enhance the 
 3. **Ticket Tagging and Mentioning:** Enable users to tag colleagues or stakeholders in ticket comments, facilitating better collaboration and bringing attention to relevant parties.
 
 4. **Ticket Escalation:** Develop an escalation mechanism that automatically elevates critical or unresolved tickets to higher-level support or management for prompt attention with notification to concerned persons.
+
+
+# Developer Approach
+Follow these approach to complete this use case.
+
+## Backend
+
+- First come up with the list of APIs you need to build. What should the APIs look like and what action types should be used. The type of input data it should accept and the expected output of the API. Discuss this with your mentor & get approval on this.
+- Design database scheme. Define all the tables you need and the relationships between the tables should be well defined.Discuss this with your mentor & get approval on this.
+- Setup your framework. Decide a framework and setup it's file structure required for this project.
+- Start the impelementation of the APIs
+
+
+## Frotend
+TBD
