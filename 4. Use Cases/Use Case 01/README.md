@@ -2,7 +2,7 @@
 
 
 ## Objective:
-The objective of the use is to build a complete real worl application where backend developers can collaborate with frontend developers to complete this application.
+The objective of the use is to build a complete real world application where backend developers can collaborate with frontend developers to complete this application.
 
 ## Background:
 Our organization relies heavily on a robust and streamlined ticket management system to manage various internal and customer-related tasks efficiently. The current ticket management process lacks essential features and fails to meet our growing demands. We are seeking a skilled developer to design and implement a comprehensive ticket management system that can handle ticket creation, assignment, tracking, categorization, status notifications, and seamless status updates.
@@ -68,10 +68,16 @@ A search bar and filtering options are placed prominently on the ticket listing 
 10. **Notifications and Alerts:**
 Users receive real-time email notifications for ticket updates, such as assignment, status changes, and comments. These notifications keep stakeholders informed about relevant ticket activities.
 
-11. **Ticket Analytics and Reports:**
+11. **User Roles and Permissions:**
+Different user roles should be displayed in the user's profile page, along with the permissions associated with those roles. Administrators should have a 'Manage Users' page where they can assign roles and permissions.
+
+12. **User Authentication:**
+Screen for User Sign In.
+
+13. **Ticket Analytics and Reports:**
 A separate analytics or reporting section provides graphical representations of ticket data, such as resolution times, ticket statuses, category distribution, SLA compliance, and user satisfaction ratings.
 
-12. **Responsive Design:**
+14. **Responsive Design:**
 The UI should be designed to be responsive, ensuring a seamless user experience across different devices, including desktops, tablets, and smartphones.
 
 Overall, the UI should be visually appealing, consistent, and intuitive, allowing users to navigate the system with ease and perform tasks efficiently. Regular user testing and feedback collection can help refine and optimize the UI for a better user experience.
