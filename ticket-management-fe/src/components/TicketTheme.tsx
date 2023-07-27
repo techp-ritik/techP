@@ -10,7 +10,7 @@ const TicketTheme = createTheme({
       main: "#f50057", // Set the secondary color to a ticket-related shade of red
     },
     background: {
-      default: "#FFC0CB", // Set the default background color
+      default: "#FFFFFF", // Set the default background color
       paper: "#ffffff", // Set the background color for paper components
     },
   },
@@ -32,6 +32,17 @@ const TicketTheme = createTheme({
     // Add more typography styles as needed
   },
   components: {
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          // Add the background color here
+          backgroundColor: "#3f51b5",
+          textAlign: "center",
+          color: "white",
+        },
+      },
+    },
+
     MuiButton: {
       styleOverrides: {
         containedPrimary: {

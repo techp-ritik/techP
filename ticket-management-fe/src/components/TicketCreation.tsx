@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import TicketTheme from "./TicketTheme";
 
 import Stack from "@mui/material/Stack";
-import "./TicketCreation.css";
+
 import { useState } from "react";
 import {
   Dialog,
@@ -222,7 +222,7 @@ function TicketCreation() {
                   });
                 }}
               >
-                <MenuItem value={""} disabled>
+                <MenuItem value={"SELECT CATEGORY"} disabled>
                   SELECT CATEGORY
                 </MenuItem>
                 <MenuItem value={"TECHNICAL SUPPORT"}>
@@ -264,7 +264,7 @@ function TicketCreation() {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          View PDF/IMAGE
+                          View Attachment/s
                         </a>
                       )}
                     </>
