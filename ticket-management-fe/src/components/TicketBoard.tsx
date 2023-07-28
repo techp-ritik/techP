@@ -1,4 +1,3 @@
-import * as React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Badge from "@mui/material/Badge";
@@ -6,9 +5,25 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
+import React, { useState } from "react";
 
 export default function TicketBoard() {
-  let data = [
+  interface TicketList {
+    id: string;
+    title: string;
+    description: string;
+    status: string;
+    priority: string;
+    raisedBy: string;
+    createdAt: string;
+    completedAt: string;
+    file: [string];
+    category: string;
+    assignee: null;
+    updated_at: string;
+  }
+
+  let data: TicketList[] = [
     {
       id: "#1",
       title: "Website Login Issue",
@@ -96,14 +111,14 @@ export default function TicketBoard() {
       updated_at: "2023-07-26T12:39:03.657807",
     },
   ];
-  const [tickets, setTickets] = React.useState(data);
+  const [tickets, setTickets] = useState(data);
   const getTicketsLength = (status: String) => {
     let res = tickets.filter((item) => {
       return item.status === status;
     });
     return res.length;
   };
-  const [ticketLength, setTicketLength] = React.useState({
+  const [ticketLength, setTicketLength] = useState({
     todo: getTicketsLength("todo"),
     inprogress: getTicketsLength("inprogress"),
     blocked: getTicketsLength("blocked"),
@@ -114,9 +129,9 @@ export default function TicketBoard() {
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (
-      source.droppableId !== null ||
-      (undefined && destination?.droppableId !== null) ||
-      undefined
+      source.droppableId !== undefined ||
+      (null && destination?.droppableId !== undefined) ||
+      null
     ) {
       let listIndex = tickets.findIndex(
         (item) => item.id === result.draggableId
@@ -137,151 +152,72 @@ export default function TicketBoard() {
       }
     }
   };
+  const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
 
   return (
-    <Box sx={{ flexGrow: 1 ,marginTop:4}}>
+    <Box sx={{ flexGrow: 1, marginTop: 4 }}>
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
-          <Grid item xs={3}>
-            <Card sx={{ margin: 1 }}>
-              <CardHeader
-                sx={{ background: " #dddddd" }}
-                title={
-                  <div
-                    style={{
-                      fontSize: "15px",
-                      textAlign: "center",
-                      fontWeight: "600",
-                    }}
-                  >
-                    TODO{" "}
-                    <Badge
-                      sx={{ marginLeft: "11px", marginBottom: "3px" }}
-                      badgeContent={ticketLength.todo}
-                      color="primary"
-                    ></Badge>
-                  </div>
-                }
-              />
-              <Droppable droppableId="todo">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    <Tickets
-                      getTickets={tickets.filter((item) => {
-                        return item.status === "todo";
-                      })}
-                    />
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </Card>
-          </Grid>
-          <Grid item xs={3}>
-            <Card sx={{ margin: 1 }}>
-              <CardHeader
-                sx={{ background: " #dddddd" }}
-                title={
-                  <div
-                    style={{
-                      fontSize: "15px",
-                      textAlign: "center",
-                      fontWeight: "600",
-                    }}
-                  >
-                    IN PROGRESS{" "}
-                    <Badge
-                      sx={{ marginLeft: "11px", marginBottom: "3px" }}
-                      badgeContent={ticketLength.inprogress}
-                      color="warning"
-                    ></Badge>
-                  </div>
-                }
-              />
-              <Droppable droppableId="inprogress">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    <Tickets
-                      getTickets={tickets.filter((item) => {
-                        return item.status === "inprogress";
-                      })}
-                    />
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </Card>
-          </Grid>
-          <Grid item xs={3}>
-            <Card sx={{ margin: 1 }}>
-              <CardHeader
-                sx={{ background: " #dddddd" }}
-                title={
-                  <div
-                    style={{
-                      fontSize: "15px",
-                      textAlign: "center",
-                      fontWeight: "600",
-                    }}
-                  >
-                    BLOCKED{" "}
-                    <Badge
-                      sx={{ marginLeft: "11px", marginBottom: "3px" }}
-                      badgeContent={ticketLength.blocked}
-                      color="error"
-                    ></Badge>
-                  </div>
-                }
-              />
-              <Droppable droppableId="blocked">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    <Tickets
-                      getTickets={tickets.filter((item) => {
-                        return item.status === "blocked";
-                      })}
-                    />
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </Card>
-          </Grid>
-          <Grid item xs={3}>
-            <Card sx={{ margin: 1 }}>
-              <CardHeader
-                sx={{ background: " #dddddd" }}
-                title={
-                  <div
-                    style={{
-                      fontSize: "15px",
-                      textAlign: "center",
-                      fontWeight: "600",
-                    }}
-                  >
-                    COMPLETED{" "}
-                    <Badge
-                      sx={{ marginLeft: "11px", marginBottom: "3px" }}
-                      badgeContent={ticketLength.completed}
-                      color="success"
-                    ></Badge>
-                  </div>
-                }
-              />
-              <Droppable droppableId="completed">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    <Tickets
-                      getTickets={tickets.filter((item) => {
-                        return item.status === "completed";
-                      })}
-                    />
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </Card>
-          </Grid>
+          {ticketStatus.map((status) => {
+            let badgeTheme;
+            let badgeContent;
+            switch (status) {
+              case "COMPLETED":
+                badgeTheme = "success";
+                badgeContent = ticketLength.completed;
+                break;
+              case "INPROGRESS":
+                badgeTheme = "warning";
+                badgeContent = ticketLength.inprogress;
+                break;
+              case "BLOCKED":
+                badgeTheme = "error";
+                badgeContent = ticketLength.blocked;
+                break;
+              case "TODO":
+                badgeTheme = "primary";
+                badgeContent = ticketLength.todo;
+                break;
+            }
+
+            return (
+              <Grid item xs={3}>
+                <Card sx={{ margin: 1 }}>
+                  <CardHeader
+                    sx={{ background: " #dddddd" }}
+                    title={
+                      <div
+                        style={{
+                          fontSize: "15px",
+                          textAlign: "center",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {status}{" "}
+                        <Badge
+                          sx={{ marginLeft: "11px", marginBottom: "3px" }}
+                          badgeContent={badgeContent}
+                          color="primary"
+                        ></Badge>
+                      </div>
+                    }
+                  />
+                  <Droppable droppableId={status.toLowerCase()}>
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.droppableProps}>
+                        <Tickets
+                          getTickets={tickets.filter((item) => {
+                            return item.status === status.toLowerCase();
+                          })}
+                        />
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
       </DragDropContext>
     </Box>
