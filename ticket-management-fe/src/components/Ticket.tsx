@@ -1,11 +1,13 @@
 import * as React from "react";
-
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import {
   Dialog,
   DialogTitle,
@@ -15,27 +17,19 @@ import {
 } from "@mui/material";
 
 import MenuItem from "@mui/material/MenuItem";
-
 import Select from "@mui/material/Select";
-
 import Container from "@mui/material/Container";
-
 import { useEffect } from "react";
 import { Widgets } from "@mui/icons-material";
-
-function TicketCreation() {
+function Ticket() {
   let id = "8";
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState({
     title: "title",
     description:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     category: "HR",
-    upload: [
-      "https://www.africau.edu/images/default/sample.pdf ",
-      " https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    ],
+    file: [] as File[],
   });
 
   const handleOpenModal = () => {
@@ -46,8 +40,8 @@ function TicketCreation() {
     setnewTicketInformation({
       title: "",
       description: "",
-      selectCategory: "",
-      upload: [],
+      category: "",
+      file: [],
     });
     id = "";
     setIsModalOpen(false);
@@ -56,35 +50,38 @@ function TicketCreation() {
   const [newTicketInformation, setnewTicketInformation] = useState<{
     title: string;
     description: string;
-    selectCategory: string;
-    upload: string[]; // Explicitly specify the type as string[]
+    category: string;
+    file: File[];
   }>({
     title: "",
     description: "",
-    selectCategory: "SELECT CATEGORY",
-    upload: [], // Initialize as an empty array of strings
+    category: "SELECT CATEGORY",
+    file: [],
   });
 
-  // const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [fileUrl, setFileUrl] = useState<string[]>([]);
-
-  // const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     const fileUrl = URL.createObjectURL(file);
-  //     setFileUrl(fileUrl);
-  //   }
-  // };
+  const [newTicketFileUrl, setnewTicketFileurl] = useState<{
+    fileurl: string[];
+  }>({
+    fileurl: [],
+  });
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+      const fileArray: File[] = Array.from(files);
+      setnewTicketInformation({
+        ...newTicketInformation,
+        file: [...newTicketInformation.file, ...fileArray],
+      });
 
-      setFileUrl([...fileUrl, ...urls]);
+      setnewTicketFileurl({
+        ...newTicketInformation,
+        fileurl: [...newTicketFileUrl.fileurl, ...urls],
+      });
     }
   };
-  //to update textfields if id is
+
   const handleEdit = () => {
     //   fetch(`/v1/ticket/${id}`)
     //     .then((response) => {
@@ -96,14 +93,14 @@ function TicketCreation() {
     //     })
     //     .then((data) => {
     // Set the ticket data to populate the text fields for editing
-    setnewTicketInformation({
-      title: data.title,
-      description: data.description,
-      selectCategory: data.category,
+    // setnewTicketInformation({
+    //   title: data.title,
+    //   description: data.description,
+    //   category: data.category,
 
-      upload: data.upload,
-    });
-    setFileUrl(data.upload);
+    //   file: data.file,
+    // });
+    // setFileUrl(data.file);
 
     handleOpenModal();
 
@@ -133,10 +130,18 @@ function TicketCreation() {
   //       reader.readAsDataURL(file);
   //     }
   //   };
-  const handleDeleteAttachment = (indexToDelete: Number) => {
-    setFileUrl((prevUrls) =>
-      prevUrls.filter((url, index, value) => index !== indexToDelete)
-    );
+  // const handleDeleteAttachment = (indexToDelete: Number) => {
+  //   setFileUrl((prevUrls) =>
+  //     prevUrls.filter((url, index, value) => index !== indexToDelete)
+  //   );
+  // };
+  const handleDeleteAttachment = (indexToDelete: number) => {
+    setnewTicketInformation((prevData) => ({
+      ...prevData,
+      file: prevData.file.filter(
+        (url, index, value) => index !== indexToDelete
+      ),
+    }));
   };
   //for api calls
 
@@ -144,27 +149,18 @@ function TicketCreation() {
     if (
       !newTicketInformation.title ||
       !newTicketInformation.description ||
-      newTicketInformation.selectCategory === "SELECT CATEGORY"
+      newTicketInformation.category === "SELECT CATEGORY"
     ) {
-      alert("Please fill in all the required fields.");
+      toast.error("Please fill all the required fields");
       return;
     }
-
     handleCloseModal();
-    // if (
-    //   !newTicketInformation.title ||
-    //   !newTicketInformation.description ||
-    //   newTicketInformation.selectCategory === "SELECT CATEGORY"
-    // ) {
-    //   alert("Please fill in all the required fields.");
-    //   return;
-    // }
 
     // try {
     //   const payload = {
     //     title: newTicketInformation.title,
     //     description: newTicketInformation.description,
-    //     category: newTicketInformation.selectCategory,
+    //     category: newTicketInformation.category,
     //     file: fileUrl, // Use the fileUrl state variable as the file URL
     //   };
 
@@ -262,14 +258,14 @@ function TicketCreation() {
               required
               defaultValue="SELECT CATEGORY"
               autoFocus
-              name="SelectCategory"
+              name="category"
               type="text"
-              value={newTicketInformation.selectCategory}
+              value={newTicketInformation.category}
               sx={{ marginBottom: "30px" }}
               onChange={(e) => {
                 setnewTicketInformation({
                   ...newTicketInformation,
-                  selectCategory: e.target.value,
+                  category: e.target.value,
                 });
               }}
             >
@@ -300,7 +296,7 @@ function TicketCreation() {
                     onChange={handleFileUpload}
                   />
                 </label>
-
+                {/* //////////////////////////////////////////////////////////////////////
                 {fileUrl.map((url, index) => (
                   <React.Fragment key={index}>
                     {url.startsWith("data:image") ? (
@@ -340,6 +336,49 @@ function TicketCreation() {
                     )}
                   </React.Fragment>
                 ))}
+                //////////////////////////////////////////////////////////////////////////// */}
+
+                {newTicketFileUrl.fileurl.map((url, index) => (
+                  <React.Fragment key={index}>
+                    {url.startsWith("data:image") ? (
+                      <div>
+                        <img src={url} alt={`Uploaded ${index}`} height="100" />
+                        <IconButton
+                          onClick={() => handleDeleteAttachment(index)}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    ) : (
+                      <div>
+                        <Link
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            border: "1px solid #ccc",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                            backgroundColor: "#f0f0f0",
+                            textDecoration: "none",
+                            color: "#000",
+                          }}
+                        >
+                          View Attachment {index + 1}
+                        </Link>
+                        <IconButton
+                          onClick={() => handleDeleteAttachment(index)}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+
+                {/* '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' */}
               </Stack>
             </Container>
           </DialogContent>
@@ -363,4 +402,4 @@ function TicketCreation() {
   );
 }
 
-export default TicketCreation;
+export default Ticket;
