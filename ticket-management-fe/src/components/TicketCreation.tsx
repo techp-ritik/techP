@@ -2,9 +2,9 @@ import * as React from "react";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
-
+import Link from "@mui/material/Link/Link";
 import { useState } from "react";
 import {
   Dialog,
@@ -21,14 +21,16 @@ import Select from "@mui/material/Select";
 import Container from "@mui/material/Container";
 
 import { useEffect } from "react";
+import { Widgets } from "@mui/icons-material";
 
 function TicketCreation() {
-  let id = "";
+  let id = "8";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState({
     title: "title",
-    description: "desc",
+    description:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     category: "HR",
     upload: [
       "https://www.africau.edu/images/default/sample.pdf ",
@@ -41,6 +43,13 @@ function TicketCreation() {
   };
 
   const handleCloseModal = () => {
+    setnewTicketInformation({
+      title: "",
+      description: "",
+      selectCategory: "",
+      upload: [],
+    });
+    id = "";
     setIsModalOpen(false);
   };
 
@@ -141,10 +150,6 @@ function TicketCreation() {
       return;
     }
 
-    console.log("check here if data getting posted");
-    console.log(newTicketInformation.title);
-    console.log(newTicketInformation.description);
-    console.log(newTicketInformation.selectCategory);
     handleCloseModal();
     // if (
     //   !newTicketInformation.title ||
@@ -198,7 +203,12 @@ function TicketCreation() {
         CREATE NEW TICKET
       </Button>
 
-      <Dialog open={isModalOpen} onClose={handleCloseModal}>
+      <Dialog
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="lg"
+      >
         <div>
           {id ? (
             <DialogTitle className="Header">EDIT TICKET</DialogTitle>
@@ -241,9 +251,9 @@ function TicketCreation() {
               type="text"
               id="Description"
               rows={4}
+              sx={{ marginBottom: "20px" }}
             />
-            <br />
-            <br />
+
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -255,7 +265,7 @@ function TicketCreation() {
               name="SelectCategory"
               type="text"
               value={newTicketInformation.selectCategory}
-              sx={{ textAlign: "left" }}
+              sx={{ marginBottom: "30px" }}
               onChange={(e) => {
                 setnewTicketInformation({
                   ...newTicketInformation,
@@ -270,8 +280,13 @@ function TicketCreation() {
               <MenuItem value={"HR"}>HR</MenuItem>
             </Select>
 
-            <Container maxWidth="md" sx={{ mt: 8 }}>
-              <Stack direction="row" alignItems="center" spacing={2}>
+            <Container maxWidth="md">
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems={"flex-start"}
+                justifyContent={"flex-start"}
+              >
                 <label htmlFor="upload-image">
                   <Button variant="contained" component="span" size="small">
                     Upload
@@ -295,19 +310,31 @@ function TicketCreation() {
                           onClick={() => handleDeleteAttachment(index)}
                           size="small"
                         >
-                          x
+                          <DeleteIcon></DeleteIcon>
                         </IconButton>
                       </div>
                     ) : (
                       <div>
-                        <a href={url} target="_blank" rel="noopener noreferrer">
+                        <Link
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            border: "1px solid #ccc",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                            backgroundColor: "#f0f0f0",
+                            textDecoration: "none",
+                            color: "#000",
+                          }}
+                        >
                           View Attachment {index + 1}
-                        </a>
+                        </Link>
                         <IconButton
                           onClick={() => handleDeleteAttachment(index)}
                           size="small"
                         >
-                          x
+                          <DeleteIcon></DeleteIcon>
                         </IconButton>
                       </div>
                     )}
