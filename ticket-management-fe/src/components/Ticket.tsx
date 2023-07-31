@@ -1,4 +1,5 @@
 import * as React from "react";
+import EditIcon from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,8 +22,11 @@ import Select from "@mui/material/Select";
 import Container from "@mui/material/Container";
 import { useEffect } from "react";
 import { Widgets } from "@mui/icons-material";
+import { margin, textAlign } from "@mui/system";
+
 function Ticket() {
-  let id = "8";
+  let id = "";
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState({
     title: "title",
@@ -37,7 +41,7 @@ function Ticket() {
   };
 
   const handleCloseModal = () => {
-    setnewTicketInformation({
+    setticketInformation({
       title: "",
       description: "",
       category: "",
@@ -47,7 +51,7 @@ function Ticket() {
     setIsModalOpen(false);
   };
 
-  const [newTicketInformation, setnewTicketInformation] = useState<{
+  const [ticketInformation, setticketInformation] = useState<{
     title: string;
     description: string;
     category: string;
@@ -59,7 +63,7 @@ function Ticket() {
     file: [],
   });
 
-  const [newTicketFileUrl, setnewTicketFileurl] = useState<{
+  const [ticketUrl, setticketUrl] = useState<{
     fileurl: string[];
   }>({
     fileurl: [],
@@ -70,14 +74,14 @@ function Ticket() {
     if (files) {
       const urls = Array.from(files).map((file) => URL.createObjectURL(file));
       const fileArray: File[] = Array.from(files);
-      setnewTicketInformation({
-        ...newTicketInformation,
-        file: [...newTicketInformation.file, ...fileArray],
+      setticketInformation({
+        ...ticketInformation,
+        file: [...ticketInformation.file, ...fileArray],
       });
 
-      setnewTicketFileurl({
-        ...newTicketInformation,
-        fileurl: [...newTicketFileUrl.fileurl, ...urls],
+      setticketUrl({
+        ...ticketUrl,
+        fileurl: [...ticketUrl.fileurl, ...urls],
       });
     }
   };
@@ -93,14 +97,12 @@ function Ticket() {
     //     })
     //     .then((data) => {
     // Set the ticket data to populate the text fields for editing
-    // setnewTicketInformation({
-    //   title: data.title,
-    //   description: data.description,
-    //   category: data.category,
-
-    //   file: data.file,
-    // });
-    // setFileUrl(data.file);
+    setticketInformation({
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      file: [],
+    });
 
     handleOpenModal();
 
@@ -111,34 +113,22 @@ function Ticket() {
     //   alert("Error fetching ticket data. Please try again later.");
     // });
   };
-
   useEffect(() => {
     if (id !== "") {
       handleEdit();
     }
   }, [id]);
 
-  //   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     const file = event.target.files?.[0];
-  //     if (file) {
-  //       const reader = new FileReader();
-
-  //       reader.onloadend = () => {
-  //         setFileUrl(reader.result as string);
-  //       };
-
-  //       reader.readAsDataURL(file);
-  //     }
-  //   };
-  // const handleDeleteAttachment = (indexToDelete: Number) => {
-  //   setFileUrl((prevUrls) =>
-  //     prevUrls.filter((url, index, value) => index !== indexToDelete)
-  //   );
-  // };
   const handleDeleteAttachment = (indexToDelete: number) => {
-    setnewTicketInformation((prevData) => ({
+    setticketInformation((prevData) => ({
       ...prevData,
       file: prevData.file.filter(
+        (url, index, value) => index !== indexToDelete
+      ),
+    }));
+    setticketUrl((prevUrls) => ({
+      ...prevUrls,
+      fileurl: prevUrls.fileurl.filter(
         (url, index, value) => index !== indexToDelete
       ),
     }));
@@ -147,13 +137,14 @@ function Ticket() {
 
   const handleSubmit = async () => {
     if (
-      !newTicketInformation.title ||
-      !newTicketInformation.description ||
-      newTicketInformation.category === "SELECT CATEGORY"
+      !ticketInformation.title ||
+      !ticketInformation.description ||
+      ticketInformation.category === "SELECT CATEGORY"
     ) {
       toast.error("Please fill all the required fields");
       return;
     }
+    setticketUrl({ fileurl: [] });
     handleCloseModal();
 
     // try {
@@ -203,21 +194,19 @@ function Ticket() {
         open={isModalOpen}
         onClose={handleCloseModal}
         fullWidth
-        maxWidth="lg"
+        maxWidth="sm"
       >
         <div>
-          {id ? (
-            <DialogTitle className="Header">EDIT TICKET</DialogTitle>
-          ) : (
-            <DialogTitle className="Header">CREATE NEW TICKET</DialogTitle>
-          )}
+          <DialogTitle>
+            {id ? "TICKET DETAILS" : "CREATE NEW TICKET"}
+          </DialogTitle>
 
           <DialogContent>
             <TextField
-              value={newTicketInformation.title}
+              value={ticketInformation.title}
               onChange={(e) => {
-                setnewTicketInformation({
-                  ...newTicketInformation,
+                setticketInformation({
+                  ...ticketInformation,
                   title: e.target.value,
                 });
               }}
@@ -231,10 +220,10 @@ function Ticket() {
               autoFocus
             />
             <TextField
-              value={newTicketInformation.description}
+              value={ticketInformation.description}
               onChange={(e) => {
-                setnewTicketInformation({
-                  ...newTicketInformation,
+                setticketInformation({
+                  ...ticketInformation,
                   description: e.target.value,
                 });
               }}
@@ -246,7 +235,7 @@ function Ticket() {
               label="Description"
               type="text"
               id="Description"
-              rows={4}
+              rows={2}
               sx={{ marginBottom: "20px" }}
             />
 
@@ -254,17 +243,16 @@ function Ticket() {
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               fullWidth
-              margin="none"
               required
               defaultValue="SELECT CATEGORY"
               autoFocus
               name="category"
               type="text"
-              value={newTicketInformation.category}
-              sx={{ marginBottom: "30px" }}
+              value={ticketInformation.category}
+              sx={{ marginBottom: "20px" }}
               onChange={(e) => {
-                setnewTicketInformation({
-                  ...newTicketInformation,
+                setticketInformation({
+                  ...ticketInformation,
                   category: e.target.value,
                 });
               }}
@@ -276,126 +264,76 @@ function Ticket() {
               <MenuItem value={"HR"}>HR</MenuItem>
             </Select>
 
-            <Container maxWidth="md">
-              <Stack
-                direction="row"
-                spacing={2}
-                alignItems={"flex-start"}
-                justifyContent={"flex-start"}
-              >
-                <label htmlFor="upload-image">
-                  <Button variant="contained" component="span" size="small">
-                    Upload
-                  </Button>
-                  <input
-                    id="upload-image"
-                    hidden
-                    accept="image/* , application/pdf"
-                    type="file"
-                    multiple
-                    onChange={handleFileUpload}
-                  />
-                </label>
-                {/* //////////////////////////////////////////////////////////////////////
-                {fileUrl.map((url, index) => (
-                  <React.Fragment key={index}>
-                    {url.startsWith("data:image") ? (
-                      <div>
-                        <img src={url} alt={`Uploaded ${index}`} height="100" />
-                        <IconButton
-                          onClick={() => handleDeleteAttachment(index)}
-                          size="small"
-                        >
-                          <DeleteIcon></DeleteIcon>
-                        </IconButton>
-                      </div>
-                    ) : (
-                      <div>
-                        <Link
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            border: "1px solid #ccc",
-                            padding: "5px 10px",
-                            borderRadius: "5px",
-                            backgroundColor: "#f0f0f0",
-                            textDecoration: "none",
-                            color: "#000",
-                          }}
-                        >
-                          View Attachment {index + 1}
-                        </Link>
-                        <IconButton
-                          onClick={() => handleDeleteAttachment(index)}
-                          size="small"
-                        >
-                          <DeleteIcon></DeleteIcon>
-                        </IconButton>
-                      </div>
-                    )}
-                  </React.Fragment>
-                ))}
-                //////////////////////////////////////////////////////////////////////////// */}
+            <Stack
+              direction="row"
+              alignItems={"flex-start"}
+              justifyContent={"flex-start"}
+              spacing={2}
+              marginBottom={"20px"}
+            >
+              <label htmlFor="upload-image">
+                <Button variant="contained" component="span" size="small">
+                  Upload
+                </Button>
+                <input
+                  id="upload-image"
+                  hidden
+                  accept="image/* , application/pdf"
+                  type="file"
+                  multiple
+                  onChange={handleFileUpload}
+                />
+              </label>
 
-                {newTicketFileUrl.fileurl.map((url, index) => (
-                  <React.Fragment key={index}>
-                    {url.startsWith("data:image") ? (
-                      <div>
-                        <img src={url} alt={`Uploaded ${index}`} height="100" />
-                        <IconButton
-                          onClick={() => handleDeleteAttachment(index)}
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </div>
-                    ) : (
-                      <div>
-                        <Link
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            border: "1px solid #ccc",
-                            padding: "5px 10px",
-                            borderRadius: "5px",
-                            backgroundColor: "#f0f0f0",
-                            textDecoration: "none",
-                            color: "#000",
-                          }}
-                        >
-                          View Attachment {index + 1}
-                        </Link>
-                        <IconButton
-                          onClick={() => handleDeleteAttachment(index)}
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </div>
-                    )}
-                  </React.Fragment>
-                ))}
+              {ticketUrl.fileurl.map((url, index) => (
+                <React.Fragment key={index}>
+                  {url.startsWith("data:image") ? (
+                    <div>
+                      <img src={url} alt={`Uploaded ${index}`} height="100" />
+                      <IconButton
+                        onClick={() => handleDeleteAttachment(index)}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </div>
+                  ) : (
+                    <div>
+                      <Link
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          border: "1px solid #ccc",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          backgroundColor: "#f0f0f0",
+                          textDecoration: "none",
+                          color: "#000",
+                        }}
+                      >
+                        View Attachment {index + 1}
+                      </Link>
+                      <IconButton
+                        onClick={() => handleDeleteAttachment(index)}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}
+            </Stack>
 
-                {/* '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' */}
-              </Stack>
-            </Container>
+            <DialogActions>
+              <Button onClick={handleCloseModal}>Cancel</Button>
+
+              <Button variant="contained" onClick={handleSubmit} size="small">
+                {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
+              </Button>
+            </DialogActions>
           </DialogContent>
-
-          <DialogActions>
-            <Button onClick={handleCloseModal}>Cancel</Button>
-
-            {id ? (
-              <Button variant="contained" onClick={handleSubmit} size="small">
-                EDIT TICKET
-              </Button>
-            ) : (
-              <Button variant="contained" onClick={handleSubmit} size="small">
-                CREATE NEW TICKET
-              </Button>
-            )}
-          </DialogActions>
         </div>
       </Dialog>
     </div>
