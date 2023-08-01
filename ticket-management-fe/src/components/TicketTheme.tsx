@@ -35,10 +35,40 @@ const TicketTheme = createTheme({
     MuiDialogTitle: {
       styleOverrides: {
         root: {
-          // Add the background color here
           backgroundColor: "#3f51b5",
           textAlign: "center",
           color: "white",
+        },
+      },
+    },
+
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          boxShadow:
+            "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
+          cursor: "pointer",
+          borderRadius: "10px",
+        },
+      },
+    },
+
+    MuiModal: {
+      styleOverrides: {
+        root: {
+          "& .MuiPaper-root": {
+            borderRadius: "20px",
+          },
+        },
+      },
+    },
+
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          "& .MuiDrawer-paper": {
+            borderRadius: "0px",
+          },
         },
       },
     },
@@ -55,6 +85,7 @@ const TicketTheme = createTheme({
         },
       },
     },
+
     MuiInputBase: {
       styleOverrides: {
         input: {
@@ -62,6 +93,7 @@ const TicketTheme = createTheme({
         },
       },
     },
+
     MuiSelect: {
       styleOverrides: {
         select: {
