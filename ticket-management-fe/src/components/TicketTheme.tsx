@@ -32,6 +32,15 @@ const TicketTheme = createTheme({
     // Add more typography styles as needed
   },
   components: {
+    MuiModal: {
+      styleOverrides: {
+        root: {
+          "& .MuiPaper-root": {
+            borderRadius: "8px", // Adjust the value for the desired border radius
+          },
+        },
+      },
+    },
     MuiDialogTitle: {
       styleOverrides: {
         root: {
@@ -46,11 +55,11 @@ const TicketTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          borderRadius: "20px", // Set the border-radius for primary contained buttons
+          borderRadius: "8px", // Set the border-radius for primary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for primary buttons
         },
         containedSecondary: {
-          borderRadius: "20px", // Set the border-radius for secondary contained buttons
+          borderRadius: "8px", // Set the border-radius for secondary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for secondary buttons
         },
       },
