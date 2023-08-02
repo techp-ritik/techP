@@ -4,10 +4,10 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { DialogTitle } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { userData, user } from "./Users";
+import { Data } from "./Users";
 import "./Users.css";
 
 const style = {
@@ -22,9 +22,9 @@ const style = {
   padding: "0px 0px 20px 0px",
 };
 interface list {
-  UserList: userData;
-  setUserList: React.Dispatch<React.SetStateAction<userData>>;
-  user: user;
+  UserList: Data[];
+  setUserList: React.Dispatch<React.SetStateAction<Data[]>>;
+  user: Data;
   setUser: React.Dispatch<
     React.SetStateAction<{
       id: string;
@@ -34,7 +34,7 @@ interface list {
       phone: string;
       ticketsCreated: number;
       ticketsAssigned: number;
-      password: string;
+
       actions: string;
     }>
   >;
@@ -57,9 +57,30 @@ export default function CreateUserModal({
     phone: "",
     ticketsCreated: 0,
     ticketsAssigned: 0,
-    password: "",
+
     actions: "",
   };
+
+  // const addUser = async () => {
+  //   fetch("ticketapi/UserList", {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       id: user.id,
+  //       name: user.name,
+  //       email: user.email,
+  //       username: user.username,
+  //       phone: user.phone,
+  //     }),
+  //     headers: {
+  //       "Content-type": "application/json; charset=UTF-8",
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((newData) => {
+  //       setUserList([...UserList, newData]);
+  //     });
+  // };
+
   const handleSubmit = () => {
     if (user.id == "") {
       let newUser = user;
@@ -67,6 +88,7 @@ export default function CreateUserModal({
       let newUserData = [...UserList, newUser];
       setUserList(newUserData);
       setOpenModal(false);
+      //addUser()
       toast("User Data Added Successfully", { theme: "light" });
     } else {
       let res = UserList.map((list) => {

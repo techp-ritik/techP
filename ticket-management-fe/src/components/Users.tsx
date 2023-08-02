@@ -49,7 +49,7 @@ const columns: readonly Column[] = [
   { id: "id", label: "Actions", minWidth: 100 },
 ];
 
-interface Data {
+export type Data = {
   id: string;
   name: string;
   email: string;
@@ -58,17 +58,21 @@ interface Data {
   ticketsCreated: number;
   ticketsAssigned: number;
   actions: any;
-  password: string;
-}
-
-export type userData = Data[];
-export type user = Data;
+};
 
 export default function Users() {
+  // useEffect(() => {
+  //   fetch(`ticketapi/UserList`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setUserList(data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
-  const [Userlist, setUserList] = useState<userData>([
+  const [Userlist, setUserList] = useState<Data[]>([
     {
       id: "#1",
       name: "Utkarsh",
@@ -76,14 +80,12 @@ export default function Users() {
       username: "utkarsh111",
       phone: "9999999999",
       ticketsCreated: 5,
-      password: "",
       ticketsAssigned: 7,
       actions: "",
     },
     {
       id: "#2",
       name: "Ram",
-      password: "",
       email: "sethiyautkarsh@gmail.com",
       username: "utkarsh111",
       phone: "9999999999",
@@ -94,7 +96,6 @@ export default function Users() {
     {
       id: "#3",
       name: "Atharv",
-      password: "",
       email: "sethiyautkarsh@gmail.com",
       username: "utkarsh111",
       phone: "9999999999",
@@ -105,7 +106,6 @@ export default function Users() {
     {
       id: "#4",
       name: "Varun",
-      password: "",
       email: "sethiyautkarsh@gmail.com",
       username: "utkarsh111",
       phone: "9999999999",
@@ -116,7 +116,6 @@ export default function Users() {
     {
       id: "#5",
       name: "Shyam",
-      password: "",
       email: "sethiyautkarsh@gmail.com",
       username: "utkarsh111",
       phone: "9999999999",
@@ -127,7 +126,6 @@ export default function Users() {
     {
       id: "#6",
       name: "Aditya",
-      password: "",
       email: "sethiyautkarsh@gmail.com",
       username: "utkarsh111",
       phone: "9999999999",
@@ -144,7 +142,6 @@ export default function Users() {
     phone: "",
     ticketsCreated: 0,
     ticketsAssigned: 0,
-    password: "",
     actions: "",
   };
   const [user, setUser] = useState(clearForm);
@@ -171,6 +168,22 @@ export default function Users() {
   const [openModal, setOpenModal] = useState(false);
 
   function DeleteModal() {
+    // const deleteUserHandler = (user.id) => {
+    //   fetch(`ticketsapi/users/${user.id}`, {
+    //     method: "DELETE",
+    //   }).then(()=>{
+    //     setUserList(
+    //       Userlist.filter((list) => {
+    //         return list.id !== user.id;
+    //       })
+    //     )
+    //   }
+
+    //   );
+
+    //   setUser(clearForm)
+    //   toast("User Deleted Deleted Successfully", { theme: "light" });
+    // };
     const handleClose = () => {
       setOpen(false);
     };
@@ -178,6 +191,7 @@ export default function Users() {
       let newList = Userlist.filter((list) => {
         return list.id !== user.id;
       });
+      //deleteUserHandler();
       setUserList(newList);
       toast("User Deleted Successfully", { theme: "light" });
       handleClose();
@@ -197,10 +211,10 @@ export default function Users() {
           <DialogTitle>{"Do you want to delete this user ?"}</DialogTitle>
           <DialogContent sx={{ marginTop: "15px" }}>
             <DialogContentText id="alert-dialog-slide-description">
-              Name:{user.name}
+              Name- {user.name}
             </DialogContentText>
             <DialogContentText id="alert-dialog-slide-description">
-              Email:{user.email}
+              Email- {user.email}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -340,16 +354,16 @@ export default function Users() {
                 })}
             </TableBody>
           </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20]}
+            component="div"
+            count={Userlist.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
-          component="div"
-          count={Userlist.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Typography>
     </>
   );
