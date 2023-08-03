@@ -5,7 +5,11 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getAllTickets, getTicket } from "./api/baseapi";
+import { updateTicketStatus } from "./api/baseapi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function TicketBoard() {
   interface TicketList {
@@ -111,7 +115,10 @@ export default function TicketBoard() {
       updated_at: "2023-07-26T12:39:03.657807",
     },
   ];
+
   const [tickets, setTickets] = useState(data);
+  const [localtickets, setLocalTickets] = useState(data);
+
   const getTicketsLength = (status: String) => {
     let res = tickets.filter((item) => {
       return item.status === status;
@@ -124,25 +131,48 @@ export default function TicketBoard() {
     blocked: getTicketsLength("blocked"),
     completed: getTicketsLength("completed"),
   });
-  console.log(ticketLength);
 
+  const [ticketId, setTicketID] = useState<number | string>("");
+
+  useEffect(() => {
+    getAllTickets().then((res) => {
+      setTickets(res);
+      setLocalTickets(res);
+      console.log(res);
+    });
+  }, []);
+  console.log(localtickets);
   const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
     if (
       source.droppableId !== undefined ||
       (null && destination?.droppableId !== undefined) ||
       null
     ) {
-      let listIndex = tickets.findIndex(
-        (item) => item.id === result.draggableId
-      );
-      if (
-        typeof tickets[listIndex].status == "string" &&
-        destination?.droppableId !== undefined
-      ) {
-        let res = tickets;
-        res[listIndex].status = destination?.droppableId!;
-        setTickets(res);
+      if (destination?.droppableId !== undefined) {
+        let updateTicket = localtickets.map((list) => {
+          if (list.id == draggableId) {
+            return { ...list, status: destination?.droppableId! };
+          }
+          return list;
+        });
+        setLocalTickets(updateTicket);
+
+        let res = updateTicketStatus(draggableId, destination?.droppableId!);
+        res.then((response) => {
+          console.log(response);
+          if (response?.status === 200) {
+            getAllTickets().then((res) => {
+              setTickets(res);
+              setLocalTickets(res);
+              toast("Ticket Status Updated ", { theme: "light" });
+            });
+          } else {
+            setLocalTickets(tickets);
+            toast("Error while updating ticket", { theme: "light" });
+          }
+        });
+
         setTicketLength({
           todo: getTicketsLength("todo"),
           inprogress: getTicketsLength("inprogress"),
@@ -156,6 +186,8 @@ export default function TicketBoard() {
 
   return (
     <Box sx={{ flexGrow: 1, marginTop: 4 }}>
+      <ToastContainer position="top-center" autoClose={1000} />
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
           {ticketStatus.map((status) => {
@@ -164,19 +196,27 @@ export default function TicketBoard() {
             switch (status) {
               case "COMPLETED":
                 badgeTheme = "success";
-                badgeContent = ticketLength.completed;
+                badgeContent = localtickets.filter(
+                  (item) => item.status === "completed"
+                ).length;
                 break;
               case "INPROGRESS":
                 badgeTheme = "warning";
-                badgeContent = ticketLength.inprogress;
+                badgeContent = localtickets.filter(
+                  (item) => item.status === "inprogress"
+                ).length;
                 break;
               case "BLOCKED":
                 badgeTheme = "error";
-                badgeContent = ticketLength.blocked;
+                badgeContent = localtickets.filter(
+                  (item) => item.status === "blocked"
+                ).length;
                 break;
               case "TODO":
                 badgeTheme = "primary";
-                badgeContent = ticketLength.todo;
+                badgeContent = localtickets.filter(
+                  (item) => item.status === "todo"
+                ).length;
                 break;
             }
 
@@ -206,7 +246,7 @@ export default function TicketBoard() {
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         <Tickets
-                          getTickets={tickets.filter((item) => {
+                          getTickets={localtickets.filter((item) => {
                             return item.status === status.toLowerCase();
                           })}
                         />
