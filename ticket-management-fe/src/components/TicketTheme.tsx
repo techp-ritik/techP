@@ -76,10 +76,12 @@ const TicketTheme = createTheme({
       styleOverrides: {
         containedPrimary: {
           borderRadius: "8px", // Set the border-radius for primary contained buttons
+          // Set the border-radius for primary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for primary buttons
         },
         containedSecondary: {
           borderRadius: "8px", // Set the border-radius for secondary contained buttons
+          // Set the border-radius for secondary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for secondary buttons
         },
       },

@@ -167,14 +167,17 @@ export default function TicketBoard() {
         marginTop: 4,
         display: "flex",
         flexDirection: "column",
-        textAlign: "end",
-        margin: "20px",
 
-        alignItems: "right",
-        justifyContent: "space-between",
+        margin: "20px",
+        justifyContent: "flex-end",
       }}
     >
-      <Button onClick={handleCreateNewTicket}>Create new ticket</Button>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button variant="contained" onClick={handleCreateNewTicket}>
+          CREATE NEW CATEGORY
+        </Button>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
           {ticketStatus.map((status) => {
