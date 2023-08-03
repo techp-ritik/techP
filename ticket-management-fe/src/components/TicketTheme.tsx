@@ -32,12 +32,12 @@ const TicketTheme = createTheme({
     // Add more typography styles as needed
   },
   components: {
-    MuiDialogTitle: {
+    MuiModal: {
       styleOverrides: {
         root: {
-          backgroundColor: "#3f51b5",
-          textAlign: "center",
-          color: "white",
+          "& .MuiPaper-root": {
+            borderRadius: "8px", // Adjust the value for the desired border radius
+          },
         },
       },
     },
@@ -48,17 +48,16 @@ const TicketTheme = createTheme({
           boxShadow:
             "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
           cursor: "pointer",
-          borderRadius: "10px",
+          borderRadius: "8px",
         },
       },
     },
-
-    MuiModal: {
+    MuiDialogTitle: {
       styleOverrides: {
         root: {
-          "& .MuiPaper-root": {
-            borderRadius: "20px",
-          },
+          backgroundColor: "#3f51b5",
+          textAlign: "center",
+          color: "white",
         },
       },
     },
@@ -76,11 +75,11 @@ const TicketTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          borderRadius: "20px", // Set the border-radius for primary contained buttons
+          borderRadius: "8px", // Set the border-radius for primary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for primary buttons
         },
         containedSecondary: {
-          borderRadius: "20px", // Set the border-radius for secondary contained buttons
+          borderRadius: "8px", // Set the border-radius for secondary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for secondary buttons
         },
       },
@@ -97,7 +96,7 @@ const TicketTheme = createTheme({
     MuiSelect: {
       styleOverrides: {
         select: {
-          borderRadius: "4px", // Set the border-radius for the select component
+          borderRadius: "8px", // Set the border-radius for the select component
         },
       },
     },

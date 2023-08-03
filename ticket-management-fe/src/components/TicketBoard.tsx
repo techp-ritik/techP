@@ -5,9 +5,16 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Ticket from "./Ticket";
+import { Button } from "@mui/material";
 
 export default function TicketBoard() {
+  const [newTicketId, setNewTicketId] = useState<number | null>(null);
+
+  const handleCreateNewTicket = () => {
+    setNewTicketId(0);
+  };
   interface TicketList {
     id: string;
     title: string;
@@ -19,13 +26,13 @@ export default function TicketBoard() {
     completedAt: string;
     file: [string];
     category: string;
-    assignee: null;
+    assignee: string;
     updated_at: string;
   }
 
   let data: TicketList[] = [
     {
-      id: "#1",
+      id: "1",
       title: "Website Login Issue",
       description: "I'm unable to log in to my account.",
       status: "inprogress",
@@ -35,12 +42,12 @@ export default function TicketBoard() {
       completedAt: "",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
 
     {
-      id: "#2",
+      id: "2",
       title: "Device Issue",
       description: "My Laptop is not working properly",
       priority: "Low",
@@ -50,11 +57,11 @@ export default function TicketBoard() {
       status: "todo",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#3",
+      id: "36",
       title: "Profile Related Issue",
       description: "My Credentials are wrong",
       priority: "Medium",
@@ -64,12 +71,12 @@ export default function TicketBoard() {
       status: "completed",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
 
     {
-      id: "#4",
+      id: "4",
       title: "Salary Related Issue",
       description: "Salary Not Credited for last month",
       priority: "Medium",
@@ -79,11 +86,11 @@ export default function TicketBoard() {
       status: "completed",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#5",
+      id: "5",
       title: "Resource Related Issue",
       description: "Resources are not allocated to the team",
       priority: "Low",
@@ -93,11 +100,11 @@ export default function TicketBoard() {
       status: "blocked",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#6",
+      id: "6",
       title: "Repo Access Denied",
       description: "Repo not Alloted",
       priority: "Low",
@@ -107,7 +114,7 @@ export default function TicketBoard() {
       status: "todo",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
   ];
@@ -124,7 +131,6 @@ export default function TicketBoard() {
     blocked: getTicketsLength("blocked"),
     completed: getTicketsLength("completed"),
   });
-  console.log(ticketLength);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -155,7 +161,20 @@ export default function TicketBoard() {
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
 
   return (
-    <Box sx={{ flexGrow: 1, marginTop: 4 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        marginTop: 4,
+        display: "flex",
+        flexDirection: "column",
+        textAlign: "end",
+        margin: "20px",
+
+        alignItems: "right",
+        justifyContent: "space-between",
+      }}
+    >
+      <Button onClick={handleCreateNewTicket}>Create new ticket</Button>
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
           {ticketStatus.map((status) => {
@@ -220,6 +239,7 @@ export default function TicketBoard() {
           })}
         </Grid>
       </DragDropContext>
+      {newTicketId === 0 && <Ticket id={newTicketId} selectedTicket={null} />}
     </Box>
   );
 }

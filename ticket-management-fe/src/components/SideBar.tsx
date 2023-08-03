@@ -85,10 +85,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
           </Link>
         </ListItem>
         <ListItem>
-          <Link
-            to="/dashboard"
-            style={{ textDecoration: "none", color: "black" }}
-          >
+          <Link to="/users" style={{ textDecoration: "none", color: "black" }}>
             <ListItemButton>
               <ListItemIcon>
                 <GroupIcon />

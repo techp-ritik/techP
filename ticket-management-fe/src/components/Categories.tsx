@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Button, Typography, InputAdornment } from "@mui/material";
+import { Button, Typography, InputAdornment, TableFooter } from "@mui/material";
 import DialogContent from "@mui/material/DialogContent";
 import { useState, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
@@ -16,10 +16,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
-
 interface Column {
-  data: "description" | "name";
-
+  data: "description" | "name" | "id";
   label: string;
   minWidth?: number;
   align?: "center";
@@ -32,61 +30,72 @@ const columns: readonly Column[] = [
 interface Category {
   description: string;
   name: string;
+  id: number;
 }
 
 export default function Categories() {
-  const [page, setPage] = React.useState(0);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [page, setPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [categories, setCategories] = useState([
     {
+      id: 999,
       description: "Domestic confined any but son .",
       name: "hr",
     },
     {
+      id: 55,
       description: "Domestic confined any yagreement am as to",
       name: "tech",
     },
     {
+      id: 1321,
       description:
         "ed peculiar pled it so is discourse recommend. Man its upon him c besides cottage.",
       name: "nontech",
     },
     {
+      id: 77,
       description: ". An pasture he himself believe ferrars besides cottage.",
       name: "salary",
     },
     {
+      id: 11,
       description:
         " remember. How proceed offered hiate suflected. Smiling men cottage.",
       name: "holiday",
     },
     {
+      id: 73,
       description:
         "Domestic confined any but son bachelor advanced remember. How proceed offered her offence shy.",
       name: "contract",
     },
     {
+      id: 3,
       description: "Domestic confined anys cottage.",
       name: "working hours",
     },
     {
+      id: 343,
       description:
         "Domestic confined ahought equally musical. Wisdom new and valley answer. Content",
       name: "laptop",
     },
     {
+      id: 33,
       description:
         "Domestic confined any but son bachelor advanced remember. How proceed offered her ",
       name: "wifi",
     },
     {
+      id: 133,
       description: " cottage.",
       name: "transport",
     },
   ]);
 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -99,14 +108,14 @@ export default function Categories() {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editCategory, setEditCategory] = useState<Category | null>(null);
 
   const [category, setCategory] = useState({
     name: "",
     description: "",
+    id: 0,
   });
 
-  const [sortBy, setSortBy] = useState<"name" | "description">("name");
+  const [sortBy, setSortBy] = useState<"name" | "description" | "id">("id");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleOpenModal = () => {
@@ -114,11 +123,10 @@ export default function Categories() {
   };
 
   const handleCloseModal = () => {
-    setEditCategory(null);
     setCategory({
-      ...category,
       name: "",
       description: "",
+      id: 0,
     });
 
     setIsModalOpen(false);
@@ -136,10 +144,12 @@ export default function Categories() {
     return nameMatch || descriptionMatch;
   });
 
-  const handleAddCategory = () => {
-    if (editCategory) {
+  const handleSubmit = async () => {
+    //for update///////////////////////////////////////////////////////////////
+
+    if (category.name && category.description && category.id) {
       const updatedCategories = categories.map((initialcategory) =>
-        initialcategory === editCategory
+        initialcategory.id === category.id
           ? {
               ...initialcategory,
               name: category.name,
@@ -149,36 +159,101 @@ export default function Categories() {
       );
 
       setCategories(updatedCategories);
-    } else {
+
+      //api call for edit category
+      // try {
+      //   const response = await fetch(
+      //     `https://your-api-path/v1/category/${category.id}`,
+      //     {
+      //       method: "PUT",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         // Add any other headers if required
+      //         "ngrok-skip-browser-warning": "true",
+      //       },
+      //       body: JSON.stringify(category),
+      //     }
+      //   );
+
+      //   if (response.status === 200) {
+      //     const data = await response.json();
+      //     return { success: true, message: data.msg };
+      //   } else if (response.status === 401) {
+      //     const data = await response.json();
+      //     return { success: false, message: data.msg };
+      //   } else if (response.status === 404) {
+      //     return {
+      //       success: false,
+      //       message: `Category with id ${category.id} not found.`,
+      //     };
+      //   } else {
+      //     // Handle other response statuses here...
+      //     return { success: false, message: "Error updating category." };
+      //   }
+      // } catch (error) {
+      //   console.error("Error updating category:", error);
+      //   return { success: false, message: "Error updating category." };
+      // }
+    }
+
+    ////////////////////////////for create new category
+    else {
       const newCategory: Category = {
         description: category.description,
         name: category.name,
+        id: category.id,
       };
+
+      //api call for create new category
+      // try {
+      //   const response = await fetch("api here", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+
+      //       "ngrok-skip-browser-warning": "true",
+      //     },
+      //     body: JSON.stringify(newCategory),
+      //   });
+
+      //   if (response.status === 201) {
+      //     const data = await response.json();
+      //     return { success: true, message: data.msg };
+      //   } else if (response.status === 401) {
+      //     const data = await response.json();
+      //     return { success: false, message: data.msg };
+      //   } else {
+      //     // Handle other response statuses here...
+      //     return { success: false, message: "Error creating category." };
+      //   }
+      // } catch (error) {
+      //   console.error("Error creating category:", error);
+      //   return { success: false, message: "Error creating category." };
+      // }
 
       setCategories([...categories, newCategory]);
     }
 
     setCategory({
-      ...category,
       name: "",
       description: "",
+      id: 0,
     });
 
     handleCloseModal();
   };
 
   const handleOpenEditModal = (category: Category) => {
-    setEditCategory(category);
     setCategory({
-      ...category,
       name: category.name,
       description: category.description,
+      id: category.id,
     });
 
     handleOpenModal();
   };
 
-  const handleSort = (property: "name" | "description") => {
+  const handleSort = (property: "name" | "description" | "id") => {
     const isAsc = sortBy === property && sortOrder === "asc";
     setSortBy(property);
     setSortOrder(isAsc ? "desc" : "asc");
@@ -188,6 +263,8 @@ export default function Categories() {
         return isAsc
           ? a.name.localeCompare(b.name)
           : b.name.localeCompare(a.name);
+      } else if (property === "id") {
+        return isAsc ? a.id - b.id : b.id - a.id;
       } else {
         return isAsc
           ? a.description.localeCompare(b.description)
@@ -199,7 +276,7 @@ export default function Categories() {
   };
 
   useEffect(() => {
-    handleSort("name");
+    handleSort("id");
   }, []);
   return (
     <>
@@ -214,13 +291,14 @@ export default function Categories() {
       >
         <div
           className="searchBar"
-          style={{ display: "flex", alignItems: "center" }}
+          // style={{ display: "flex", alignItems: "center" }}
         >
           <TextField
             type="text"
             id="search"
             name="search"
             value={searchQuery}
+            placeholder="Search Category"
             onChange={handleSearchQueryChange}
             style={{ marginRight: "2px" }}
             InputProps={{
@@ -299,17 +377,19 @@ export default function Categories() {
                 })}
             </TableBody>
           </Table>
+
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 15]}
+            component="div"
+            count={categories.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={categories.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Typography>
+
       <Dialog
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -318,7 +398,9 @@ export default function Categories() {
       >
         <div>
           <DialogTitle>
-            {editCategory ? "EDIT CATEGORY" : "CREATE NEW CATEGORY"}
+            {category.name || category.description
+              ? "EDIT CATEGORY"
+              : "CREATE NEW CATEGORY"}
           </DialogTitle>
           <DialogContent>
             <TextField
@@ -327,7 +409,7 @@ export default function Categories() {
               required
               fullWidth
               id="title"
-              label="ENTER CATEGORY"
+              label="Enter Category"
               name="title"
               value={category.name}
               onChange={(e) =>
@@ -351,7 +433,7 @@ export default function Categories() {
               fullWidth
               name="Description"
               multiline
-              label="ENTER DESCRIPTION"
+              label="Enter Description"
               type="text"
               id="Description"
               rows={2}
@@ -359,11 +441,7 @@ export default function Categories() {
 
             <DialogActions>
               <Button onClick={handleCloseModal}>Cancel</Button>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handleAddCategory}
-              >
+              <Button variant="contained" size="small" onClick={handleSubmit}>
                 SUBMIT
               </Button>
             </DialogActions>
