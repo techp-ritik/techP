@@ -3,6 +3,8 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+
+import { toast } from "react-toastify";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -56,13 +58,13 @@ export default function Categories() {
     },
     {
       id: 77,
-      description: ". An pasture he himself believe ferrars besides cottage.",
+      description: "An pasture he himself believe ferrars besides cottage.",
       name: "salary",
     },
     {
       id: 11,
       description:
-        " remember. How proceed offered hiate suflected. Smiling men cottage.",
+        "remembe How proceed offered hiate suflected. Smiling men cottage.",
       name: "holiday",
     },
     {
@@ -90,7 +92,7 @@ export default function Categories() {
     },
     {
       id: 133,
-      description: " cottage.",
+      description: "cottage.",
       name: "transport",
     },
   ]);
@@ -146,7 +148,11 @@ export default function Categories() {
 
   const handleSubmit = async () => {
     //for update///////////////////////////////////////////////////////////////
+    if (!category.name || !category.description) {
+      toast.error("Fields cannot be empty");
 
+      return;
+    }
     if (category.name && category.description && category.id) {
       const updatedCategories = categories.map((initialcategory) =>
         initialcategory.id === category.id
@@ -198,6 +204,11 @@ export default function Categories() {
 
     ////////////////////////////for create new category
     else {
+      if (!category.name || !category.description) {
+        toast.error("Please fill all the required fields");
+
+        return;
+      }
       const newCategory: Category = {
         description: category.description,
         name: category.name,
@@ -261,14 +272,23 @@ export default function Categories() {
     const sortedCategories = [...categories].sort((a, b) => {
       if (property === "name") {
         return isAsc
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
+          ? a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+          : b.name
+              .toLocaleLowerCase()
+              .localeCompare(a.name.toLocaleLowerCase());
       } else if (property === "id") {
         return isAsc ? a.id - b.id : b.id - a.id;
-      } else {
+      } else if (property === "description") {
         return isAsc
-          ? a.description.localeCompare(b.description)
-          : b.description.localeCompare(a.description);
+          ? a.description
+              .toLocaleLowerCase()
+              .localeCompare(b.description.toLocaleLowerCase())
+          : b.description
+              .toLocaleLowerCase()
+              .localeCompare(a.description.toLocaleLowerCase());
+      } else {
+        // Invalid property, no sorting needed
+        return 0;
       }
     });
 
@@ -286,35 +306,36 @@ export default function Categories() {
           margin: "20px",
           display: "flex",
           alignItems: "center",
+
           justifyContent: "space-between",
         }}
       >
-        <div
-          className="searchBar"
-          // style={{ display: "flex", alignItems: "center" }}
-        >
-          <TextField
-            type="text"
-            id="search"
-            name="search"
-            value={searchQuery}
-            placeholder="Search Category"
-            onChange={handleSearchQueryChange}
-            style={{ marginRight: "2px" }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon
-                    onClick={() => setSearchQuery("")}
-                    sx={{ cursor: "pointer", fontSize: "1.5rem" }}
-                  />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </div>
+        <TextField
+          type="text"
+          id="search"
+          name="search"
+          value={searchQuery}
+          placeholder="Search Category"
+          onChange={handleSearchQueryChange}
+          style={{ marginRight: "1px" }}
+          sx={{ width: "300px" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon
+                  onClick={() => setSearchQuery("")}
+                  sx={{ cursor: "pointer" }}
+                />
+              </InputAdornment>
+            ),
+          }}
+        />
 
-        <Button variant="contained" onClick={handleOpenModal}>
+        <Button
+          variant="contained"
+          onClick={handleOpenModal}
+          sx={{ height: "40px" }}
+        >
           CREATE NEW CATEGORY
         </Button>
       </div>
@@ -379,7 +400,7 @@ export default function Categories() {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 15]}
+            rowsPerPageOptions={[5]}
             component="div"
             count={categories.length}
             rowsPerPage={rowsPerPage}
@@ -398,9 +419,7 @@ export default function Categories() {
       >
         <div>
           <DialogTitle>
-            {category.name || category.description
-              ? "EDIT CATEGORY"
-              : "CREATE NEW CATEGORY"}
+            {category.id ? "EDIT CATEGORY" : "CREATE NEW CATEGORY"}
           </DialogTitle>
           <DialogContent>
             <TextField
@@ -438,14 +457,18 @@ export default function Categories() {
               id="Description"
               rows={2}
             />
-
-            <DialogActions>
-              <Button onClick={handleCloseModal}>Cancel</Button>
-              <Button variant="contained" size="small" onClick={handleSubmit}>
-                SUBMIT
-              </Button>
-            </DialogActions>
           </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal}>Cancel</Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSubmit}
+              sx={{ marginRight: "15px" }}
+            >
+              SUBMIT
+            </Button>
+          </DialogActions>
         </div>
       </Dialog>
     </>

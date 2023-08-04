@@ -1,5 +1,4 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { orange } from "@mui/material/colors";
 
 const TicketTheme = createTheme({
   palette: {
@@ -75,7 +74,8 @@ const TicketTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          borderRadius: "8px", // Set the border-radius for primary contained buttons
+          borderRadius: "8px",
+          // Set the border-radius for primary contained buttons
           // Set the border-radius for primary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for primary buttons
         },
@@ -90,7 +90,10 @@ const TicketTheme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         input: {
-          fontFamily: "Roboto, Arial, sans-serif", // Set the font-family for input fields
+          fontFamily: "Roboto, Arial, sans-serif",
+          height: "10px",
+
+          // Set the font-family for input fields
         },
       },
     },
