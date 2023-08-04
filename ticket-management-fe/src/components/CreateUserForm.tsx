@@ -9,7 +9,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Data } from "./Users";
 
-
 const style = {
   position: "absolute" as "absolute",
   textAlign: "center",
@@ -80,8 +79,10 @@ export default function CreateUserModal({
   //       setUserList([...UserList, newData]);
   //     });
   // };
+  //>
+  const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const handleSubmit = () => {
     if (user.id == "") {
       let newUser = user;
       newUser.id = `#${UserList.length + 1}`;
@@ -139,7 +140,7 @@ export default function CreateUserModal({
               noValidate
               autoComplete="off"
             >
-              <form className="user_create_form">
+              <form onSubmit={handleSubmit} className="user_create_form">
                 <div>
                   <TextField
                     required
@@ -187,7 +188,7 @@ export default function CreateUserModal({
                   <Button
                     style={{ marginTop: "10px" }}
                     size="large"
-                    type="submit"
+                    
                     onClick={() => {
                       setOpenModal(false);
                     }}
@@ -198,16 +199,52 @@ export default function CreateUserModal({
                   <Button
                     style={{ marginTop: "10px" }}
                     size="large"
-                    onClick={() => {
-                      handleSubmit();
-                    }}
+                    type="submit"
                     variant="contained"
                   >
                     {user.id == "" ? "Create User" : "Update "}
                   </Button>
                 </div>
               </form>
+              
             </Box>
+            <form onSubmit={handleSubmit}>
+              <TextField
+               
+                margin="normal"
+                type="email"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+              />
+              <TextField
+                
+               
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+             
+
+              <Button
+                
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                ok
+              </Button>
+            </form>
           </Typography>
         </Box>
       </Modal>

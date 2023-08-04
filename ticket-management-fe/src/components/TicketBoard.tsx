@@ -6,10 +6,11 @@ import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import React, { useState, useEffect } from "react";
-import { getAllTickets, getTicket } from "./api/baseapi";
+import { getAllTickets, getTicket,filterTickets } from "./api/baseapi";
 import { updateTicketStatus } from "./api/baseapi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Filter from "./filter";
 
 export default function TicketBoard() {
   interface TicketList {
@@ -141,7 +142,9 @@ export default function TicketBoard() {
       console.log(res);
     });
   }, []);
-  console.log(localtickets);
+
+ let filter=filterTickets("priority","high"  )
+ console.log(filter)
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
     if (
@@ -149,7 +152,7 @@ export default function TicketBoard() {
       (null && destination?.droppableId !== undefined) ||
       null
     ) {
-      if (destination?.droppableId !== undefined) {
+      if (destination?.droppableId !== undefined && source.droppableId !==destination?.droppableId!) {
         let updateTicket = localtickets.map((list) => {
           if (list.id == draggableId) {
             return { ...list, status: destination?.droppableId! };
@@ -186,6 +189,7 @@ export default function TicketBoard() {
 
   return (
     <Box sx={{ flexGrow: 1, marginTop: 4 }}>
+     <Filter/>
       <ToastContainer position="top-center" autoClose={1000} />
 
       <DragDropContext onDragEnd={onDragEnd}>

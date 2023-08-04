@@ -18,7 +18,18 @@ function Tickets(props: list) {
         </div>
       ) : (
         props.getTickets.map((list: any, index: number) => {
-          
+          let priorityColor="";
+           switch(list.priority){
+             case "high":
+              priorityColor="red"
+              break;
+             case "medium":
+              priorityColor="orange"
+              break; 
+             case "low":
+                priorityColor="green"
+                break;
+           }
 
           return (
             <Draggable
@@ -35,7 +46,7 @@ function Tickets(props: list) {
                 >
                   <div className="ticket">
                     <Typography sx={{}} className="ticketTitle">
-                      Ticket {list.id}
+                      Ticket #{list.id}
                       <Button
                         size="small"
                         type="submit"
@@ -46,19 +57,18 @@ function Tickets(props: list) {
                         View Ticket
                       </Button>
                     </Typography>
-                   
+                   <div >
                     <div className="ticketDetail">
                       <div style={{ textAlign: "end" }}>
                         
                       </div>
 
                       <div className="ticket_title">Title: {list.title}</div>
-                      <div>Priority: {list.priority}</div>
-                      <div>Raised By: {list.raisedBy}</div>
+                      <div>Priority: <span style={{color:priorityColor}}>{list.priority}</span></div>
+                      <div className="ticketSubDetail"> <div>Raised By: {list.raisedBy} </div>  <div>{list.status !=="completed"?<> Active Time</>: <>Resolved Time</>} : {list.time_taken} hrs</div></div>
                     </div>
 
-                    <div className="ticketSubDetail">
-                      
+                    
                     </div>
                   </div>
                   <div className="ticketShadow"></div>

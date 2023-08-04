@@ -94,10 +94,12 @@ hr{
     padding: 4px 16px;
 }
 .ticketSubDetail{
+  
+   color: rgb(58, 58, 58);
+    font-size: 12px;
+    align-items: center;
     display: flex;
     justify-content: space-between;
-    font-size: 1rem;
-    padding: 5px;
     
 }
 

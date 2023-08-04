@@ -1,7 +1,26 @@
 const getAllTickets = async () => {
   try {
     const response = await fetch(
-      "https://cce6-103-177-83-247.ngrok-free.app/v1/tickets",
+      "https://32e5-103-177-83-247.ngrok-free.app/v1/tickets",
+      {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+const filterTickets = async (params:string,value:string|number|Date) => {
+  try {
+    const response = await fetch(
+      `https://32e5-103-177-83-247.ngrok-free.app/v1/tickets/?${params}=${value}`,
       {
         headers: { "ngrok-skip-browser-warning": "true" },
       }
@@ -21,7 +40,7 @@ const getAllTickets = async () => {
 const getTicket = async (id: number): Promise<void> => {
   try {
     const response = await fetch(
-      `https://cce6-103-177-83-247.ngrok-free.app/v1/ticket/${id}`,
+      `https://32e5-103-177-83-247.ngrok-free.app/v1/ticket/${id}`,
       {
         headers: { "ngrok-skip-browser-warning": "true" },
         method: "GET",
@@ -46,7 +65,7 @@ const updateTicketStatus = async (id: number | string, status: string) => {
       console.log("inside edit");
       // Editing an existing ticket, make a PUT request
       const response = await fetch(
-        `https://cce6-103-177-83-247.ngrok-free.app/v1/ticket/?id=${id}`,
+        `https://32e5-103-177-83-247.ngrok-free.app/v1/ticket/?id=${id}`,
         {
           method: "PUT",
           body: formData,
@@ -64,4 +83,4 @@ const updateTicketStatus = async (id: number | string, status: string) => {
   }
 };
 
-export { getAllTickets, getTicket, updateTicketStatus };
+export { getAllTickets, getTicket, updateTicketStatus ,filterTickets};
