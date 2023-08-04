@@ -1,5 +1,4 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { orange } from "@mui/material/colors";
 
 const TicketTheme = createTheme({
   palette: {
@@ -41,6 +40,7 @@ const TicketTheme = createTheme({
         },
       },
     },
+
     MuiTableContainer: {
       styleOverrides: {
         root: {
@@ -54,7 +54,6 @@ const TicketTheme = createTheme({
     MuiDialogTitle: {
       styleOverrides: {
         root: {
-          // Add the background color here
           backgroundColor: "#3f51b5",
           textAlign: "center",
           color: "white",
@@ -62,29 +61,47 @@ const TicketTheme = createTheme({
       },
     },
 
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          "& .MuiDrawer-paper": {
+            borderRadius: "0px",
+          },
+        },
+      },
+    },
+
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          borderRadius: "8px", // Set the border-radius for primary contained buttons
+          borderRadius: "8px",
+          // Set the border-radius for primary contained buttons
+          // Set the border-radius for primary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for primary buttons
         },
         containedSecondary: {
           borderRadius: "8px", // Set the border-radius for secondary contained buttons
+          // Set the border-radius for secondary contained buttons
           textTransform: "uppercase", // Convert text to uppercase for secondary buttons
         },
       },
     },
+
     MuiInputBase: {
       styleOverrides: {
         input: {
-          fontFamily: "Roboto, Arial, sans-serif", // Set the font-family for input fields
+          fontFamily: "Roboto, Arial, sans-serif",
+          height: "10px",
+
+          // Set the font-family for input fields
         },
       },
     },
+
     MuiSelect: {
       styleOverrides: {
         select: {
-          borderRadius: "4px", // Set the border-radius for the select component
+          borderRadius: "8px", // Set the border-radius for the select component
         },
       },
     },

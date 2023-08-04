@@ -5,13 +5,16 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import React, { useState, useEffect } from "react";
-import { getAllTickets, getTicket } from "./api/baseapi";
-import { updateTicketStatus } from "./api/baseapi";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from "react";
+import Ticket from "./Ticket";
+import { Button } from "@mui/material";
 
 export default function TicketBoard() {
+  const [newTicketId, setNewTicketId] = useState<number | null>(null);
+
+  const handleCreateNewTicket = () => {
+    setNewTicketId(0);
+  };
   interface TicketList {
     id: string;
     title: string;
@@ -23,13 +26,13 @@ export default function TicketBoard() {
     completedAt: string;
     file: [string];
     category: string;
-    assignee: null;
+    assignee: string;
     updated_at: string;
   }
 
   let data: TicketList[] = [
     {
-      id: "#1",
+      id: "1",
       title: "Website Login Issue",
       description: "I'm unable to log in to my account.",
       status: "inprogress",
@@ -39,12 +42,12 @@ export default function TicketBoard() {
       completedAt: "",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
 
     {
-      id: "#2",
+      id: "2",
       title: "Device Issue",
       description: "My Laptop is not working properly",
       priority: "Low",
@@ -54,11 +57,11 @@ export default function TicketBoard() {
       status: "todo",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#3",
+      id: "36",
       title: "Profile Related Issue",
       description: "My Credentials are wrong",
       priority: "Medium",
@@ -68,12 +71,12 @@ export default function TicketBoard() {
       status: "completed",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
 
     {
-      id: "#4",
+      id: "4",
       title: "Salary Related Issue",
       description: "Salary Not Credited for last month",
       priority: "Medium",
@@ -83,11 +86,11 @@ export default function TicketBoard() {
       status: "completed",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#5",
+      id: "5",
       title: "Resource Related Issue",
       description: "Resources are not allocated to the team",
       priority: "Low",
@@ -97,11 +100,11 @@ export default function TicketBoard() {
       status: "blocked",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#6",
+      id: "6",
       title: "Repo Access Denied",
       description: "Repo not Alloted",
       priority: "Low",
@@ -111,14 +114,11 @@ export default function TicketBoard() {
       status: "todo",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
   ];
-
   const [tickets, setTickets] = useState(data);
-  const [localtickets, setLocalTickets] = useState(data);
-
   const getTicketsLength = (status: String) => {
     let res = tickets.filter((item) => {
       return item.status === status;
@@ -132,47 +132,23 @@ export default function TicketBoard() {
     completed: getTicketsLength("completed"),
   });
 
-  const [ticketId, setTicketID] = useState<number | string>("");
-
-  useEffect(() => {
-    getAllTickets().then((res) => {
-      setTickets(res);
-      setLocalTickets(res);
-      console.log(res);
-    });
-  }, []);
-  console.log(localtickets);
   const onDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
     if (
       source.droppableId !== undefined ||
       (null && destination?.droppableId !== undefined) ||
       null
     ) {
-      if (destination?.droppableId !== undefined) {
-        let updateTicket = localtickets.map((list) => {
-          if (list.id == draggableId) {
-            return { ...list, status: destination?.droppableId! };
-          }
-          return list;
-        });
-        setLocalTickets(updateTicket);
-
-        let res = updateTicketStatus(draggableId, destination?.droppableId!);
-        res.then((response) => {
-          console.log(response);
-          if (response?.status === 200) {
-            getAllTickets().then((res) => {
-              setTickets(res);
-              setLocalTickets(res);
-              toast("Ticket Status Updated ", { theme: "light" });
-            });
-          } else {
-            setLocalTickets(tickets);
-            toast("Error while updating ticket", { theme: "light" });
-          }
-        });
-
+      let listIndex = tickets.findIndex(
+        (item) => item.id === result.draggableId
+      );
+      if (
+        typeof tickets[listIndex].status == "string" &&
+        destination?.droppableId !== undefined
+      ) {
+        let res = tickets;
+        res[listIndex].status = destination?.droppableId!;
+        setTickets(res);
         setTicketLength({
           todo: getTicketsLength("todo"),
           inprogress: getTicketsLength("inprogress"),
@@ -185,8 +161,22 @@ export default function TicketBoard() {
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
 
   return (
-    <Box sx={{ flexGrow: 1, marginTop: 4 }}>
-      <ToastContainer position="top-center" autoClose={1000} />
+    <Box
+      sx={{
+        flexGrow: 1,
+        marginTop: 4,
+        display: "flex",
+        flexDirection: "column",
+
+        margin: "20px",
+        justifyContent: "flex-end",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button variant="contained" onClick={handleCreateNewTicket}>
+          CREATE NEW CATEGORY
+        </Button>
+      </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
@@ -196,27 +186,19 @@ export default function TicketBoard() {
             switch (status) {
               case "COMPLETED":
                 badgeTheme = "success";
-                badgeContent = localtickets.filter(
-                  (item) => item.status === "completed"
-                ).length;
+                badgeContent = ticketLength.completed;
                 break;
               case "INPROGRESS":
                 badgeTheme = "warning";
-                badgeContent = localtickets.filter(
-                  (item) => item.status === "inprogress"
-                ).length;
+                badgeContent = ticketLength.inprogress;
                 break;
               case "BLOCKED":
                 badgeTheme = "error";
-                badgeContent = localtickets.filter(
-                  (item) => item.status === "blocked"
-                ).length;
+                badgeContent = ticketLength.blocked;
                 break;
               case "TODO":
                 badgeTheme = "primary";
-                badgeContent = localtickets.filter(
-                  (item) => item.status === "todo"
-                ).length;
+                badgeContent = ticketLength.todo;
                 break;
             }
 
@@ -246,7 +228,7 @@ export default function TicketBoard() {
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         <Tickets
-                          getTickets={localtickets.filter((item) => {
+                          getTickets={tickets.filter((item) => {
                             return item.status === status.toLowerCase();
                           })}
                         />
@@ -260,6 +242,7 @@ export default function TicketBoard() {
           })}
         </Grid>
       </DragDropContext>
+      {newTicketId === 0 && <Ticket id={newTicketId} selectedTicket={null} />}
     </Box>
   );
 }

@@ -9,7 +9,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Data } from "./Users";
 
-
 const style = {
   position: "absolute" as "absolute",
   textAlign: "center",

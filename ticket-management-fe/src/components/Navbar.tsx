@@ -1,14 +1,19 @@
 import * as React from "react";
+import SideBar from "./SideBar";
+import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
+import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
+
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -30,11 +35,9 @@ export default function Navbar() {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
-
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  const location = useLocation();
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -55,7 +58,6 @@ export default function Navbar() {
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
     </Menu>
   );
-
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
@@ -87,16 +89,22 @@ export default function Navbar() {
       </MenuItem>
     </Menu>
   );
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
+          <MenuIcon onClick={handleSidebarToggle} />
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{ display: { xs: "none", sm: "block", marginLeft: "20px" } }}
           >
             Ticket Management System
           </Typography>
@@ -131,6 +139,7 @@ export default function Navbar() {
           </Box>
         </Toolbar>
       </AppBar>
+      <SideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       {renderMobileMenu}
       {renderMenu}
     </Box>
