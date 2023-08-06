@@ -119,7 +119,6 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
       handleEdit();
     }
   }, [id]);
-
   const handleDeleteAttachment = (indexToDelete: number) => {
     setticketInformation((prevData) => ({
       ...prevData,

@@ -238,7 +238,6 @@ console.log(localtickets)
                 ).length;
                 break;
             }
-
             return (
               <Grid item xs={3}>
                 <Card sx={{ margin: 1 ,border:"1px solid #cecece"}}>

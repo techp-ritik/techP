@@ -330,7 +330,6 @@ export default function Categories() {
             ),
           }}
         />
-
         <Button
           variant="contained"
           onClick={handleOpenModal}
