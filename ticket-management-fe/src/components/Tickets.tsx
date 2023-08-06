@@ -86,7 +86,14 @@ function Tickets(props: list) {
         })
       )}
 
-      {showTicket && <Ticket id={ticketId} selectedTicket={selectedTicket} />}
+      {showTicket && (
+        <Ticket
+          id={ticketId}
+          selectedTicket={selectedTicket}
+          setShowTicket={setShowTicket}
+          setNewTicketId={setTicketId}
+        />
+      )}
     </div>
   );
 }
