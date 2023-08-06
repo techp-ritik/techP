@@ -6,9 +6,10 @@ import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import React, { useState, useEffect } from "react";
-import { getAllTickets, getTicket,filterTickets } from "./api/baseapi";
-import { updateTicketStatus } from "./api/baseapi";
-import { ToastContainer, toast } from "react-toastify";
+import { filterTickets } from "../api/baseapi";
+import { getAllTickets,getTicket } from "../api/baseapi";
+import { updateTicketStatus } from "../api/baseapi";
+import { ToastContainer,toast } from "react-toastify";
 import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import Filter from "./filter";
@@ -31,10 +32,13 @@ export type  TicketList ={
   updated_at: string;
 }
 
+
+
 export default function TicketBoard() {
   const [newTicketId, setNewTicketId] = useState<number | null>(null);
-
+  const [showTicket, setShowTicket] = useState(false);
   const handleCreateNewTicket = () => {
+    setShowTicket(true);
     setNewTicketId(0);
   };
 
@@ -127,8 +131,10 @@ export default function TicketBoard() {
       updated_at: "2023-07-26T12:39:03.657807",
     },
   ];
+
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
+
   const getTicketsLength = (status: String) => {
  return 1
   };
@@ -144,6 +150,15 @@ export default function TicketBoard() {
       setTickets(res);
       setLocalTickets(res);
       console.log(res);
+    });
+  }, []);
+
+  const [ticketId, setTicketID] = useState<number | string>("");
+
+  useEffect(() => {
+    getAllTickets().then((res) => {
+      setTickets(res);
+      setLocalTickets(res);
     });
   }, []);
 
@@ -165,16 +180,15 @@ export default function TicketBoard() {
 
         let res = updateTicketStatus(draggableId, destination?.droppableId!);
         res.then((response) => {
-          console.log(response);
           if (response?.status === 200) {
             getAllTickets().then((res) => {
               setTickets(res);
               setLocalTickets(res);
-              // toast("Ticket Status Updated ", { theme: "light" });
+              toast("Ticket Status Updated ", { theme: "light",autoClose:1500,position:"top-center" });
             });
           } else {
             setLocalTickets(tickets);
-            toast("Error while updating ticket", { theme: "light" });
+            toast("Error while updating ticket", { theme: "light",autoClose:1500,position:"top-center" });
           }
         });
 
@@ -191,22 +205,26 @@ export default function TicketBoard() {
 console.log(localtickets)
   return (
     <Box
-    sx={{
-      flexGrow: 1,
-      marginTop: 4,
-      display: "flex",
-      flexDirection: "column",
-      margin: "20px",
-      justifyContent: "flex-end",
-    }}
-  >
-    <div style={{ display: "flex", justifyContent:"space-between",margin:"2px" }}>
-      <Filter setLocalTickets={setLocalTickets} />
-      <Button variant="contained" onClick={handleCreateNewTicket}>
-        CREATE NEW CATEGORY
-      </Button>
-    </div>
-    
+      sx={{
+        flexGrow: 1,
+        marginTop: 4,
+        display: "flex",
+        flexDirection: "column",
+
+        margin: "20px",
+        justifyContent: "flex-end",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <span> <Filter setLocalTickets={setLocalTickets}/></span>
+       
+        <Button sx={{marginRight:"10px",marginBottom:"5px"}} variant="contained" onClick={handleCreateNewTicket}>
+          CREATE NEW TICKET
+        </Button>
+      </div>
+
+      {/* <ToastContainer position="top-center" autoClose={1000} /> */}
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
           {ticketStatus.map((status) => {
@@ -279,7 +297,15 @@ console.log(localtickets)
           })}
         </Grid>
       </DragDropContext>
-      {newTicketId === 0 && <Ticket   setLocaltickets={setLocalTickets} id={newTicketId} selectedTicket={null} />}
+      {newTicketId === 0 && (
+        <Ticket
+          setLocaltickets={setLocalTickets}
+          id={newTicketId}
+          selectedTicket={null}
+          setShowTicket={setShowTicket}
+          setNewTicketId={setNewTicketId}
+        />
+      )}
     </Box>
   );
 }

@@ -6,6 +6,8 @@ import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
 
+import { getAllCategories } from "../api/baseapi";
+
 import {
   Dialog,
   DialogTitle,
@@ -13,15 +15,22 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
-import { getCreateTicket, getUpdateTicket } from "../api/baseapi";
+import { createTicket, updateTicket } from "../api/baseapi";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { deleteTicket } from "./api/baseapi";
-import { ToastContainer, toast } from "react-toastify";
+import { deleteTicket } from "../api/baseapi";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
-import { getAllTickets } from "./api/baseapi";
+import { getAllTickets } from "../api/baseapi";
+
+interface TicketProps {
+  id: number;
+  selectedTicket: any;
+  setShowTicket: any;
+  setNewTicketId: any;
+}
 interface Attachment {
   id: number;
   filename: string;
@@ -33,12 +42,27 @@ interface TicketProps {
   setLocaltickets:React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
-function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
-  // let id: number | null = 2;
+  
+ 
 
+function Ticket({
+  id,
+  selectedTicket,
+  setShowTicket,
+  setNewTicketId,
+  setLocaltickets
+}: TicketProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
+    getAllCategories().then((res) => {
+      setticketInformation((prevTicketInfo) => ({
+        ...prevTicketInfo,
+        category_id: res.length > 0 ? res[0].name : "",
+      }));
+
+      setCategories(res);
+    });
     setIsModalOpen(true);
   };
 
@@ -46,32 +70,43 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
     setticketInformation({
       title: "",
       description: "",
-      category: "",
+      category_id: 0,
       priority: "",
-      assignee: "",
-      status: "",
+      assignee: 0,
+
       file: [],
+      filepath: "",
+      created_by: 0,
     });
-    id = 0;
-
+    setShowTicket(false);
     setIsModalOpen(false);
+    setNewTicketId(null);
   };
+  interface Category {
+    description: string;
+    name: string;
+    id: number;
+  }
 
+  const [categories, setCategories] = useState<Category[]>([]);
   const [ticketInformation, setticketInformation] = useState<{
     title: string;
     description: string;
-    category: string;
+    category_id: number | string;
     priority: string;
-    assignee: string;
-    status: string;
+    assignee: number;
+    created_by: number;
+    filepath: string;
+
     file: File[];
   }>({
     title: "",
     description: "",
-    category: "Select Category",
+    category_id: 0,
     priority: "Select Priority",
-    assignee: "",
-    status: "",
+    assignee: 0,
+    filepath: "",
+    created_by: 1,
     file: [],
   });
 
@@ -102,10 +137,15 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
     setticketInformation({
       title: selectedTicket.title,
       description: selectedTicket.description,
-      category: selectedTicket.category,
+      category_id: selectedTicket.category.name,
+
+      filepath: selectedTicket.attachments
+        .map((attachment: Attachment) => attachment.filepath)
+        .join(", "),
       priority: selectedTicket.priority,
-      status: selectedTicket.status,
-      assignee: selectedTicket.assignee.toString(),
+
+      created_by: selectedTicket.created_by,
+      assignee: selectedTicket.assignee,
       file: [],
     });
 
@@ -118,6 +158,7 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
     } else {
       handleEdit();
     }
+    getAllCategories();
   }, [id]);
   const handleDeleteAttachment = (indexToDelete: number) => {
     setticketInformation((prevData) => ({
@@ -138,10 +179,10 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
     if (
       !ticketInformation.title ||
       !ticketInformation.description ||
-      ticketInformation.category === "Select Category" ||
+      ticketInformation.category_id === null ||
       ticketInformation.priority === "Select Priority"
     ) {
-      toast.error("Please fill all the required fields");
+      toast.error("Please fill all the required fields", { theme: "light",autoClose:1500,position:"top-center" });
 
       return;
     }
@@ -149,47 +190,54 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
     const formData = new FormData();
     formData.append("title", ticketInformation.title);
     formData.append("description", ticketInformation.description);
-    formData.append("category", ticketInformation.category);
+    formData.append("category_id", ticketInformation.category_id.toString());
     formData.append("priority", ticketInformation.priority);
-    formData.append("assignee", ticketInformation.assignee);
-    // formData.append("status" , ticketInformation.status);
+    formData.append("assignee", ticketInformation.assignee.toString());
+    formData.append("created_by", ticketInformation.created_by?.toString());
 
-    // Append the file(s) to the FormData object
     ticketInformation.file.forEach((file) => {
       formData.append("files", file);
     });
 
     if (id === 0) {
       try {
-        let createResponse = await getCreateTicket(formData);
+        let createResponse = await createTicket(formData);
 
         if (createResponse === 201) {
-          toast("Ticket created successfully.");
+          toast("Ticket created successfully.", { theme: "light",autoClose:1500,position:"top-center" });
+          getAllTickets().then((res)=>{
+            setLocaltickets(res)
+          })
           handleCloseModal();
+          return;
         }
         if (createResponse === 401) {
-          toast("Unauthorized");
+          toast("Unauthorized", { theme: "light",autoClose:1500,position:"top-center" });
         }
         if (createResponse === 404) {
-          toast("Validation error: invalid data format.");
+          toast("Validation error: invalid data format.", { theme: "light",autoClose:1500,position:"top-center" });
         } else {
-          toast("An error occurred while submitting the form .");
+          toast("An error occurred while submitting the form .", { theme: "light",autoClose:1500,position:"top-center" });
         }
       } catch (error) {}
     } else {
-      let editResponse = await getUpdateTicket(formData, id);
+      let editResponse = await updateTicket(formData, id);
 
       if (editResponse === 200) {
-        toast("Ticket edited successfully.");
+        toast("Ticket edited successfully.", { theme: "light",autoClose:1500,position:"top-center" });
+        getAllTickets().then((res)=>{
+          setLocaltickets(res)
+        })
         handleCloseModal();
+        return;
       }
       if (editResponse === 401) {
-        toast("Unauthorized");
+        toast("Unauthorized", { theme: "light",autoClose:1500,position:"top-center" });
       }
       if (editResponse === 404) {
         toast("Validation error: invalid data format.");
       } else {
-        toast("An error occurred while submitting the form .");
+        toast("An error occurred while editing the form .");
       }
     }
   };
@@ -200,7 +248,7 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
   console.log(res)
   setLocaltickets(res)
  })
- handleCloseModal();   toast(`Ticket#${id} Deleted Successfully`, { theme: "light" }); 
+ handleCloseModal();   toast(`Ticket#${id} Deleted Successfully`, { theme: "light",autoClose:1500,position:"top-center" }); 
    }
 
   return (
@@ -228,7 +276,7 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
               }}
               margin="normal"
               type="string"
-              required
+              required={id === null || id === 0}
               fullWidth
               id="title"
               label="Title"
@@ -244,7 +292,7 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
                 });
               }}
               margin="normal"
-              required
+              required={id === null || id === 0}
               fullWidth
               name="Description"
               multiline
@@ -259,25 +307,28 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               fullWidth
-              required
+              required={id === null || id === 0}
               defaultValue="Select Category"
               autoFocus
-              name="category"
+              name="category_id"
               type="text"
-              value={ticketInformation.category}
+              value={ticketInformation.category_id}
               sx={{ marginBottom: "20px" }}
               onChange={(e) => {
                 setticketInformation({
                   ...ticketInformation,
-                  category: e.target.value,
+                  category_id: e.target.value,
                 });
               }}
             >
               <MenuItem value={"Select Category"} disabled>
                 Select Category
               </MenuItem>
-              <MenuItem value={"TECHNICAL SUPPORT"}>TECHNICAL SUPPORT</MenuItem>
-              <MenuItem value={"HR"}>HR</MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
             </Select>
 
             <TextField
@@ -285,11 +336,11 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
               onChange={(e) => {
                 setticketInformation({
                   ...ticketInformation,
-                  assignee: e.target.value,
+                  assignee: parseInt(e.target.value),
                 });
               }}
               margin="normal"
-              required
+              required={id === null || id === 0}
               fullWidth
               name="Assignee"
               label="Assignee"
@@ -297,11 +348,12 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
               id="Assignee"
               sx={{ marginBottom: "20px" }}
             />
+
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               fullWidth
-              required
+              required={id === null || id === 0}
               defaultValue="Select Priority"
               autoFocus
               name="priority"
@@ -382,6 +434,26 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
                   )}
                 </React.Fragment>
               ))}
+              {ticketInformation.filepath && (
+                <Link
+                  href={
+                    "https://a974-210-16-94-97.ngrok-free.app/" +
+                    ticketInformation.filepath
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    border: "1px solid #ccc",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    backgroundColor: "#f0f0f0",
+                    textDecoration: "none",
+                    color: "#000",
+                  }}
+                >
+                  View Attachment
+                </Link>
+              )}
             </Stack>
 
             <DialogActions>
@@ -390,7 +462,7 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
               <Button variant="contained" onClick={handleSubmit} size="small">
                 {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
               </Button>
-              {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>}
+              {/* {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>} */}
              
                
               
@@ -401,5 +473,6 @@ function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
     </div>
   );
 }
-
 export default Ticket;
+
+

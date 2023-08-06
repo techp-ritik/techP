@@ -80,8 +80,12 @@ export default function CreateUserModal({
   //     });
   // };
   //>
-  const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+    if(!user.name || !user.email || !user.phone || !user.username){
+      toast("All fields are Mandatory", { theme: "light",autoClose:1500,position:"top-center" })
+      return
+      
+    }
 
     if (user.id == "") {
       let newUser = user;
@@ -90,7 +94,7 @@ export default function CreateUserModal({
       setUserList(newUserData);
       setOpenModal(false);
       //addUser()
-      toast("User Data Added Successfully", { theme: "light" });
+      toast("User Data Added Successfully", { theme: "light",autoClose:1500,position:"top-center" });
     } else {
       let res = UserList.map((list) => {
         return list.id === user.id
@@ -105,14 +109,14 @@ export default function CreateUserModal({
       });
       setUserList(res);
       setOpenModal(false);
-      toast("User Updated Successfully", { theme: "light" });
+      toast("User Updated Successfully", { theme: "light",autoClose:1500,position:"top-center" });
     }
     setUser(clearForm);
   };
 
   return (
     <div>
-      <ToastContainer position="top-center" autoClose={2000} />
+      
 
       <Modal
         open={openModal}
@@ -140,12 +144,11 @@ export default function CreateUserModal({
               noValidate
               autoComplete="off"
             >
-              <form onSubmit={handleSubmit} className="user_create_form">
-                <div>
+              
+              
                   <TextField
                     required
-                    style={{ marginRight: "1px" }}
-                    sx={{ width: "300px" }}
+                   
                     id="outlined-required"
                     label="Name"
                     value={user.name}
@@ -185,7 +188,7 @@ export default function CreateUserModal({
                       setUser({ ...user, phone: e.target.value });
                     }}
                   />
-                </div>
+             
                 <div style={{ textAlign: "end", padding: "10px" }}>
                   <Button
                     style={{ marginTop: "10px" }}
@@ -201,52 +204,16 @@ export default function CreateUserModal({
                   <Button
                     style={{ marginTop: "10px" }}
                     size="large"
-                    type="submit"
+                    onClick={handleSubmit}
                     variant="contained"
                   >
                     {user.id == "" ? "Create User" : "Update "}
                   </Button>
                 </div>
-              </form>
+            
               
             </Box>
-            <form onSubmit={handleSubmit}>
-              <TextField
-               
-                margin="normal"
-                type="email"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                
-               
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-             
-
-              <Button
-                
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                ok
-              </Button>
-            </form>
+            
           </Typography>
         </Box>
       </Modal>

@@ -86,7 +86,7 @@ function Tickets(props: list) {
                         onClick={() => handleViewTicketClick(list, list.id)}
                         startIcon={<ReceiptIcon />}
                       >
-                        View Ticket
+                        Edit Ticket
                       </Button>
                     </Typography>
                     <div>
@@ -102,9 +102,12 @@ function Tickets(props: list) {
                         </div>
                         <div className="ticketSubDetail">
                           {" "}
-                          <div>Raised By: </div>{" "}
+                          <div>Raised By: {list.user?.name.toUpperCase()} </div>{" "}
                           <div>
-                            {list.status !== "completed" ? (
+                            {list.status=="blocked"?
+                            <>Time Taken</>
+                            :
+                            list.status !== "completed" ? (
                               <> Active Time</>
                             ) : (
                               <>Resolved Time</>
@@ -124,7 +127,16 @@ function Tickets(props: list) {
         })
       )}
 
-      {showTicket && <Ticket setLocaltickets={props.setLocaltickets} id={ticketId} selectedTicket={selectedTicket} />}
+   
+      {showTicket && (
+        <Ticket
+        setLocaltickets={props.setLocaltickets}
+          id={ticketId}
+          selectedTicket={selectedTicket}
+          setShowTicket={setShowTicket}
+          setNewTicketId={setTicketId}
+        />
+      )}
     </div>
   );
 }

@@ -193,13 +193,13 @@ export default function Users() {
       });
       //deleteUserHandler();
       setUserList(newList);
-      toast("User Deleted Successfully", { theme: "light" });
+      toast("User Deleted Successfully", { theme: "light",autoClose:1500,position:"top-center" });
       handleClose();
     };
 
     return (
       <div>
-        <ToastContainer position="top-center" autoClose={1000} />
+        
         <Dialog
           sx={{ borderRadius: "20px" }}
           open={open}

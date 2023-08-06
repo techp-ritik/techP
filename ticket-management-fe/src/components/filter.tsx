@@ -11,10 +11,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { filterTickets, getAllTickets } from "./api/baseapi";
+import { filterTickets, getAllTickets } from "../api/baseapi";
 import { TicketList } from "./TicketBoard";
 import { validate } from "@babel/types";
-import { getAllCatgories } from "./api/baseapi";
+import { getAllCategories } from "../api/baseapi";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
@@ -37,7 +37,7 @@ export default function Filter({ setLocalTickets }: props) {
   const [completeDate, setCompleteDate] = React.useState("");
 
   React.useEffect(() => {
-    getAllCatgories().then((res) => {
+    getAllCategories().then((res) => {
       setCategories(res);
     });
   }, []);
@@ -152,7 +152,7 @@ export default function Filter({ setLocalTickets }: props) {
                 id="demo-simple-select-standard"
                 value={filterData.category}
                 onChange={(e) => {
-                  setFilterData({ ...filterData, created_at: e.target.value });
+                  setFilterData({ ...filterData, category: e.target.value });
                   handleChangeCategories(e)
                   
                 
