@@ -4,12 +4,43 @@ import { Button } from "@mui/material";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Typography from "@mui/material/Typography";
 import { Draggable } from "react-beautiful-dnd";
+import Ticket from "./Ticket";
+import { useState } from "react";
+import { TicketList } from "./TicketBoard";
 
 interface list {
   getTickets: {}[];
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>
 }
 
 function Tickets(props: list) {
+  const [showTicket, setShowTicket] = useState(false);
+  const [ticketId, setTicketId] = useState(0);
+  interface TicketData {
+    id: number;
+    title: string;
+    description: string;
+    status: string;
+    priority: string;
+    raisedBy: string;
+    createdAt: string;
+    completedAt: string;
+  }
+  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+
+  // Step 2: Update the state variable when the "View Ticket" button is clicked
+  const handleViewTicketClick = (list: any, id: number) => {
+    setShowTicket(true);
+    setTicketId(list.id);
+    setSelectedTicket(list);
+  };
+  const splitTime = (hour: number) => {
+    if (hour >= 24) {
+      var totaldays = hour / 24;
+      return Math.round(totaldays)+" days";
+    }
+    return hour+" hours";
+  };
   return (
     <div className="ticketList">
       {props.getTickets.length == 0 ? (
@@ -18,18 +49,18 @@ function Tickets(props: list) {
         </div>
       ) : (
         props.getTickets.map((list: any, index: number) => {
-          let priorityColor="";
-           switch(list.priority){
-             case "high":
-              priorityColor="red"
+          let priorityColor = "";
+          switch (list.priority) {
+            case "high":
+              priorityColor = "red";
               break;
-             case "medium":
-              priorityColor="orange"
-              break; 
-             case "low":
-                priorityColor="green"
-                break;
-           }
+            case "medium":
+              priorityColor = "#f75700";
+              break;
+            case "low":
+              priorityColor = "#e3cc00";
+              break;
+          }
 
           return (
             <Draggable
@@ -52,24 +83,38 @@ function Tickets(props: list) {
                         type="submit"
                         // sx={{color:'white'}}
                         variant="text"
+                        onClick={() => handleViewTicketClick(list, list.id)}
                         startIcon={<ReceiptIcon />}
                       >
                         View Ticket
                       </Button>
                     </Typography>
-                   <div >
-                    <div className="ticketDetail">
-                      <div style={{ textAlign: "end" }}>
-                        
+                    <div>
+                      <div className="ticketDetail">
+                        <div style={{ textAlign: "end" }}></div>
+
+                        <div className="ticket_title">Title: {list.title}</div>
+                        <div>
+                          Priority:{" "}
+                          <span style={{ color: priorityColor }}>
+                            {list.priority.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="ticketSubDetail">
+                          {" "}
+                          <div>Raised By: </div>{" "}
+                          <div>
+                            {list.status !== "completed" ? (
+                              <> Active Time</>
+                            ) : (
+                              <>Resolved Time</>
+                            )}{" "}
+                            : {splitTime(list.time_taken)} 
+                          </div>
+                        </div>
                       </div>
-
-                      <div className="ticket_title">Title: {list.title}</div>
-                      <div>Priority: <span style={{color:priorityColor}}>{list.priority}</span></div>
-                      <div className="ticketSubDetail"> <div>Raised By: {list.raisedBy} </div>  <div>{list.status !=="completed"?<> Active Time</>: <>Resolved Time</>} : {list.time_taken} hrs</div></div>
                     </div>
-
-                    
-                    </div>
+                    <div className="ticketSubDetail"></div>
                   </div>
                   <div className="ticketShadow"></div>
                 </div>
@@ -78,6 +123,8 @@ function Tickets(props: list) {
           );
         })
       )}
+
+      {showTicket && <Ticket setLocaltickets={props.setLocaltickets} id={ticketId} selectedTicket={selectedTicket} />}
     </div>
   );
 }

@@ -9,28 +9,39 @@ import React, { useState, useEffect } from "react";
 import { getAllTickets, getTicket,filterTickets } from "./api/baseapi";
 import { updateTicketStatus } from "./api/baseapi";
 import { ToastContainer, toast } from "react-toastify";
+import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import Filter from "./filter";
 
+import Ticket from "./Ticket";
+
+
+export type  TicketList ={
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  raisedBy: string;
+  createdAt: string;
+  completedAt: string;
+  file: [string];
+  category: string;
+  assignee: string;
+  updated_at: string;
+}
+
 export default function TicketBoard() {
-  interface TicketList {
-    id: string;
-    title: string;
-    description: string;
-    status: string;
-    priority: string;
-    raisedBy: string;
-    createdAt: string;
-    completedAt: string;
-    file: [string];
-    category: string;
-    assignee: null;
-    updated_at: string;
-  }
+  const [newTicketId, setNewTicketId] = useState<number | null>(null);
+
+  const handleCreateNewTicket = () => {
+    setNewTicketId(0);
+  };
+
 
   let data: TicketList[] = [
     {
-      id: "#1",
+      id: "1",
       title: "Website Login Issue",
       description: "I'm unable to log in to my account.",
       status: "inprogress",
@@ -40,12 +51,12 @@ export default function TicketBoard() {
       completedAt: "",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
 
     {
-      id: "#2",
+      id: "2",
       title: "Device Issue",
       description: "My Laptop is not working properly",
       priority: "Low",
@@ -55,11 +66,11 @@ export default function TicketBoard() {
       status: "todo",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#3",
+      id: "36",
       title: "Profile Related Issue",
       description: "My Credentials are wrong",
       priority: "Medium",
@@ -69,12 +80,12 @@ export default function TicketBoard() {
       status: "completed",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
 
     {
-      id: "#4",
+      id: "4",
       title: "Salary Related Issue",
       description: "Salary Not Credited for last month",
       priority: "Medium",
@@ -84,11 +95,11 @@ export default function TicketBoard() {
       status: "completed",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#5",
+      id: "5",
       title: "Resource Related Issue",
       description: "Resources are not allocated to the team",
       priority: "Low",
@@ -98,11 +109,11 @@ export default function TicketBoard() {
       status: "blocked",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
     {
-      id: "#6",
+      id: "6",
       title: "Repo Access Denied",
       description: "Repo not Alloted",
       priority: "Low",
@@ -112,19 +123,14 @@ export default function TicketBoard() {
       status: "todo",
       file: ["mediafile"],
       category: "HR",
-      assignee: null,
+      assignee: "null",
       updated_at: "2023-07-26T12:39:03.657807",
     },
   ];
-
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
-
   const getTicketsLength = (status: String) => {
-    let res = tickets.filter((item) => {
-      return item.status === status;
-    });
-    return res.length;
+ return 1
   };
   const [ticketLength, setTicketLength] = useState({
     todo: getTicketsLength("todo"),
@@ -132,9 +138,7 @@ export default function TicketBoard() {
     blocked: getTicketsLength("blocked"),
     completed: getTicketsLength("completed"),
   });
-
-  const [ticketId, setTicketID] = useState<number | string>("");
-
+  
   useEffect(() => {
     getAllTickets().then((res) => {
       setTickets(res);
@@ -143,8 +147,6 @@ export default function TicketBoard() {
     });
   }, []);
 
- let filter=filterTickets("priority","high"  )
- console.log(filter)
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
     if (
@@ -168,7 +170,7 @@ export default function TicketBoard() {
             getAllTickets().then((res) => {
               setTickets(res);
               setLocalTickets(res);
-              toast("Ticket Status Updated ", { theme: "light" });
+              // toast("Ticket Status Updated ", { theme: "light" });
             });
           } else {
             setLocalTickets(tickets);
@@ -186,12 +188,25 @@ export default function TicketBoard() {
     }
   };
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
-
+console.log(localtickets)
   return (
-    <Box sx={{ flexGrow: 1, marginTop: 4 }}>
-     <Filter/>
-      <ToastContainer position="top-center" autoClose={1000} />
-
+    <Box
+    sx={{
+      flexGrow: 1,
+      marginTop: 4,
+      display: "flex",
+      flexDirection: "column",
+      margin: "20px",
+      justifyContent: "flex-end",
+    }}
+  >
+    <div style={{ display: "flex", justifyContent:"space-between",margin:"2px" }}>
+      <Filter setLocalTickets={setLocalTickets} />
+      <Button variant="contained" onClick={handleCreateNewTicket}>
+        CREATE NEW CATEGORY
+      </Button>
+    </div>
+    
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
           {ticketStatus.map((status) => {
@@ -212,7 +227,7 @@ export default function TicketBoard() {
                 break;
               case "BLOCKED":
                 badgeTheme = "error";
-                badgeContent = localtickets.filter(
+                badgeContent =  localtickets.filter(
                   (item) => item.status === "blocked"
                 ).length;
                 break;
@@ -226,7 +241,7 @@ export default function TicketBoard() {
 
             return (
               <Grid item xs={3}>
-                <Card sx={{ margin: 1 }}>
+                <Card sx={{ margin: 1 ,border:"1px solid #cecece"}}>
                   <CardHeader
                     sx={{ background: " #dddddd" }}
                     title={
@@ -250,6 +265,7 @@ export default function TicketBoard() {
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         <Tickets
+                         setLocaltickets={setLocalTickets}
                           getTickets={localtickets.filter((item) => {
                             return item.status === status.toLowerCase();
                           })}
@@ -264,6 +280,7 @@ export default function TicketBoard() {
           })}
         </Grid>
       </DragDropContext>
+      {newTicketId === 0 && <Ticket   setLocaltickets={setLocalTickets} id={newTicketId} selectedTicket={null} />}
     </Box>
   );
 }

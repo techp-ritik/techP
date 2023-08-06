@@ -256,6 +256,8 @@ export default function Users() {
       >
         <TextField
           type="text"
+          style={{ marginRight: "1px" }}
+          sx={{ width: "300px" }}
           id="search"
           name="search"
           placeholder="Search User"

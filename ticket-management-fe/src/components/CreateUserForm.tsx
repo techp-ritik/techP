@@ -144,6 +144,8 @@ export default function CreateUserModal({
                 <div>
                   <TextField
                     required
+                    style={{ marginRight: "1px" }}
+                    sx={{ width: "300px" }}
                     id="outlined-required"
                     label="Name"
                     value={user.name}

@@ -11,14 +11,70 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-export default function Filter() {
+import { filterTickets, getAllTickets } from "./api/baseapi";
+import { TicketList } from "./TicketBoard";
+import { validate } from "@babel/types";
+import { getAllCatgories } from "./api/baseapi";
+
+interface props {
+  setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
+}
+
+export default function Filter({ setLocalTickets }: props) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const [age, setAge] = React.useState("");
+  const [filterData, setFilterData] = React.useState({
+    priority: "all",
+    category:"all",
+    created_at: "",
+    completed_at: "",
+  });
+  
+  const [priority, setPriority] = React.useState("");
+  const [categories, setCategories] = React.useState([]);
+  const [createDate, setcreateDate] = React.useState("");
+  const [completeDate, setCompleteDate] = React.useState("");
 
+  React.useEffect(() => {
+    getAllCatgories().then((res) => {
+      setCategories(res);
+    });
+  }, []);
+  console.log(categories);
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    let priority = event.target.value;
+    
+    if (event.target.value != "all") {
+      filterTickets("priority", priority).then((res) => {
+        setLocalTickets(res);
+      });
+    } else {
+      getAllTickets().then((res) => {
+        setLocalTickets(res);
+      });
+    }
+    handleClose();
+  };
+  const handleChangeCategories = (event: SelectChangeEvent) => {
+    let category = event.target.value;
+    console.log(category)
+    if (category !== "all") {
+      console.log(category)
+      filterTickets("category", category).then((res) => {
+        setLocalTickets(res);
+      });
+    } else {
+      console.log(category)
+      getAllTickets().then((res) => {
+        setLocalTickets(res);
+      });
+    }
+    handleClose();
+  };
+  const handleChangeDate = (event: SelectChangeEvent) => {
+   console.log(filterData.created_at)
+    handleClose();
   };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -33,19 +89,23 @@ export default function Filter() {
 
   return (
     <div>
-      <Button
+      <span className="filter" onClick={handleClick}>
+        <FilterListIcon color="primary" />
+      </span>
+
+      {/* <Button
         startIcon={<FilterListIcon color="primary" />}
         aria-describedby={id}
         variant="text"
         onClick={handleClick}
-      ></Button>
+      ></Button> */}
       <Popover
         id={id}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "right",
         }}
         transformOrigin={{
@@ -54,8 +114,8 @@ export default function Filter() {
         }}
       >
         <Typography>
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 400 }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", justifyContent: "space-between",alignItems:"center" }}>
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
               <InputLabel id="demo-simple-select-standard-label">
                 Priority
               </InputLabel>
@@ -63,11 +123,15 @@ export default function Filter() {
                 labelId="demo-simple-select-standard-label"
                 sx={{ minWidth: 150 }}
                 id="demo-simple-select-standard"
-                value={age}
-                onChange={handleChange}
+                value={filterData.priority}
+                onChange={(e) => {
+                  handleChange(e);
+                  setFilterData({ ...filterData, priority: e.target.value });
+                
+                }}
                 label="Age"
               >
-                <MenuItem value="">
+                <MenuItem value="all">
                   <em>None</em>
                 </MenuItem>
 
@@ -75,18 +139,69 @@ export default function Filter() {
                 <MenuItem value={"medium"}>Medium</MenuItem>
                 <MenuItem value={"low"}>Low</MenuItem>
               </Select>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DatePicker"]}>
-                  <DatePicker  sx={{width:"200px"}} label="Start Date" />
-                </DemoContainer>
-              </LocalizationProvider>
-              <LocalizationProvider  dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DatePicker"]}>
-                  <DatePicker  sx={{width:"200px"}} label="End Date" />
-                </DemoContainer>
-              </LocalizationProvider>
-            </div>
-          </FormControl>
+
+            </FormControl>
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+              {" "}
+              <InputLabel id="demo-simple-select-standard-label">
+                Category
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-standard-label"
+                sx={{ minWidth: 150 }}
+                id="demo-simple-select-standard"
+                value={filterData.category}
+                onChange={(e) => {
+                  setFilterData({ ...filterData, created_at: e.target.value });
+                  handleChangeCategories(e)
+                  
+                
+                }}
+                label="Age"
+              >
+                <MenuItem value="all">
+                  <em>None</em>
+                </MenuItem>
+
+                {categories.length > 0 &&
+                  categories.map((item: any) => {
+                    return (
+                      <MenuItem value={item.id}>
+                        {item?.name.toUpperCase()}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+            </FormControl>
+            {/* <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+          <label style={{fontSize:"12px" ,color:"grey",fontWeight:"500",marginBottom:"2px"}}>
+                Start Date
+                </label>
+            <input
+                style={{padding:"5px",outline:"grey"}}
+                type="date"
+                onChange={(e) => {
+                  setFilterData({...filterData,created_at:e.target.value})
+                  handleChangeDate(e);
+                }}
+              />
+              </FormControl>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+          <label style={{fontSize:"12px" ,color:"grey",fontWeight:"500",marginBottom:"2px"}}>
+                End Date 
+                </label>
+            <input
+                style={{padding:"5px",outline:"grey"}}
+                type="date"
+                onChange={(e) => {
+                  filterTickets("created_at",e.target.value).then((res)=>{
+                    console.log(e.target.value)
+                    console.log(res)
+                  })
+                }}
+              />
+              </FormControl> */}
+          </div>
         </Typography>
       </Popover>
     </div>

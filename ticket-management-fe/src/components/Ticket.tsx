@@ -1,14 +1,11 @@
 import * as React from "react";
-import EditIcon from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
+
 import {
   Dialog,
   DialogTitle,
@@ -16,25 +13,30 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
-
+import { getCreateTicket, getUpdateTicket } from "../api/baseapi";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import Container from "@mui/material/Container";
+import { deleteTicket } from "./api/baseapi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
-import { Widgets } from "@mui/icons-material";
-import { margin, textAlign } from "@mui/system";
+import { getAllTickets } from "./api/baseapi";
+interface Attachment {
+  id: number;
+  filename: string;
+  filepath: string;
+}
+interface TicketProps {
+  id: number;
+  selectedTicket: any;
+  setLocaltickets:React.Dispatch<React.SetStateAction<TicketList[]>>;
+}
 
-function Ticket() {
-  let id = "";
+function Ticket({ id, selectedTicket,setLocaltickets }: TicketProps) {
+  // let id: number | null = 2;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [data, setData] = useState({
-    title: "title",
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    category: "HR",
-    file: [] as File[],
-  });
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -45,9 +47,13 @@ function Ticket() {
       title: "",
       description: "",
       category: "",
+      priority: "",
+      assignee: "",
+      status: "",
       file: [],
     });
-    id = "";
+    id = 0;
+
     setIsModalOpen(false);
   };
 
@@ -55,11 +61,17 @@ function Ticket() {
     title: string;
     description: string;
     category: string;
+    priority: string;
+    assignee: string;
+    status: string;
     file: File[];
   }>({
     title: "",
     description: "",
-    category: "SELECT CATEGORY",
+    category: "Select Category",
+    priority: "Select Priority",
+    assignee: "",
+    status: "",
     file: [],
   });
 
@@ -87,34 +99,23 @@ function Ticket() {
   };
 
   const handleEdit = () => {
-    //   fetch(`/v1/ticket/${id}`)
-    //     .then((response) => {
-    //       if (response.ok) {
-    //         return response.json();
-    //       } else {
-    //         throw new Error("Ticket data not found");
-    //       }
-    //     })
-    //     .then((data) => {
-    // Set the ticket data to populate the text fields for editing
     setticketInformation({
-      title: data.title,
-      description: data.description,
-      category: data.category,
+      title: selectedTicket.title,
+      description: selectedTicket.description,
+      category: selectedTicket.category,
+      priority: selectedTicket.priority,
+      status: selectedTicket.status,
+      assignee: selectedTicket.assignee.toString(),
       file: [],
     });
 
     handleOpenModal();
-
-    // Open the modal to edit the ticket
-    // })
-    // .catch((error) => {
-    //   console.error("Error fetching ticket data:", error);
-    //   alert("Error fetching ticket data. Please try again later.");
-    // });
   };
+
   useEffect(() => {
-    if (id !== "") {
+    if (id === null || id === 0) {
+      handleOpenModal();
+    } else {
       handleEdit();
     }
   }, [id]);
@@ -133,63 +134,79 @@ function Ticket() {
       ),
     }));
   };
-  //for api calls
 
   const handleSubmit = async () => {
     if (
       !ticketInformation.title ||
       !ticketInformation.description ||
-      ticketInformation.category === "SELECT CATEGORY"
+      ticketInformation.category === "Select Category" ||
+      ticketInformation.priority === "Select Priority"
     ) {
       toast.error("Please fill all the required fields");
+
       return;
     }
-    setticketUrl({ fileurl: [] });
-    handleCloseModal();
 
-    // try {
-    //   const payload = {
-    //     title: newTicketInformation.title,
-    //     description: newTicketInformation.description,
-    //     category: newTicketInformation.category,
-    //     file: fileUrl, // Use the fileUrl state variable as the file URL
-    //   };
+    const formData = new FormData();
+    formData.append("title", ticketInformation.title);
+    formData.append("description", ticketInformation.description);
+    formData.append("category", ticketInformation.category);
+    formData.append("priority", ticketInformation.priority);
+    formData.append("assignee", ticketInformation.assignee);
+    // formData.append("status" , ticketInformation.status);
 
-    // API call using fetch
-    //commenting api call for testing
-    //   const response = await fetch("/v1/ticket/", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(payload), // Convert the payload object to JSON format
-    //   });
+    // Append the file(s) to the FormData object
+    ticketInformation.file.forEach((file) => {
+      formData.append("files", file);
+    });
 
-    //   // Check the response status and handle accordingly
-    //   if (response.status === 201) {
-    //     alert("Ticket created successfully.");
-    //     handleCloseModal(); // Close the modal after successful submission
-    //   } else if (response.status === 401) {
-    //     alert("Unauthorized");
-    //   } else if (response.status === 404) {
-    //     const data = await response.json();
-    //     alert(data.msg || "Validation error: invalid data format.");
-    //   } else {
-    //     alert("An error occurred while submitting the form.");
-    //   }
-    // } catch (error) {
-    //   alert("An error occurred while submitting the form.");
-    //   console.error(error);
-    // }
-    /////////////////////////////////////
+    if (id === 0) {
+      try {
+        let createResponse = await getCreateTicket(formData);
+
+        if (createResponse === 201) {
+          toast("Ticket created successfully.");
+          handleCloseModal();
+        }
+        if (createResponse === 401) {
+          toast("Unauthorized");
+        }
+        if (createResponse === 404) {
+          toast("Validation error: invalid data format.");
+        } else {
+          toast("An error occurred while submitting the form .");
+        }
+      } catch (error) {}
+    } else {
+      let editResponse = await getUpdateTicket(formData, id);
+
+      if (editResponse === 200) {
+        toast("Ticket edited successfully.");
+        handleCloseModal();
+      }
+      if (editResponse === 401) {
+        toast("Unauthorized");
+      }
+      if (editResponse === 404) {
+        toast("Validation error: invalid data format.");
+      } else {
+        toast("An error occurred while submitting the form .");
+      }
+    }
   };
+
+   const deleteTicketHandler=(id:number)=>{
+    deleteTicket(id);
+ getAllTickets().then((res)=>{
+  console.log(res)
+  setLocaltickets(res)
+ })
+ handleCloseModal();   toast(`Ticket#${id} Deleted Successfully`, { theme: "light" }); 
+   }
 
   return (
     <div>
-      <Button variant="contained" onClick={handleOpenModal} size="small">
-        CREATE NEW TICKET
-      </Button>
-
+       
       <Dialog
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -244,7 +261,7 @@ function Ticket() {
               id="demo-simple-select"
               fullWidth
               required
-              defaultValue="SELECT CATEGORY"
+              defaultValue="Select Category"
               autoFocus
               name="category"
               type="text"
@@ -257,13 +274,55 @@ function Ticket() {
                 });
               }}
             >
-              <MenuItem value={"SELECT CATEGORY"} disabled>
-                SELECT CATEGORY
+              <MenuItem value={"Select Category"} disabled>
+                Select Category
               </MenuItem>
               <MenuItem value={"TECHNICAL SUPPORT"}>TECHNICAL SUPPORT</MenuItem>
               <MenuItem value={"HR"}>HR</MenuItem>
             </Select>
 
+            <TextField
+              value={ticketInformation.assignee}
+              onChange={(e) => {
+                setticketInformation({
+                  ...ticketInformation,
+                  assignee: e.target.value,
+                });
+              }}
+              margin="normal"
+              required
+              fullWidth
+              name="Assignee"
+              label="Assignee"
+              type="number"
+              id="Assignee"
+              sx={{ marginBottom: "20px" }}
+            />
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              fullWidth
+              required
+              defaultValue="Select Priority"
+              autoFocus
+              name="priority"
+              type="text"
+              value={ticketInformation.priority}
+              sx={{ marginBottom: "20px" }}
+              onChange={(e) => {
+                setticketInformation({
+                  ...ticketInformation,
+                  priority: e.target.value,
+                });
+              }}
+            >
+              <MenuItem value={"Select Priority"} disabled>
+                Select Priority
+              </MenuItem>
+              <MenuItem value={"low"}>low</MenuItem>
+              <MenuItem value={"medium"}>medium</MenuItem>
+              <MenuItem value={"high"}>high</MenuItem>
+            </Select>
             <Stack
               direction="row"
               alignItems={"flex-start"}
@@ -332,6 +391,10 @@ function Ticket() {
               <Button variant="contained" onClick={handleSubmit} size="small">
                 {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
               </Button>
+              {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>}
+             
+               
+              
             </DialogActions>
           </DialogContent>
         </div>
