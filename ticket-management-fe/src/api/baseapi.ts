@@ -44,7 +44,6 @@ export const getUpdateTicket = async (formData : FormData , id : number )  =>{
         }
       );
       const editData =  await response.status;
-    
       return editData;
     }catch (error) {
       alert("An error occurred while submitting the form.");

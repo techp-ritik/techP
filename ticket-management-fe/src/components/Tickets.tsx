@@ -90,5 +90,4 @@ function Tickets(props: list) {
     </div>
   );
 }
-
 export default Tickets;

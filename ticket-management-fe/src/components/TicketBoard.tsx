@@ -201,7 +201,6 @@ export default function TicketBoard() {
                 badgeContent = ticketLength.todo;
                 break;
             }
-
             return (
               <Grid item xs={3}>
                 <Card sx={{ margin: 1 }}>
