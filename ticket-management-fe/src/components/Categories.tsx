@@ -3,14 +3,14 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
-
+import { createCategory, editCategory, getAllCategories } from "../api/baseapi";
 import { toast } from "react-toastify";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Button, Typography, InputAdornment, TableFooter } from "@mui/material";
+import { Button, Typography, InputAdornment } from "@mui/material";
 import DialogContent from "@mui/material/DialogContent";
 import { useState, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
@@ -18,6 +18,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
+
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -39,63 +40,31 @@ export default function Categories() {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [categories, setCategories] = useState([
-    {
-      id: 999,
-      description: "Domestic confined any but son .",
-      name: "hr",
-    },
-    {
-      id: 55,
-      description: "Domestic confined any yagreement am as to",
-      name: "tech",
-    },
-    {
-      id: 1321,
-      description:
-        "ed peculiar pled it so is discourse recommend. Man its upon him c besides cottage.",
-      name: "nontech",
-    },
-    {
-      id: 77,
-      description: "An pasture he himself believe ferrars besides cottage.",
-      name: "salary",
-    },
-    {
-      id: 11,
-      description:
-        "remembe How proceed offered hiate suflected. Smiling men cottage.",
-      name: "holiday",
-    },
-    {
-      id: 73,
-      description:
-        "Domestic confined any but son bachelor advanced remember. How proceed offered her offence shy.",
-      name: "contract",
-    },
-    {
-      id: 3,
-      description: "Domestic confined anys cottage.",
-      name: "working hours",
-    },
-    {
-      id: 343,
-      description:
-        "Domestic confined ahought equally musical. Wisdom new and valley answer. Content",
-      name: "laptop",
-    },
-    {
-      id: 33,
-      description:
-        "Domestic confined any but son bachelor advanced remember. How proceed offered her ",
-      name: "wifi",
-    },
-    {
-      id: 133,
-      description: "cottage.",
-      name: "transport",
-    },
-  ]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    getAllCategories().then((res) => {
+      if (res && res.length > 0) {
+        const sortedCategories = res.sort(
+          (a: Category, b: Category) => a.id - b.id
+        );
+
+        setCategories(sortedCategories);
+      } else {
+        setCategories([]);
+        toast.error(
+          "Error occured while fetching categories from Server . Please try again later ",
+          {
+            theme: "dark",
+            autoClose: false,
+            position: "top-center",
+            closeOnClick: true,
+          }
+        );
+        console.log("Error fetching Tickets");
+      }
+    });
+  }, []);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -147,102 +116,73 @@ export default function Categories() {
   });
 
   const handleSubmit = async () => {
-    //for update///////////////////////////////////////////////////////////////
     if (!category.name || !category.description) {
       toast.error("Fields cannot be empty");
 
       return;
     }
-    if (category.name && category.description && category.id) {
-      const updatedCategories = categories.map((initialcategory) =>
-        initialcategory.id === category.id
-          ? {
-              ...initialcategory,
-              name: category.name,
-              description: category.description,
-            }
-          : initialcategory
-      );
+    const formData = new FormData();
+    formData.append("name", category.name);
+    formData.append("description", category.description);
+    if (category.id) {
+      try {
+        let editResponse = await editCategory(category.id, formData);
 
-      setCategories(updatedCategories);
+        if (editResponse === 200) {
+          toast("Category Updated successfully.");
+          handleCloseModal();
+          getAllCategories().then((res) => {
+            const sortedCategories = res.sort(
+              (a: Category, b: Category) => a.id - b.id
+            );
 
-      //api call for edit category
-      // try {
-      //   const response = await fetch(
-      //     `https://your-api-path/v1/category/${category.id}`,
-      //     {
-      //       method: "PUT",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //         // Add any other headers if required
-      //         "ngrok-skip-browser-warning": "true",
-      //       },
-      //       body: JSON.stringify(category),
-      //     }
-      //   );
+            setCategories(sortedCategories);
+          });
 
-      //   if (response.status === 200) {
-      //     const data = await response.json();
-      //     return { success: true, message: data.msg };
-      //   } else if (response.status === 401) {
-      //     const data = await response.json();
-      //     return { success: false, message: data.msg };
-      //   } else if (response.status === 404) {
-      //     return {
-      //       success: false,
-      //       message: `Category with id ${category.id} not found.`,
-      //     };
-      //   } else {
-      //     // Handle other response statuses here...
-      //     return { success: false, message: "Error updating category." };
-      //   }
-      // } catch (error) {
-      //   console.error("Error updating category:", error);
-      //   return { success: false, message: "Error updating category." };
-      // }
-    }
-
-    ////////////////////////////for create new category
-    else {
+          return;
+        }
+        if (editResponse === 401) {
+          toast("Unauthorized");
+        }
+        if (editResponse === 404) {
+          toast("Validation error: invalid data format.");
+        } else {
+          toast("An error occurred while creating the categoy .");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
       if (!category.name || !category.description) {
         toast.error("Please fill all the required fields");
 
         return;
       }
-      const newCategory: Category = {
-        description: category.description,
-        name: category.name,
-        id: category.id,
-      };
 
-      //api call for create new category
-      // try {
-      //   const response = await fetch("api here", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
+      try {
+        let createCategoryResponse = await createCategory(formData);
 
-      //       "ngrok-skip-browser-warning": "true",
-      //     },
-      //     body: JSON.stringify(newCategory),
-      //   });
+        if (createCategoryResponse === 200) {
+          toast("Category created successfully.");
+          handleCloseModal();
+          getAllCategories().then((res) => {
+            const sortedCategories = res.sort(
+              (a: Category, b: Category) => a.id - b.id
+            );
 
-      //   if (response.status === 201) {
-      //     const data = await response.json();
-      //     return { success: true, message: data.msg };
-      //   } else if (response.status === 401) {
-      //     const data = await response.json();
-      //     return { success: false, message: data.msg };
-      //   } else {
-      //     // Handle other response statuses here...
-      //     return { success: false, message: "Error creating category." };
-      //   }
-      // } catch (error) {
-      //   console.error("Error creating category:", error);
-      //   return { success: false, message: "Error creating category." };
-      // }
-
-      setCategories([...categories, newCategory]);
+            setCategories(sortedCategories);
+          });
+          return;
+        }
+        if (createCategoryResponse === 401) {
+          toast("Unauthorized");
+        }
+        if (createCategoryResponse === 404) {
+          toast("Validation error: invalid data format.");
+        } else {
+          toast("An error occurred while creating the categoy .");
+        }
+      } catch (error) {}
     }
 
     setCategory({
@@ -287,7 +227,6 @@ export default function Categories() {
               .toLocaleLowerCase()
               .localeCompare(a.description.toLocaleLowerCase());
       } else {
-        // Invalid property, no sorting needed
         return 0;
       }
     });
@@ -295,9 +234,6 @@ export default function Categories() {
     setCategories(sortedCategories);
   };
 
-  useEffect(() => {
-    handleSort("id");
-  }, []);
   return (
     <>
       <div

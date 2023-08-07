@@ -6,9 +6,11 @@ import Typography from "@mui/material/Typography";
 import { Draggable } from "react-beautiful-dnd";
 import Ticket from "./Ticket";
 import { useState } from "react";
+import { TicketList } from "./TicketBoard";
 
 interface list {
   getTickets: {}[];
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
 function Tickets(props: list) {
@@ -32,14 +34,34 @@ function Tickets(props: list) {
     setTicketId(list.id);
     setSelectedTicket(list);
   };
+  const splitTime = (hour: number) => {
+    if (hour >= 24) {
+      var totaldays = hour / 24;
+      return Math.round(totaldays) + " days";
+    }
+    return hour + " hours";
+  };
   return (
     <div className="ticketList">
-      {props.getTickets.length == 0 ? (
+      {props.getTickets?.length === 0 || undefined ? (
         <div className="no_tickets">
           <>No Tickets</>
         </div>
       ) : (
-        props.getTickets.map((list: any, index: number) => {
+        props.getTickets?.map((list: any, index: number) => {
+          let priorityColor = "";
+          switch (list.priority) {
+            case "high":
+              priorityColor = "red";
+              break;
+            case "medium":
+              priorityColor = "#f75700";
+              break;
+            case "low":
+              priorityColor = "#e3cc00";
+              break;
+          }
+
           return (
             <Draggable
               key={list.id}
@@ -55,7 +77,7 @@ function Tickets(props: list) {
                 >
                   <div className="ticket">
                     <Typography sx={{}} className="ticketTitle">
-                      Ticket {list.id}
+                      Ticket #{list.id}
                       <Button
                         size="small"
                         type="submit"
@@ -64,18 +86,38 @@ function Tickets(props: list) {
                         onClick={() => handleViewTicketClick(list, list.id)}
                         startIcon={<ReceiptIcon />}
                       >
-                        View Ticket
+                        Edit Ticket
                       </Button>
                     </Typography>
+                    <div>
+                      <div className="ticketDetail">
+                        <div style={{ textAlign: "end" }}></div>
 
-                    <div className="ticketDetail">
-                      <div style={{ textAlign: "end" }}></div>
-
-                      <div className="ticket_title">Title: {list.title}</div>
-                      <div>Priority: {list.priority}</div>
-                      <div>Raised By: {list.raisedBy}</div>
+                        <div className="ticket_title">Title: {list.title}</div>
+                        <div>
+                          Priority:{" "}
+                          <span style={{ color: priorityColor }}>
+                            {list.priority.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="ticketSubDetail">
+                          {" "}
+                          <div>
+                            Raised By: {list.user?.name.toUpperCase()}{" "}
+                          </div>{" "}
+                          <div>
+                            {list.status == "blocked" ? (
+                              <>Time Taken</>
+                            ) : list.status !== "completed" ? (
+                              <> Active Time</>
+                            ) : (
+                              <>Resolved Time</>
+                            )}{" "}
+                            : {splitTime(list.time_taken)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-
                     <div className="ticketSubDetail"></div>
                   </div>
                   <div className="ticketShadow"></div>
@@ -86,7 +128,15 @@ function Tickets(props: list) {
         })
       )}
 
-      {showTicket && <Ticket id={ticketId} selectedTicket={selectedTicket} />}
+      {showTicket && (
+        <Ticket
+          setLocaltickets={props.setLocaltickets}
+          id={ticketId}
+          selectedTicket={selectedTicket}
+          setShowTicket={setShowTicket}
+          setNewTicketId={setTicketId}
+        />
+      )}
     </div>
   );
 }
