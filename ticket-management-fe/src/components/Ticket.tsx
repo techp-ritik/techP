@@ -19,7 +19,7 @@ import { createTicket, updateTicket } from "../api/baseapi";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { deleteTicket } from "../api/baseapi";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
@@ -39,18 +39,15 @@ interface Attachment {
 interface TicketProps {
   id: number;
   selectedTicket: any;
-  setLocaltickets:React.Dispatch<React.SetStateAction<TicketList[]>>;
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
-
-  
- 
 
 function Ticket({
   id,
   selectedTicket,
   setShowTicket,
   setNewTicketId,
-  setLocaltickets
+  setLocaltickets,
 }: TicketProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -182,7 +179,11 @@ function Ticket({
       ticketInformation.category_id === null ||
       ticketInformation.priority === "Select Priority"
     ) {
-      toast.error("Please fill all the required fields", { theme: "light",autoClose:1500,position:"top-center" });
+      toast.error("Please fill all the required fields", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-center",
+      });
 
       return;
     }
@@ -204,35 +205,59 @@ function Ticket({
         let createResponse = await createTicket(formData);
 
         if (createResponse === 201) {
-          toast("Ticket created successfully.", { theme: "light",autoClose:1500,position:"top-center" });
-          getAllTickets().then((res)=>{
-            setLocaltickets(res)
-          })
+          toast("Ticket created successfully.", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
+          getAllTickets().then((res) => {
+            setLocaltickets(res);
+          });
           handleCloseModal();
           return;
         }
         if (createResponse === 401) {
-          toast("Unauthorized", { theme: "light",autoClose:1500,position:"top-center" });
+          toast("Unauthorized", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
         }
         if (createResponse === 404) {
-          toast("Validation error: invalid data format.", { theme: "light",autoClose:1500,position:"top-center" });
+          toast("Validation error: invalid data format.", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
         } else {
-          toast("An error occurred while submitting the form .", { theme: "light",autoClose:1500,position:"top-center" });
+          toast("An error occurred while submitting the form .", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
         }
       } catch (error) {}
     } else {
       let editResponse = await updateTicket(formData, id);
 
       if (editResponse === 200) {
-        toast("Ticket edited successfully.", { theme: "light",autoClose:1500,position:"top-center" });
-        getAllTickets().then((res)=>{
-          setLocaltickets(res)
-        })
+        toast("Ticket edited successfully.", {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-center",
+        });
+        getAllTickets().then((res) => {
+          setLocaltickets(res);
+        });
         handleCloseModal();
         return;
       }
       if (editResponse === 401) {
-        toast("Unauthorized", { theme: "light",autoClose:1500,position:"top-center" });
+        toast("Unauthorized", {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-center",
+        });
       }
       if (editResponse === 404) {
         toast("Validation error: invalid data format.");
@@ -242,18 +267,23 @@ function Ticket({
     }
   };
 
-   const deleteTicketHandler=(id:number)=>{
+  const deleteTicketHandler = (id: number) => {
+    console.log(id);
     deleteTicket(id);
- getAllTickets().then((res)=>{
-  console.log(res)
-  setLocaltickets(res)
- })
- handleCloseModal();   toast(`Ticket#${id} Deleted Successfully`, { theme: "light",autoClose:1500,position:"top-center" }); 
-   }
+    getAllTickets().then((res) => {
+      console.log(res);
+      setLocaltickets(res);
+    });
+    handleCloseModal();
+    toast(`Ticket#${id} Deleted Successfully`, {
+      theme: "light",
+      autoClose: 1500,
+      position: "top-center",
+    });
+  };
 
   return (
     <div>
-       
       <Dialog
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -456,16 +486,28 @@ function Ticket({
               )}
             </Stack>
 
-            <DialogActions>
-              <Button onClick={handleCloseModal}>Cancel</Button>
+            <DialogActions
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              {id && (
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    deleteTicketHandler(id);
+                  }}
+                  size="small"
+                >
+                  DELETE TICKET
+                </Button>
+              )}
 
-              <Button variant="contained" onClick={handleSubmit} size="small">
-                {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
-              </Button>
-              {/* {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>} */}
-             
-               
-              
+              <div>
+                <Button onClick={handleCloseModal}>Cancel</Button>
+                <Button variant="contained" onClick={handleSubmit} size="small">
+                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
+                </Button>
+              </div>
             </DialogActions>
           </DialogContent>
         </div>
@@ -474,5 +516,3 @@ function Ticket({
   );
 }
 export default Ticket;
-
-

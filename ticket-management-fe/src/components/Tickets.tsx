@@ -41,6 +41,7 @@ function Tickets(props: list) {
     }
     return hour+" hours";
   };
+  
   return (
     <div className="ticketList">
       {props.getTickets.length == 0 ? (
