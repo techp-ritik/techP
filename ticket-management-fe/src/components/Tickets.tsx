@@ -92,7 +92,7 @@ function Tickets(props: list) {
                         onClick={() => handleViewTicketClick(list, list.id)}
                         // startIcon={<ReceiptIcon />}
                       >
-                        <EditIcon />
+                        <EditIcon sx={{ fontSize: 20 }} />
                       </Button>
                     </Typography>
                     <div>
