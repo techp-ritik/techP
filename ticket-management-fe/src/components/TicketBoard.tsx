@@ -53,7 +53,7 @@ export default function TicketBoard() {
     blocked: getTicketsLength("blocked"),
     completed: getTicketsLength("completed"),
   });
-  
+
   useEffect(() => {
     getAllTickets().then((res) => {
       if (res && res.length > 0) {
@@ -70,7 +70,7 @@ export default function TicketBoard() {
           {
             theme: "dark",
             autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-center",
+            position: "top-right",
             closeOnClick: true, // Allow users to close the toast by clicking
           }
         );
@@ -80,8 +80,6 @@ export default function TicketBoard() {
   }, []);
 
   const [ticketId, setTicketID] = useState<number | string>("");
-
-
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -111,7 +109,7 @@ export default function TicketBoard() {
               toast("Ticket Status Updated ", {
                 theme: "light",
                 autoClose: 1500,
-                position: "top-center",
+                position: "top-right",
               });
             });
           } else {
@@ -119,7 +117,7 @@ export default function TicketBoard() {
             toast("Error while updating ticket", {
               theme: "light",
               autoClose: 1500,
-              position: "top-center",
+              position: "top-right",
             });
           }
         });
@@ -208,7 +206,7 @@ export default function TicketBoard() {
                           fontWeight: "600",
                         }}
                       >
-                        {status}{" "}
+                        {status == "INPROGRESS" ? "IN PROGRESS" : status}{" "}
                         <Badge
                           sx={{ marginLeft: "11px", marginBottom: "3px" }}
                           badgeContent={badgeContent}

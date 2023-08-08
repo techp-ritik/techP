@@ -26,54 +26,50 @@ export default function Filter({ setLocalTickets }: props) {
     category: "",
     created_at: "",
     completed_at: "",
-    query:""
+    query: "",
   });
   let filters = [
-  
     {
       key: "priority",
-      value: params.priority
+      value: params.priority,
     },
     {
       key: "category",
-      value: params.category
+      value: params.category,
     },
     {
       key: "start_date",
-      value: params.created_at
+      value: params.created_at,
     },
     {
       key: "end_date",
-      value: params.completed_at
+      value: params.completed_at,
     },
     {
-      key:"query",
-      value:params.query
-    }
+      key: "query",
+      value: params.query,
+    },
   ];
-
-  
-
 
   const [categories, setCategories] = React.useState([]);
 
-  let api=`https://5e07-210-16-94-100.ngrok-free.app/v1/tickets?${filters.map((item,index)=>{
-    if(item.value!==''){
-    let param= `${index==0?'':'&'}`+item.key +'=' + item.value
-    return param
+  let api = `https://5e07-210-16-94-100.ngrok-free.app/v1/tickets?${filters.map(
+    (item, index) => {
+      if (item.value !== "") {
+        let param = `${index == 0 ? "" : "&"}` + item.key + "=" + item.value;
+        return param;
+      }
+      return "";
     }
-    return '';
-  })}`
-  api=api.replaceAll(',','')
-  console.log(api)
+  )}`;
+  api = api.replaceAll(",", "");
+  console.log(api);
   React.useEffect(() => {
     getAllCategories().then((res) => {
       setCategories(res);
     });
   }, []);
-  
 
-  
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -82,11 +78,11 @@ export default function Filter({ setLocalTickets }: props) {
     setAnchorEl(null);
   };
 
-React.useEffect(()=>{
-  filterTickets(api).then((res)=>{
-    setLocalTickets(res)
-  })
-},[api])
+  React.useEffect(() => {
+    filterTickets(api).then((res) => {
+      setLocalTickets(res);
+    });
+  }, [api]);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -130,10 +126,7 @@ React.useEffect(()=>{
                 value={params.priority}
                 onChange={(e) => {
                   setParams({ ...params, priority: e.target.value });
-                 
-                  
                 }}
-                
               >
                 <MenuItem value="">
                   <em>None</em>
@@ -156,9 +149,7 @@ React.useEffect(()=>{
                 value={params.category}
                 onChange={(e) => {
                   setParams({ ...params, category: e.target.value });
-                  
                 }}
-                
               >
                 <MenuItem value="">
                   <em>None</em>
@@ -175,14 +166,17 @@ React.useEffect(()=>{
               </Select>
             </FormControl>
 
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+            <FormControl
+              variant="standard"
+              sx={{ m: 1, minWidth: 100, marginTop: "25px" }}
+            >
               <TextField
-                 onChange={(e) => {
+                onChange={(e) => {
                   setParams({ ...params, query: e.target.value });
-                  
                 }}
                 id="standard-basic"
-                label="Search Ticket"
+                // label="Search Ticket"
+                placeholder="Search Ticket"
                 variant="standard"
                 InputProps={{
                   startAdornment: (
@@ -210,7 +204,6 @@ React.useEffect(()=>{
                 type="date"
                 onChange={(e) => {
                   setParams({ ...params, created_at: e.target.value });
-                  
                 }}
               />
             </FormControl>
@@ -231,7 +224,6 @@ React.useEffect(()=>{
                 value={params.completed_at}
                 onChange={(e) => {
                   setParams({ ...params, completed_at: e.target.value });
-                  
                 }}
               />
             </FormControl>

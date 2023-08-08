@@ -6,7 +6,6 @@ export default function Dashboard() {
     <div>
       <div style={{ display: "flex" }}>
         <TicketBoard />
-        
       </div>
     </div>
   );

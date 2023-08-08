@@ -24,7 +24,6 @@ import { TransitionProps } from "@mui/material/transitions";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import CreateUserModal from "./CreateUserForm";
 
-
 interface Column {
   id:
     | "name"
@@ -73,7 +72,7 @@ export default function Users() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
-  const [sortBy, setSortBy] = useState<"name" >("name");
+  const [sortBy, setSortBy] = useState<"name">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [Userlist, setUserList] = useState<Data[]>([
     {
@@ -137,7 +136,7 @@ export default function Users() {
       actions: "",
     },
   ]);
-  const handleSort = (property: "name" ) => {
+  const handleSort = (property: "name") => {
     const isAsc = sortBy === property && sortOrder === "asc";
     setSortBy(property);
     setSortOrder(isAsc ? "desc" : "asc");
@@ -149,12 +148,12 @@ export default function Users() {
           : b.name
               .toLocaleLowerCase()
               .localeCompare(a.name.toLocaleLowerCase());
-      }  else {
+      } else {
         return 0;
       }
     });
 
-   setUserList(sortedUsers);
+    setUserList(sortedUsers);
   };
   const clearForm = {
     id: "",
@@ -166,7 +165,7 @@ export default function Users() {
     ticketsAssigned: 0,
     actions: "",
   };
- 
+
   const [user, setUser] = useState(clearForm);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -191,7 +190,6 @@ export default function Users() {
   const [openModal, setOpenModal] = useState(false);
 
   function DeleteModal() {
- 
     const handleClose = () => {
       setOpen(false);
     };
@@ -201,13 +199,16 @@ export default function Users() {
       });
       //deleteUserHandler();
       setUserList(newList);
-      toast("User Deleted Successfully", { theme: "light",autoClose:1500,position:"top-right" });
+      toast("User Deleted Successfully", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-right",
+      });
       handleClose();
     };
 
     return (
       <div>
-        
         <Dialog
           sx={{ borderRadius: "20px" }}
           open={open}
@@ -265,7 +266,7 @@ export default function Users() {
         <TextField
           type="text"
           style={{ marginRight: "1px" }}
-          sx={{ width: "300px"}}
+          sx={{ width: "300px" }}
           id="search"
           name="search"
           placeholder="Search User"
@@ -314,7 +315,6 @@ export default function Users() {
                     >
                       {column.label}
                     </TableSortLabel>
-                    
                   </TableCell>
                 ))}
               </TableRow>
