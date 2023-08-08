@@ -7,6 +7,7 @@ import { DialogTitle } from "@mui/material";
 import React, { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import { Data } from "./Users";
 
 const style = {
@@ -82,7 +83,7 @@ export default function CreateUserModal({
   //>
   const handleSubmit = () => {
     if(!user.name || !user.email || !user.phone || !user.username){
-      toast("All fields are Mandatory", { theme: "light",autoClose:1500,position:"top-center" })
+      toast.error("All fields are Mandatory", { theme: "light",autoClose:1500,position:"top-right" })
       return
       
     }
@@ -94,7 +95,7 @@ export default function CreateUserModal({
       setUserList(newUserData);
       setOpenModal(false);
       //addUser()
-      toast("User Data Added Successfully", { theme: "light",autoClose:1500,position:"top-center" });
+      toast("User Data Added Successfully", { theme: "light",autoClose:1500,position:"top-right" });
     } else {
       let res = UserList.map((list) => {
         return list.id === user.id
@@ -109,7 +110,7 @@ export default function CreateUserModal({
       });
       setUserList(res);
       setOpenModal(false);
-      toast("User Updated Successfully", { theme: "light",autoClose:1500,position:"top-center" });
+      toast("User Updated Successfully", { theme: "light",autoClose:1500,position:"top-right" });
     }
     setUser(clearForm);
   };
@@ -139,7 +140,7 @@ export default function CreateUserModal({
             <Box
               component="form"
               sx={{
-                "& .MuiTextField-root": { m: 1, width: "25ch" },
+                "& .MuiTextField-root": { m: 1, width: "30ch" },
               }}
               noValidate
               autoComplete="off"
@@ -148,7 +149,7 @@ export default function CreateUserModal({
               
                   <TextField
                     required
-                   
+                    
                     id="outlined-required"
                     label="Name"
                     value={user.name}
@@ -188,8 +189,7 @@ export default function CreateUserModal({
                       setUser({ ...user, phone: e.target.value });
                     }}
                   />
-             
-                <div style={{ textAlign: "end", padding: "10px" }}>
+                   <div style={{ textAlign: "end" ,marginRight:"5ch" }}>
                   <Button
                     style={{ marginTop: "10px" }}
                     size="large"
