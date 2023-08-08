@@ -7,6 +7,7 @@ import { DialogTitle } from "@mui/material";
 import React, { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import { Data } from "./Users";
 
 const style = {
@@ -116,7 +117,7 @@ export default function CreateUserModal({
       });
       setUserList(res);
       setOpenModal(false);
-      toast("User Data Added Successfully", {
+      toast("User Updated Successfully", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -148,7 +149,7 @@ export default function CreateUserModal({
             <Box
               component="form"
               sx={{
-                "& .MuiTextField-root": { m: 1, width: "25ch" },
+                "& .MuiTextField-root": { m: 1, width: "30ch" },
               }}
               noValidate
               autoComplete="off"

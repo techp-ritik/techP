@@ -21,7 +21,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
-
+import TableSortLabel from "@mui/material/TableSortLabel";
 import CreateUserModal from "./CreateUserForm";
 
 interface Column {
@@ -72,6 +72,8 @@ export default function Users() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
+  const [sortBy, setSortBy] = useState<"name">("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [Userlist, setUserList] = useState<Data[]>([
     {
       id: "#1",
@@ -134,6 +136,25 @@ export default function Users() {
       actions: "",
     },
   ]);
+  const handleSort = (property: "name") => {
+    const isAsc = sortBy === property && sortOrder === "asc";
+    setSortBy(property);
+    setSortOrder(isAsc ? "desc" : "asc");
+
+    const sortedUsers = [...Userlist].sort((a, b) => {
+      if (property === "name") {
+        return isAsc
+          ? a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+          : b.name
+              .toLocaleLowerCase()
+              .localeCompare(a.name.toLocaleLowerCase());
+      } else {
+        return 0;
+      }
+    });
+
+    setUserList(sortedUsers);
+  };
   const clearForm = {
     id: "",
     name: "",
@@ -169,22 +190,6 @@ export default function Users() {
   const [openModal, setOpenModal] = useState(false);
 
   function DeleteModal() {
-    // const deleteUserHandler = (user.id) => {
-    //   fetch(`ticketsapi/users/${user.id}`, {
-    //     method: "DELETE",
-    //   }).then(()=>{
-    //     setUserList(
-    //       Userlist.filter((list) => {
-    //         return list.id !== user.id;
-    //       })
-    //     )
-    //   }
-
-    //   );
-
-    //   setUser(clearForm)
-    //   toast("User Deleted Deleted Successfully", { theme: "light" });
-    // };
     const handleClose = () => {
       setOpen(false);
     };
@@ -212,13 +217,13 @@ export default function Users() {
           onClose={handleClose}
           aria-describedby="alert-dialog-slide-description"
         >
-          <DialogTitle>{"Do you want to delete this user ?"}</DialogTitle>
+          <DialogTitle>{"Do you want to delete this User?"}</DialogTitle>
           <DialogContent sx={{ marginTop: "15px" }}>
             <DialogContentText id="alert-dialog-slide-description">
-              Name- {user.name}
+              Name: {user.name}
             </DialogContentText>
             <DialogContentText id="alert-dialog-slide-description">
-              Email- {user.email}
+              Email: {user.email}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -303,7 +308,13 @@ export default function Users() {
                     align={"center"}
                     style={{ minWidth: column.minWidth }}
                   >
-                    {column.label}
+                    <TableSortLabel
+                      active={sortBy === column.id}
+                      direction={sortOrder}
+                      onClick={() => handleSort("name")}
+                    >
+                      {column.label}
+                    </TableSortLabel>
                   </TableCell>
                 ))}
               </TableRow>
