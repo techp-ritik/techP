@@ -44,11 +44,25 @@ export default function Categories() {
 
   useEffect(() => {
     getAllCategories().then((res) => {
-      const sortedCategories = res.sort(
-        (a: Category, b: Category) => a.id - b.id
-      );
+      if (res && res.length > 0) {
+        const sortedCategories = res.sort(
+          (a: Category, b: Category) => a.id - b.id
+        );
 
-      setCategories(sortedCategories);
+        setCategories(sortedCategories);
+      } else {
+        setCategories([]);
+        toast.error(
+          "Error occured while fetching categories from Server . Please try again later ",
+          {
+            theme: "dark",
+            autoClose: false,
+            position: "top-center",
+            closeOnClick: true,
+          }
+        );
+        console.log("Error fetching Tickets");
+      }
     });
   }, []);
 
@@ -135,7 +149,9 @@ export default function Categories() {
         } else {
           toast("An error occurred while creating the categoy .");
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       if (!category.name || !category.description) {
         toast.error("Please fill all the required fields");

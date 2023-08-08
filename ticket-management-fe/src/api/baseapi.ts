@@ -1,6 +1,3 @@
-
-
-
 export const getAllTickets = async () => {
   try {
     const response = await fetch(
@@ -157,6 +154,7 @@ export const getAllCategories = async () => {
   try {
     const response = await fetch(
       "https://5e07-210-16-94-100.ngrok-free.app/v1/categories/",
+      // "",
       {
         headers: { "ngrok-skip-browser-warning": "true" },
         method: "GET",
@@ -193,24 +191,4 @@ export const editCategory = async (id : number , formData : FormData) =>{
   }
 }
 
-export const getAllUsers=async()=>{
-  try {
-    const response = await fetch(
-      "https://5e07-210-16-94-100.ngrok-free.app/v1/user",
-      {
-        headers: { "ngrok-skip-browser-warning": "true" },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 export{}
-
-

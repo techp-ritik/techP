@@ -7,17 +7,16 @@ import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import React, { useState, useEffect } from "react";
 import { filterTickets } from "../api/baseapi";
-import { getAllTickets,getTicket } from "../api/baseapi";
+import { getAllTickets, getTicket } from "../api/baseapi";
 import { updateTicketStatus } from "../api/baseapi";
-import { ToastContainer,toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import Filter from "./filter";
 
 import Ticket from "./Ticket";
 
-
-export type  TicketList ={
+export type TicketList = {
   id: string;
   title: string;
   description: string;
@@ -30,9 +29,7 @@ export type  TicketList ={
   category: string;
   assignee: string;
   updated_at: string;
-}
-
-
+};
 
 export default function TicketBoard() {
   const [newTicketId, setNewTicketId] = useState<number | null>(null);
@@ -42,101 +39,13 @@ export default function TicketBoard() {
     setNewTicketId(0);
   };
 
-
-  let data: TicketList[] = [
-    {
-      id: "1",
-      title: "Website Login Issue",
-      description: "I'm unable to log in to my account.",
-      status: "inprogress",
-      priority: "High",
-      raisedBy: "Utkarsh Sethiya",
-      createdAt: "July 18 2023",
-      completedAt: "",
-      file: ["mediafile"],
-      category: "HR",
-      assignee: "null",
-      updated_at: "2023-07-26T12:39:03.657807",
-    },
-
-    {
-      id: "2",
-      title: "Device Issue",
-      description: "My Laptop is not working properly",
-      priority: "Low",
-      raisedBy: "Atharv",
-      createdAt: "July 13 2023",
-      completedAt: "",
-      status: "todo",
-      file: ["mediafile"],
-      category: "HR",
-      assignee: "null",
-      updated_at: "2023-07-26T12:39:03.657807",
-    },
-    {
-      id: "36",
-      title: "Profile Related Issue",
-      description: "My Credentials are wrong",
-      priority: "Medium",
-      raisedBy: "Ram",
-      createdAt: "July 25 2023",
-      completedAt: "Aug 3 2023",
-      status: "completed",
-      file: ["mediafile"],
-      category: "HR",
-      assignee: "null",
-      updated_at: "2023-07-26T12:39:03.657807",
-    },
-
-    {
-      id: "4",
-      title: "Salary Related Issue",
-      description: "Salary Not Credited for last month",
-      priority: "Medium",
-      raisedBy: "Varun",
-      createdAt: "July 26 2023",
-      completedAt: "Aug 1 2023",
-      status: "completed",
-      file: ["mediafile"],
-      category: "HR",
-      assignee: "null",
-      updated_at: "2023-07-26T12:39:03.657807",
-    },
-    {
-      id: "5",
-      title: "Resource Related Issue",
-      description: "Resources are not allocated to the team",
-      priority: "Low",
-      createdAt: "June 16 2023",
-      completedAt: "",
-      raisedBy: "Utkarsh",
-      status: "blocked",
-      file: ["mediafile"],
-      category: "HR",
-      assignee: "null",
-      updated_at: "2023-07-26T12:39:03.657807",
-    },
-    {
-      id: "6",
-      title: "Repo Access Denied",
-      description: "Repo not Alloted",
-      priority: "Low",
-      createdAt: "June 16 2023",
-      completedAt: "",
-      raisedBy: "Ram",
-      status: "todo",
-      file: ["mediafile"],
-      category: "HR",
-      assignee: "null",
-      updated_at: "2023-07-26T12:39:03.657807",
-    },
-  ];
+  let data: TicketList[] = [];
 
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
 
   const getTicketsLength = (status: String) => {
- return 1
+    return 1;
   };
   const [ticketLength, setTicketLength] = useState({
     todo: getTicketsLength("todo"),
@@ -147,9 +56,26 @@ export default function TicketBoard() {
   
   useEffect(() => {
     getAllTickets().then((res) => {
-      setTickets(res);
-      setLocalTickets(res);
-      console.log(res);
+      if (res && res.length > 0) {
+        setTickets(res);
+        setLocalTickets(res);
+        console.log(res);
+      } else {
+        // If res is null or the array is empty, set the state with an empty array.
+        console.log("inside not tickets");
+        setTickets([]);
+        setLocalTickets([]);
+        toast.error(
+          "Error occured while fetching data from Server . Please try again later ",
+          {
+            theme: "dark",
+            autoClose: false, // Set autoClose to false to keep the toast open
+            position: "top-center",
+            closeOnClick: true, // Allow users to close the toast by clicking
+          }
+        );
+        console.log("Error fetching Tickets");
+      }
     });
   }, []);
 
@@ -164,7 +90,10 @@ export default function TicketBoard() {
       (null && destination?.droppableId !== undefined) ||
       null
     ) {
-      if (destination?.droppableId !== undefined && source.droppableId !==destination?.droppableId!) {
+      if (
+        destination?.droppableId !== undefined &&
+        source.droppableId !== destination?.droppableId!
+      ) {
         let updateTicket = localtickets.map((list) => {
           if (list.id == draggableId) {
             return { ...list, status: destination?.droppableId! };
@@ -179,11 +108,19 @@ export default function TicketBoard() {
             getAllTickets().then((res) => {
               setTickets(res);
               setLocalTickets(res);
-              toast("Ticket Status Updated ", { theme: "light",autoClose:1500,position:"top-center" });
+              toast("Ticket Status Updated ", {
+                theme: "light",
+                autoClose: 1500,
+                position: "top-center",
+              });
             });
           } else {
             setLocalTickets(tickets);
-            toast("Error while updating ticket", { theme: "light",autoClose:1500,position:"top-center" });
+            toast("Error while updating ticket", {
+              theme: "light",
+              autoClose: 1500,
+              position: "top-center",
+            });
           }
         });
 
@@ -197,7 +134,7 @@ export default function TicketBoard() {
     }
   };
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
-console.log(localtickets)
+  console.log(localtickets);
   return (
     <Box
       sx={{
@@ -211,9 +148,16 @@ console.log(localtickets)
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span> <Filter setLocalTickets={setLocalTickets}/></span>
-       
-        <Button sx={{marginRight:"10px",marginBottom:"5px"}} variant="contained" onClick={handleCreateNewTicket}>
+        <span>
+          {" "}
+          <Filter setLocalTickets={setLocalTickets} />
+        </span>
+
+        <Button
+          sx={{ marginRight: "10px", marginBottom: "5px" }}
+          variant="contained"
+          onClick={handleCreateNewTicket}
+        >
           CREATE NEW TICKET
         </Button>
       </div>
@@ -228,32 +172,32 @@ console.log(localtickets)
             switch (status) {
               case "COMPLETED":
                 badgeTheme = "success";
-                badgeContent = localtickets.filter(
+                badgeContent = localtickets?.filter(
                   (item) => item.status === "completed"
                 ).length;
                 break;
               case "INPROGRESS":
                 badgeTheme = "warning";
-                badgeContent = localtickets.filter(
+                badgeContent = localtickets?.filter(
                   (item) => item.status === "inprogress"
                 ).length;
                 break;
               case "BLOCKED":
                 badgeTheme = "error";
-                badgeContent =  localtickets.filter(
+                badgeContent = localtickets?.filter(
                   (item) => item.status === "blocked"
                 ).length;
                 break;
               case "TODO":
                 badgeTheme = "primary";
-                badgeContent = localtickets.filter(
+                badgeContent = localtickets?.filter(
                   (item) => item.status === "todo"
                 ).length;
                 break;
             }
             return (
               <Grid item xs={3}>
-                <Card sx={{ margin: 1 ,border:"1px solid #cecece"}}>
+                <Card sx={{ margin: 1, border: "1px solid #cecece" }}>
                   <CardHeader
                     sx={{ background: " #dddddd" }}
                     title={
@@ -277,8 +221,8 @@ console.log(localtickets)
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         <Tickets
-                         setLocaltickets={setLocalTickets}
-                          getTickets={localtickets.filter((item) => {
+                          setLocaltickets={setLocalTickets}
+                          getTickets={localtickets?.filter((item) => {
                             return item.status === status.toLowerCase();
                           })}
                         />

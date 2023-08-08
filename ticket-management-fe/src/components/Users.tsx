@@ -23,7 +23,7 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 
 import CreateUserModal from "./CreateUserForm";
-import { getAllUsers } from "../api/baseapi";
+
 
 interface Column {
   id:
@@ -145,11 +145,7 @@ export default function Users() {
     ticketsAssigned: 0,
     actions: "",
   };
-  React.useEffect(()=>{
-getAllUsers().then((res)=>{
-  setUserList(res)
-})
-  },[])
+ 
   const [user, setUser] = useState(clearForm);
 
   const handleChangePage = (event: unknown, newPage: number) => {

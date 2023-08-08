@@ -10,7 +10,7 @@ import { TicketList } from "./TicketBoard";
 
 interface list {
   getTickets: {}[];
-  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
 function Tickets(props: list) {
@@ -37,19 +37,18 @@ function Tickets(props: list) {
   const splitTime = (hour: number) => {
     if (hour >= 24) {
       var totaldays = hour / 24;
-      return Math.round(totaldays)+" days";
+      return Math.round(totaldays) + " days";
     }
-    return hour+" hours";
+    return hour + " hours";
   };
-  
   return (
     <div className="ticketList">
-      {props.getTickets.length == 0 ? (
+      {props.getTickets?.length === 0 || undefined ? (
         <div className="no_tickets">
           <>No Tickets</>
         </div>
       ) : (
-        props.getTickets.map((list: any, index: number) => {
+        props.getTickets?.map((list: any, index: number) => {
           let priorityColor = "";
           switch (list.priority) {
             case "high":
@@ -87,7 +86,7 @@ function Tickets(props: list) {
                         onClick={() => handleViewTicketClick(list, list.id)}
                         startIcon={<ReceiptIcon />}
                       >
-                        Edit 
+                        Edit Ticket
                       </Button>
                     </Typography>
                     <div>
@@ -103,17 +102,18 @@ function Tickets(props: list) {
                         </div>
                         <div className="ticketSubDetail">
                           {" "}
-                          <div>Raised By: {list.user?.name.toUpperCase()} </div>{" "}
                           <div>
-                            {list.status=="blocked"?
-                            <>Time Taken</>
-                            :
-                            list.status !== "completed" ? (
+                            Raised By: {list.user?.name.toUpperCase()}{" "}
+                          </div>{" "}
+                          <div>
+                            {list.status == "blocked" ? (
+                              <>Time Taken</>
+                            ) : list.status !== "completed" ? (
                               <> Active Time</>
                             ) : (
                               <>Resolved Time</>
                             )}{" "}
-                            : {splitTime(list.time_taken)} 
+                            : {splitTime(list.time_taken)}
                           </div>
                         </div>
                       </div>
@@ -131,7 +131,7 @@ function Tickets(props: list) {
    
       {showTicket && (
         <Ticket
-        setLocaltickets={props.setLocaltickets}
+          setLocaltickets={props.setLocaltickets}
           id={ticketId}
           selectedTicket={selectedTicket}
           setShowTicket={setShowTicket}

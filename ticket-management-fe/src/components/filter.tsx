@@ -72,7 +72,7 @@ export default function Filter({ setLocalTickets }: props) {
     });
   }, []);
   
-console.log(api)
+
   
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -84,7 +84,6 @@ console.log(api)
 
 React.useEffect(()=>{
   filterTickets(api).then((res)=>{
-    console.log(res)
     setLocalTickets(res)
   })
 },[api])
