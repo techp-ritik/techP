@@ -57,7 +57,7 @@ export default function Filter({ setLocalTickets }: props) {
 
   const [categories, setCategories] = React.useState([]);
 
-  let api=`https://1a0a-103-177-83-247.ngrok-free.app/v1/tickets?${filters.map((item,index)=>{
+  let api=`https://5e07-210-16-94-100.ngrok-free.app/v1/tickets?${filters.map((item,index)=>{
     if(item.value!==''){
     let param= `${index==0?'':'&'}`+item.key +'=' + item.value
     return param
@@ -72,7 +72,7 @@ export default function Filter({ setLocalTickets }: props) {
     });
   }, []);
   
-
+console.log(api)
   
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -84,6 +84,7 @@ export default function Filter({ setLocalTickets }: props) {
 
 React.useEffect(()=>{
   filterTickets(api).then((res)=>{
+    console.log(res)
     setLocalTickets(res)
   })
 },[api])

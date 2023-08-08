@@ -155,12 +155,7 @@ export default function TicketBoard() {
 
   const [ticketId, setTicketID] = useState<number | string>("");
 
-  useEffect(() => {
-    getAllTickets().then((res) => {
-      setTickets(res);
-      setLocalTickets(res);
-    });
-  }, []);
+
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;

@@ -87,7 +87,7 @@ function Tickets(props: list) {
                         onClick={() => handleViewTicketClick(list, list.id)}
                         startIcon={<ReceiptIcon />}
                       >
-                        Edit Ticket
+                        Edit 
                       </Button>
                     </Typography>
                     <div>
