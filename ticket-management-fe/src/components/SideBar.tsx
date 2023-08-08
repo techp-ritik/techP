@@ -51,17 +51,18 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
           textAlign: "center",
           backgroundColor: "#3f51b5",
           color: "white",
-
+          display: "flex",
+          alignItems: "center",
           height: "64px",
         }}
       >
         TICKET MANAGEMENT SYSTEM
       </ListSubheader>
       <List>
-        <ListItem>
+        <ListItem sx={{ padding: 0 }}>
           <Link
             to="/dashboard"
-            style={{ textDecoration: "none", color: "black" }}
+            style={{ textDecoration: "none", color: "black", width: "100%" }}
           >
             <ListItemButton>
               <ListItemIcon>
@@ -71,10 +72,10 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
             </ListItemButton>
           </Link>
         </ListItem>
-        <ListItem>
+        <ListItem sx={{ padding: 0, paddingTop: 2 }}>
           <Link
             to="/categories"
-            style={{ textDecoration: "none", color: "black" }}
+            style={{ textDecoration: "none", color: "black", width: "100%" }}
           >
             <ListItemButton>
               <ListItemIcon>
@@ -84,8 +85,11 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
             </ListItemButton>
           </Link>
         </ListItem>
-        <ListItem>
-          <Link to="/users" style={{ textDecoration: "none", color: "black" }}>
+        <ListItem sx={{ padding: 0, paddingTop: 2 }}>
+          <Link
+            to="/users"
+            style={{ textDecoration: "none", color: "black", width: "100%" }}
+          >
             <ListItemButton>
               <ListItemIcon>
                 <GroupIcon />
