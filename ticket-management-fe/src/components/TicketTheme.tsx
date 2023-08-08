@@ -109,5 +109,4 @@ const TicketTheme = createTheme({
   },
   // Add the backgroundImage property to the background object
 });
-
 export default TicketTheme;

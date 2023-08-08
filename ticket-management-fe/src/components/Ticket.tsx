@@ -5,7 +5,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
-import { toast } from "react-toastify";
+
+import { getAllCategories } from "../api/baseapi";
+
 import {
   Dialog,
   DialogTitle,
@@ -13,27 +15,66 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
-import { getCreateTicket, getUpdateTicket } from "../api/baseapi";
+import { createTicket, updateTicket } from "../api/baseapi";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-
+import { deleteTicket } from "../api/baseapi";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
+import { getAllTickets } from "../api/baseapi";
+
+interface TicketProps {
+  id: number;
+  selectedTicket: any;
+  setShowTicket: any;
+  setNewTicketId: any;
+}
 interface Attachment {
   id: number;
   filename: string;
-  filepath: string;
+  filepath: string[];
 }
 interface TicketProps {
   id: number;
   selectedTicket: any;
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
-function Ticket({ id, selectedTicket }: TicketProps) {
-  // let id: number | null = 2;
-
+function Ticket({
+  id,
+  selectedTicket,
+  setShowTicket,
+  setNewTicketId,
+  setLocaltickets,
+}: TicketProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isCategoriesLoaded , setIsCategoriesLOaded] = (false)
 
   const handleOpenModal = () => {
+    getAllCategories().then((res) => {
+      if (res && res.length > 0) {
+        setCategories(res);
+      } else {
+        // If res is null or the array is empty, set the state with an empty array.
+        // console.log("inside not tickets");
+        setCategories([]);
+        // setLocalTickets([]);
+        toast.error(
+          "Error occured while fetching category list . Please try again later ",
+          {
+            theme: "dark",
+            autoClose: false, // Set autoClose to false to keep the toast open
+            position: "top-center",
+            closeOnClick: true, // Allow users to close the toast by clicking
+          }
+        );
+        console.log("Error fetching categories inside open popup");
+      }
+
+      // setCategories(res);
+    });
     setIsModalOpen(true);
   };
 
@@ -41,32 +82,43 @@ function Ticket({ id, selectedTicket }: TicketProps) {
     setticketInformation({
       title: "",
       description: "",
-      category: "",
+      category_id: 0,
       priority: "",
-      assignee: "",
-      status: "",
+      assignee: 0,
+
       file: [],
+      filepath: [],
+      created_by: 0,
     });
-    id = 0;
-
+    setShowTicket(false);
     setIsModalOpen(false);
+    setNewTicketId(null);
   };
+  interface Category {
+    description: string;
+    name: string;
+    id: number;
+  }
 
+  const [categories, setCategories] = useState<Category[]>([]);
   const [ticketInformation, setticketInformation] = useState<{
     title: string;
     description: string;
-    category: string;
+    category_id: number | string;
     priority: string;
-    assignee: string;
-    status: string;
+    assignee: number;
+    created_by: number;
+    filepath: string[];
+
     file: File[];
   }>({
     title: "",
     description: "",
-    category: "Select Category",
+    category_id: "Select Category",
     priority: "Select Priority",
-    assignee: "",
-    status: "",
+    assignee: 0,
+    filepath: [],
+    created_by: 1,
     file: [],
   });
 
@@ -94,13 +146,22 @@ function Ticket({ id, selectedTicket }: TicketProps) {
   };
 
   const handleEdit = () => {
+    console.log(selectedTicket.title);
+    console.log(selectedTicket.category.name);
+    console.log(selectedTicket);
     setticketInformation({
       title: selectedTicket.title,
       description: selectedTicket.description,
-      category: selectedTicket.category,
+      category_id: selectedTicket.category.id,
+
+      filepath: selectedTicket.attachments.map(
+        (attachment: Attachment) => attachment.filepath
+      ),
+
       priority: selectedTicket.priority,
-      status: selectedTicket.status,
-      assignee: selectedTicket.assignee.toString(),
+
+      created_by: selectedTicket.created_by,
+      assignee: selectedTicket.assignee,
       file: [],
     });
 
@@ -114,7 +175,6 @@ function Ticket({ id, selectedTicket }: TicketProps) {
       handleEdit();
     }
   }, [id]);
-
   const handleDeleteAttachment = (indexToDelete: number) => {
     setticketInformation((prevData) => ({
       ...prevData,
@@ -134,60 +194,122 @@ function Ticket({ id, selectedTicket }: TicketProps) {
     if (
       !ticketInformation.title ||
       !ticketInformation.description ||
-      ticketInformation.category === "Select Category" ||
+      ticketInformation.category_id === null ||
       ticketInformation.priority === "Select Priority"
     ) {
-      toast.error("Please fill all the required fields");
+      toast.error("Please fill all the required fields", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-center",
+      });
 
       return;
     }
 
     const formData = new FormData();
+    console.log("final");
+    console.log(ticketInformation.category_id.toString());
+    console.log(ticketInformation.category_id);
     formData.append("title", ticketInformation.title);
     formData.append("description", ticketInformation.description);
-    formData.append("category", ticketInformation.category);
+    formData.append("category_id", ticketInformation.category_id.toString());
     formData.append("priority", ticketInformation.priority);
-    formData.append("assignee", ticketInformation.assignee);
-    // formData.append("status" , ticketInformation.status);
+    formData.append("assignee", ticketInformation.assignee.toString());
+    formData.append("created_by", ticketInformation.created_by?.toString());
+    console.log("here working");
+    console.log(formData);
 
-    // Append the file(s) to the FormData object
     ticketInformation.file.forEach((file) => {
       formData.append("files", file);
     });
+    console.log("check ikde888888888");
 
     if (id === 0) {
       try {
-        let createResponse = await getCreateTicket(formData);
+        console.log(formData);
+
+        let createResponse = await createTicket(formData);
 
         if (createResponse === 201) {
-          toast("Ticket created successfully.");
+          toast("Ticket created successfully.", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
+          getAllTickets().then((res) => {
+            setLocaltickets(res);
+          });
           handleCloseModal();
+          return;
         }
         if (createResponse === 401) {
-          toast("Unauthorized");
+          toast("Unauthorized", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
         }
         if (createResponse === 404) {
-          toast("Validation error: invalid data format.");
+          toast("Validation error: invalid data format.", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-center",
+          });
         } else {
-          toast("An error occurred while submitting the form .");
+          toast(
+            "An error occurred while submitting the form. Please try again ",
+            {
+              theme: "light",
+              autoClose: 1500,
+              position: "top-center",
+            }
+          );
         }
       } catch (error) {}
     } else {
-      let editResponse = await getUpdateTicket(formData, id);
+      console.log("he ikde bagh");
+      console.log(formData);
+      let editResponse = await updateTicket(formData, id);
 
       if (editResponse === 200) {
-        toast("Ticket edited successfully.");
+        toast("Ticket edited successfully.", {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-center",
+        });
+        getAllTickets().then((res) => {
+          setLocaltickets(res);
+        });
         handleCloseModal();
+        return;
       }
       if (editResponse === 401) {
-        toast("Unauthorized");
+        toast("Unauthorized", {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-center",
+        });
       }
       if (editResponse === 404) {
         toast("Validation error: invalid data format.");
       } else {
-        toast("An error occurred while submitting the form .");
+        toast("An error occurred while editing the form. Please try again");
       }
     }
+  };
+
+  const deleteTicketHandler = (id: number) => {
+    deleteTicket(id);
+    getAllTickets().then((res) => {
+      console.log(res);
+      setLocaltickets(res);
+    });
+    handleCloseModal();
+    toast(`Ticket#${id} Deleted Successfully`, {
+      theme: "light",
+      autoClose: 1500,
+      position: "top-center",
+    });
   };
 
   return (
@@ -214,7 +336,7 @@ function Ticket({ id, selectedTicket }: TicketProps) {
               }}
               margin="normal"
               type="string"
-              required
+              required={id === null || id === 0}
               fullWidth
               id="title"
               label="Title"
@@ -230,7 +352,7 @@ function Ticket({ id, selectedTicket }: TicketProps) {
                 });
               }}
               margin="normal"
-              required
+              required={id === null || id === 0}
               fullWidth
               name="Description"
               multiline
@@ -245,25 +367,35 @@ function Ticket({ id, selectedTicket }: TicketProps) {
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               fullWidth
-              required
-              defaultValue="Select Category"
+              required={id === null || id === 0}
+              defaultValue={ticketInformation.category_id}
               autoFocus
-              name="category"
+              name="category_id"
               type="text"
-              value={ticketInformation.category}
+              value={ticketInformation.category_id}
               sx={{ marginBottom: "20px" }}
               onChange={(e) => {
                 setticketInformation({
                   ...ticketInformation,
-                  category: e.target.value,
+                  category_id: e.target.value,
                 });
               }}
             >
               <MenuItem value={"Select Category"} disabled>
                 Select Category
               </MenuItem>
-              <MenuItem value={"TECHNICAL SUPPORT"}>TECHNICAL SUPPORT</MenuItem>
-              <MenuItem value={"HR"}>HR</MenuItem>
+              {/* {id ? "TICKET DETAILS" : "CREATE NEW TICKET"} */}
+              {id ? (
+                <MenuItem value={ticketInformation.category_id} disabled>
+                  {ticketInformation.category_id}
+                </MenuItem>
+              ) : null}
+
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
             </Select>
 
             <TextField
@@ -271,11 +403,11 @@ function Ticket({ id, selectedTicket }: TicketProps) {
               onChange={(e) => {
                 setticketInformation({
                   ...ticketInformation,
-                  assignee: e.target.value,
+                  assignee: parseInt(e.target.value),
                 });
               }}
               margin="normal"
-              required
+              required={id === null || id === 0}
               fullWidth
               name="Assignee"
               label="Assignee"
@@ -283,11 +415,12 @@ function Ticket({ id, selectedTicket }: TicketProps) {
               id="Assignee"
               sx={{ marginBottom: "20px" }}
             />
+
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               fullWidth
-              required
+              required={id === null || id === 0}
               defaultValue="Select Priority"
               autoFocus
               name="priority"
@@ -328,8 +461,100 @@ function Ticket({ id, selectedTicket }: TicketProps) {
                   onChange={handleFileUpload}
                 />
               </label>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "16px",
+                }}
+              >
+                {ticketUrl.fileurl.map((url, index) => (
+                  <React.Fragment key={index}>
+                    {url.startsWith("data:image") ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img src={url} alt={`Uploaded ${index}`} height="60" />{" "}
+                        <IconButton
+                          onClick={() => handleDeleteAttachment(index)}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Link
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            border: "1px solid #ccc",
+                            padding: "3px 6px", // Adjusted padding
+                            borderRadius: "5px",
+                            backgroundColor: "#f0f0f0",
+                            margin: "4px",
+                            textDecoration: "none",
+                            color: "#000",
+                            fontSize: "14px", // Adjusted font size
+                          }}
+                        >
+                          View Attachment {index + 1}
+                        </Link>
+                        <IconButton
+                          onClick={() => handleDeleteAttachment(index)}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
 
-              {ticketUrl.fileurl.map((url, index) => (
+                {ticketInformation.filepath.map((path, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      marginTop: "5px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Link
+                      href={
+                        "https://1a0a-103-177-83-247.ngrok-free.app/" + path
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "3px 6px", // Adjusted padding
+                        borderRadius: "5px",
+                        backgroundColor: "#f0f0f0",
+                        textDecoration: "none",
+                        color: "#000",
+                        fontSize: "14px", // Adjusted font size
+                      }}
+                    >
+                      View Attachment {index + 1}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              {/* {ticketUrl.fileurl.map((url, index) => (
                 <React.Fragment key={index}>
                   {url.startsWith("data:image") ? (
                     <div>
@@ -368,6 +593,26 @@ function Ticket({ id, selectedTicket }: TicketProps) {
                   )}
                 </React.Fragment>
               ))}
+
+              {ticketInformation.filepath.map((path, index) => (
+                <div key={index} style={{ marginTop: "5px" }}>
+                  <Link
+                    href={"https://1a0a-103-177-83-247.ngrok-free.app/" + path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      border: "1px solid #ccc",
+                      padding: "5px 10px",
+                      borderRadius: "5px",
+                      backgroundColor: "#f0f0f0",
+                      textDecoration: "none",
+                      color: "#000",
+                    }}
+                  >
+                    View Attachment {index + 1}
+                  </Link>
+                </div>
+              ))} */}
             </Stack>
 
             <DialogActions>
@@ -376,6 +621,7 @@ function Ticket({ id, selectedTicket }: TicketProps) {
               <Button variant="contained" onClick={handleSubmit} size="small">
                 {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
               </Button>
+              {/* {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>} */}
             </DialogActions>
           </DialogContent>
         </div>
@@ -383,5 +629,4 @@ function Ticket({ id, selectedTicket }: TicketProps) {
     </div>
   );
 }
-
 export default Ticket;
