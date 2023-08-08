@@ -533,9 +533,7 @@ function Ticket({
                     }}
                   >
                     <Link
-                      href={
-                        "https://1a0a-103-177-83-247.ngrok-free.app/" + path
-                      }
+                      href={"https://5e07-210-16-94-100.ngrok-free.app/" + path}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
@@ -553,66 +551,6 @@ function Ticket({
                   </div>
                 ))}
               </div>
-
-              {/* {ticketUrl.fileurl.map((url, index) => (
-                <React.Fragment key={index}>
-                  {url.startsWith("data:image") ? (
-                    <div>
-                      <img src={url} alt={`Uploaded ${index}`} height="100" />
-                      <IconButton
-                        onClick={() => handleDeleteAttachment(index)}
-                        size="small"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  ) : (
-                    <div>
-                      <Link
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{
-                          border: "1px solid #ccc",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                          backgroundColor: "#f0f0f0",
-                          textDecoration: "none",
-                          color: "#000",
-                        }}
-                      >
-                        View Attachment {index + 1}
-                      </Link>
-                      <IconButton
-                        onClick={() => handleDeleteAttachment(index)}
-                        size="small"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  )}
-                </React.Fragment>
-              ))}
-
-              {ticketInformation.filepath.map((path, index) => (
-                <div key={index} style={{ marginTop: "5px" }}>
-                  <Link
-                    href={"https://1a0a-103-177-83-247.ngrok-free.app/" + path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      border: "1px solid #ccc",
-                      padding: "5px 10px",
-                      borderRadius: "5px",
-                      backgroundColor: "#f0f0f0",
-                      textDecoration: "none",
-                      color: "#000",
-                    }}
-                  >
-                    View Attachment {index + 1}
-                  </Link>
-                </div>
-              ))} */}
             </Stack>
 
             <DialogActions>

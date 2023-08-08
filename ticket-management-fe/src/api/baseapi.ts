@@ -1,7 +1,11 @@
+
+
+const baseUrl = "https://5e07-210-16-94-100.ngrok-free.app/v1/"
+
 export const getAllTickets = async () => {
     try {
-      const response = await fetch(
-        "https://1a0a-103-177-83-247.ngrok-free.app/v1/tickets",
+      const response = await fetch( 
+        `${baseUrl}tickets`,
         {
           headers: { "ngrok-skip-browser-warning": "true" },
         }
@@ -18,7 +22,8 @@ export const getAllTickets = async () => {
   export const deleteTicket = async (id: number): Promise<void> => {
     try {
       const response = await fetch(
-        `https://1a0a-103-177-83-247.ngrok-free.app/v1/ticket/${id}`,
+      
+        `${baseUrl}ticket/${id}`,
         {
           headers: { "ngrok-skip-browser-warning": "true" },
           method: "DELETE",
@@ -36,7 +41,8 @@ export const getAllTickets = async () => {
   export const getTicket = async (id: number): Promise<void> => {
     try {
       const response = await fetch(
-        `https://1a0a-103-177-83-247.ngrok-free.app/v1/ticket/${id}`,
+        `${baseUrl}ticket/${id}`,
+       
         {
           headers: { "ngrok-skip-browser-warning": "true" },
           method: "GET",
@@ -56,9 +62,10 @@ export const getAllTickets = async () => {
       const formData = new FormData();
       formData.append("status", status);
       if (id !== "") {
-        // Editing an existing ticket, make a PUT request
+
         const response = await fetch(
-          `https://1a0a-103-177-83-247.ngrok-free.app/v1/ticket/?id=${id}`,
+            `${baseUrl}ticket/?id=${id}`,
+            
           {
             method: "PUT",
             body: formData,
@@ -78,7 +85,8 @@ export const getAllTickets = async () => {
   export const filterTickets = async (params?:string,value?:string|number|Date) => {
     try {
       const response = await fetch(
-        `https://1a0a-103-177-83-247.ngrok-free.app/v1/tickets?${params}=${value}`,
+      
+        `${baseUrl}tickets?${params}=${value}`,
         {
           headers: { "ngrok-skip-browser-warning": "true" },
         }
@@ -97,7 +105,8 @@ export const getAllTickets = async () => {
   export const createTicket = async(formData : FormData) =>{
     try {
         const response = await fetch(
-            "https://1a0a-103-177-83-247.ngrok-free.app/v1/ticket",
+            `${baseUrl}ticket`,
+         
             {
               method: "POST",
               body: formData,
@@ -116,7 +125,8 @@ export const getAllTickets = async () => {
   export const updateTicket = async (formData : FormData , id : number )  =>{
     try{
     const response = await fetch(
-        `https://1a0a-103-177-83-247.ngrok-free.app/v1/ticket?id=${id}`,
+        
+        `${baseUrl}ticket?id=${id}`,
         {
           method: "PUT",
           body: formData,
@@ -134,7 +144,8 @@ export const getAllTickets = async () => {
   export const createCategory = async(formData : FormData) =>{
       try {
         const response = await fetch(
-            "https://1a0a-103-177-83-247.ngrok-free.app/v1/categories",
+            `${baseUrl}categories`,
+          
             {
               method: "POST",
               body: formData,
@@ -153,8 +164,8 @@ export const getAllTickets = async () => {
   export const getAllCategories = async () => {
     try {
       const response = await fetch(
-        "https://1a0a-103-177-83-247.ngrok-free.app/v1/categories/",
-        // "",
+        `${baseUrl}categories/`,
+  
         {
           headers: { "ngrok-skip-browser-warning": "true" },
           method: "GET",
@@ -172,7 +183,8 @@ export const getAllTickets = async () => {
   export const editCategory = async (id : number , formData : FormData) =>{
     try {
       const response = await fetch(
-        `https://1a0a-103-177-83-247.ngrok-free.app/v1/categories/${id}`,
+     
+        `${baseUrl}categories/${id}`,
         {
           method: "PUT",
           body: formData,
