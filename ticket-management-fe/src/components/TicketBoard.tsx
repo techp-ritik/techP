@@ -54,8 +54,6 @@ export default function TicketBoard() {
     completed: getTicketsLength("completed"),
   });
 
-  const [ticketId, setTicketID] = useState<number | string>("");
-
   useEffect(() => {
     getAllTickets().then((res) => {
       if (res && res.length > 0) {
@@ -80,6 +78,8 @@ export default function TicketBoard() {
       }
     });
   }, []);
+
+  const [ticketId, setTicketID] = useState<number | string>("");
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -206,7 +206,7 @@ export default function TicketBoard() {
                           fontWeight: "600",
                         }}
                       >
-                        {status}{" "}
+                        {status == "INPROGRESS" ? "IN PROGRESS" : status}{" "}
                         <Badge
                           sx={{ marginLeft: "11px", marginBottom: "3px" }}
                           badgeContent={badgeContent}

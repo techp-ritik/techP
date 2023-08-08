@@ -41,6 +41,11 @@ interface TicketProps {
   selectedTicket: any;
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
+interface TicketProps {
+  id: number;
+  selectedTicket: any;
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
+}
 
 function Ticket({
   id,
@@ -84,7 +89,7 @@ function Ticket({
       description: "",
       category_id: 0,
       priority: "",
-      assignee: 0,
+      assignee: 1,
 
       file: [],
       filepath: [],
@@ -116,7 +121,7 @@ function Ticket({
     description: "",
     category_id: "Select Category",
     priority: "Select Priority",
-    assignee: 0,
+    assignee: 1,
     filepath: [],
     created_by: 1,
     file: [],
@@ -272,10 +277,10 @@ function Ticket({
       let editResponse = await updateTicket(formData, id);
 
       if (editResponse === 200) {
-        toast("Ticket edited successfully.", {
+        toast("Ticket Updated successfully.", {
           theme: "light",
           autoClose: 1500,
-          position: "top-center",
+          position: "top-right",
         });
         getAllTickets().then((res) => {
           setLocaltickets(res);
@@ -398,7 +403,7 @@ function Ticket({
               ))}
             </Select>
 
-            <TextField
+            {/* <TextField
               value={ticketInformation.assignee}
               onChange={(e) => {
                 setticketInformation({
@@ -414,7 +419,7 @@ function Ticket({
               type="number"
               id="Assignee"
               sx={{ marginBottom: "20px" }}
-            />
+            /> */}
 
             <Select
               labelId="demo-simple-select-label"
@@ -552,15 +557,95 @@ function Ticket({
                 ))}
               </div>
             </Stack>
+            <DialogActions
+              sx={{
+                justifyContent: id ? "space-between" : "flex-end", // Adjusted justifyContent
+                alignItems: "center", // Center align vertically
+              }}
+            >
+              {id ? (
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    deleteTicketHandler(id);
+                  }}
+                  size="small"
+                >
+                  DELETE TICKET
+                </Button>
+              ) : null}
 
-            <DialogActions>
-              <Button onClick={handleCloseModal}>Cancel</Button>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Button onClick={handleCloseModal} size="small">
+                  Cancel
+                </Button>
 
-              <Button variant="contained" onClick={handleSubmit} size="small">
-                {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
-              </Button>
-              {/* {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>} */}
+                <Button variant="contained" onClick={handleSubmit} size="small">
+                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
+                </Button>
+              </div>
             </DialogActions>
+
+            {/* <DialogActions sx={{ justifyContent: "space-between" }}>
+              {id ? (
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    deleteTicketHandler(id);
+                  }}
+                  size="small"
+                >
+                  DELETE TICKET
+                </Button>
+              ) : (
+                ""
+              )}
+
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Button onClick={handleCloseModal} size="small">
+                  Cancel
+                </Button>
+
+                <Button variant="contained" onClick={handleSubmit} size="small">
+                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
+                </Button>
+              </div>
+            </DialogActions> */}
+
+            {/* <DialogActions
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              {id && (
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    deleteTicketHandler(id);
+                  }}
+                  size="small"
+                >
+                  DELETE TICKET
+                </Button>
+              )}
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Button onClick={handleCloseModal} size="small">
+                  Cancel
+                </Button>
+
+                <Button variant="contained" onClick={handleSubmit} size="small">
+                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
+                </Button>
+              </div> */}
+            {/* {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>} */}
+            {/* </DialogActions> */}
           </DialogContent>
         </div>
       </Dialog>

@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Typography from "@mui/material/Typography";
 import { Draggable } from "react-beautiful-dnd";
+import EditIcon from "@mui/icons-material/Edit";
 import Ticket from "./Ticket";
 import { useState } from "react";
 import { TicketList } from "./TicketBoard";
@@ -55,7 +56,8 @@ function Tickets(props: list) {
               priorityColor = "red";
               break;
             case "medium":
-              priorityColor = "#f75700";
+              priorityColor = " #FF5F15";
+
               break;
             case "low":
               priorityColor = "#e3cc00";
@@ -76,7 +78,10 @@ function Tickets(props: list) {
                   className="ticketContainer"
                 >
                   <div className="ticket">
-                    <Typography sx={{}} className="ticketTitle">
+                    <Typography
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                      className="ticketTitle"
+                    >
                       Ticket #{list.id}
                       <Button
                         size="small"
@@ -84,16 +89,16 @@ function Tickets(props: list) {
                         // sx={{color:'white'}}
                         variant="text"
                         onClick={() => handleViewTicketClick(list, list.id)}
-                        startIcon={<ReceiptIcon />}
+                        // startIcon={<ReceiptIcon />}
                       >
-                        Edit Ticket
+                        <EditIcon />
                       </Button>
                     </Typography>
                     <div>
                       <div className="ticketDetail">
                         <div style={{ textAlign: "end" }}></div>
 
-                        <div className="ticket_title">Title: {list.title}</div>
+                        <div>Title: {list.title}</div>
                         <div>
                           Priority:{" "}
                           <span style={{ color: priorityColor }}>
