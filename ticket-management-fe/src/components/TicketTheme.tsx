@@ -91,7 +91,6 @@ const TicketTheme = createTheme({
       styleOverrides: {
         input: {
           fontFamily: "Roboto, Arial, sans-serif",
-          height: "10px",
 
           // Set the font-family for input fields
         },

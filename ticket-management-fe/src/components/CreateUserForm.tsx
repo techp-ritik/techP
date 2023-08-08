@@ -79,8 +79,17 @@ export default function CreateUserModal({
   //       setUserList([...UserList, newData]);
   //     });
   // };
-
+  //>
   const handleSubmit = () => {
+    if (!user.name || !user.email || !user.phone || !user.username) {
+      toast("All fields are Mandatory", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-center",
+      });
+      return;
+    }
+
     if (user.id == "") {
       let newUser = user;
       newUser.id = `#${UserList.length + 1}`;
@@ -88,7 +97,11 @@ export default function CreateUserModal({
       setUserList(newUserData);
       setOpenModal(false);
       //addUser()
-      toast("User Data Added Successfully", { theme: "light" });
+      toast("User Data Added Successfully", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-center",
+      });
     } else {
       let res = UserList.map((list) => {
         return list.id === user.id
@@ -103,15 +116,17 @@ export default function CreateUserModal({
       });
       setUserList(res);
       setOpenModal(false);
-      toast("User Updated Successfully", { theme: "light" });
+      toast("User Updated Successfully", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-center",
+      });
     }
     setUser(clearForm);
   };
 
   return (
     <div>
-      <ToastContainer position="top-center" autoClose={2000} />
-
       <Modal
         open={openModal}
         onClose={() => {
@@ -138,74 +153,68 @@ export default function CreateUserModal({
               noValidate
               autoComplete="off"
             >
-              <form className="user_create_form">
-                <div>
-                  <TextField
-                    required
-                    id="outlined-required"
-                    label="Name"
-                    value={user.name}
-                    onChange={(e) => {
-                      setUser({ ...user, name: e.target.value });
-                    }}
-                    defaultValue=""
-                  />
-                  <TextField
-                    required
-                    id="outlined-required"
-                    type="email"
-                    label="Email"
-                    value={user.email}
-                    onChange={(e) => {
-                      setUser({ ...user, email: e.target.value });
-                    }}
-                    defaultValue=""
-                  />
-                  <TextField
-                    required
-                    id="outlined-required"
-                    label="User Name"
-                    defaultValue=""
-                    value={user.username}
-                    onChange={(e) => {
-                      setUser({ ...user, username: e.target.value });
-                    }}
-                  />
-                  <TextField
-                    required
-                    id="outlined-required"
-                    label="Phone"
-                    defaultValue=""
-                    value={user.phone}
-                    onChange={(e) => {
-                      setUser({ ...user, phone: e.target.value });
-                    }}
-                  />
-                </div>
-                <div style={{ textAlign: "end", padding: "10px" }}>
-                  <Button
-                    style={{ marginTop: "10px" }}
-                    size="large"
-                    type="submit"
-                    onClick={() => {
-                      setOpenModal(false);
-                    }}
-                    variant="text"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    style={{ marginTop: "10px" }}
-                    size="large"
-                    onClick={() => {
-                      handleSubmit();
-                    }}
-                    variant="contained"
-                  >
-                    {user.id == "" ? "Create User" : "Update "}
-                  </Button>
-                </div>
-              </form>
+              <TextField
+                required
+                id="outlined-required"
+                label="Name"
+                value={user.name}
+                onChange={(e) => {
+                  setUser({ ...user, name: e.target.value });
+                }}
+                defaultValue=""
+              />
+              <TextField
+                required
+                id="outlined-required"
+                type="email"
+                label="Email"
+                value={user.email}
+                onChange={(e) => {
+                  setUser({ ...user, email: e.target.value });
+                }}
+                defaultValue=""
+              />
+              <TextField
+                required
+                id="outlined-required"
+                label="User Name"
+                defaultValue=""
+                value={user.username}
+                onChange={(e) => {
+                  setUser({ ...user, username: e.target.value });
+                }}
+              />
+              <TextField
+                required
+                id="outlined-required"
+                label="Phone"
+                defaultValue=""
+                value={user.phone}
+                onChange={(e) => {
+                  setUser({ ...user, phone: e.target.value });
+                }}
+              />
+
+              <div style={{ textAlign: "end", padding: "10px" }}>
+                <Button
+                  style={{ marginTop: "10px" }}
+                  size="large"
+                  onClick={() => {
+                    setOpenModal(false);
+                  }}
+                  variant="text"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  style={{ marginTop: "10px" }}
+                  size="large"
+                  onClick={handleSubmit}
+                  variant="contained"
+                >
+                  {user.id == "" ? "Create User" : "Update "}
+                </Button>
+              </div>
             </Box>
           </Typography>
         </Box>

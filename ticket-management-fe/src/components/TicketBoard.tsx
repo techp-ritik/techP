@@ -70,7 +70,7 @@ export default function TicketBoard() {
           {
             theme: "dark",
             autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-center",
+            position: "top-right",
             closeOnClick: true, // Allow users to close the toast by clicking
           }
         );
@@ -109,7 +109,7 @@ export default function TicketBoard() {
               toast("Ticket Status Updated ", {
                 theme: "light",
                 autoClose: 1500,
-                position: "top-center",
+                position: "top-right",
               });
             });
           } else {
@@ -117,7 +117,7 @@ export default function TicketBoard() {
             toast("Error while updating ticket", {
               theme: "light",
               autoClose: 1500,
-              position: "top-center",
+              position: "top-right",
             });
           }
         });
