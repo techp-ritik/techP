@@ -41,6 +41,11 @@ interface TicketProps {
   selectedTicket: any;
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
+interface TicketProps {
+  id: number;
+  selectedTicket: any;
+  setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
+}
 
 function Ticket({
   id,
@@ -615,8 +620,21 @@ function Ticket({
               ))} */}
             </Stack>
 
-            <DialogActions>
-              <Button onClick={handleCloseModal}>Cancel</Button>
+            <DialogActions
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              {id && (
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    deleteTicketHandler(id);
+                  }}
+                  size="small"
+                >
+                  DELETE TICKET
+                </Button>
+              )}
 
               <Button variant="contained" onClick={handleSubmit} size="small">
                 {id ? "EDIT TICKET" : "CREATE NEW TICKET"}

@@ -53,9 +53,7 @@ export default function TicketBoard() {
     blocked: getTicketsLength("blocked"),
     completed: getTicketsLength("completed"),
   });
-
-  const [ticketId, setTicketID] = useState<number | string>("");
-
+  
   useEffect(() => {
     getAllTickets().then((res) => {
       if (res && res.length > 0) {
@@ -80,6 +78,10 @@ export default function TicketBoard() {
       }
     });
   }, []);
+
+  const [ticketId, setTicketID] = useState<number | string>("");
+
+
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;

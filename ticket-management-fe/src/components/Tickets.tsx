@@ -128,6 +128,7 @@ function Tickets(props: list) {
         })
       )}
 
+   
       {showTicket && (
         <Ticket
           setLocaltickets={props.setLocaltickets}

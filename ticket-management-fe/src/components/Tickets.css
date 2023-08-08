@@ -1,5 +1,11 @@
 /* Main Ticket Style */
-
+.filter{
+  cursor: pointer;
+  padding: 5px;
+}
+.filter:hover{
+  background-color: #ebe8ff7b;
+}
 .ticket {
   margin: 10px;
   -webkit-transform: translateZ(0);
@@ -34,8 +40,9 @@ ticket:active {
   height: 400px;
   border: 8px solid #dddddd;
   overflow-y: scroll;
+ 
   border-end-end-radius: 6px;
-  background-color: #f5f5f5;
+  background-color: rgb(246, 248, 250);
   border-bottom-left-radius: 6px;
 }
 .no_tickets {
@@ -93,11 +100,19 @@ hr {
   font-weight: 400;
   padding: 4px 16px;
 }
-.ticketSubDetail {
+.ticketSubDetail{
+  
+   color: rgb(0, 0, 0);
+    font-size: 12px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    
+
   display: flex;
   justify-content: space-between;
-  font-size: 1rem;
-  padding: 5px;
+  font-size: 10px;
+  padding:3px 3px 2px 0px;
 }
 
 .ticketSubDetail .code {
