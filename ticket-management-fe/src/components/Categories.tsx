@@ -57,7 +57,7 @@ export default function Categories() {
           {
             theme: "dark",
             autoClose: false,
-            position: "top-center",
+            position: "top-right",
             closeOnClick: true,
           }
         );

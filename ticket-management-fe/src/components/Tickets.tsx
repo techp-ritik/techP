@@ -38,7 +38,7 @@ function Tickets(props: list) {
   const splitTime = (hour: number) => {
     if (hour >= 24) {
       var totaldays = hour / 24;
-      return Math.round(totaldays) + " days";
+      return Math.round(totaldays) + " day";
     }
     return hour + " hours";
   };
@@ -84,6 +84,7 @@ function Tickets(props: list) {
                     >
                       Ticket #{list.id}
                       <Button
+                        sx={{ display: "flex", justifyContent: "end" }}
                         size="small"
                         type="submit"
                         // sx={{color:'white'}}
@@ -105,21 +106,21 @@ function Tickets(props: list) {
                             {list.priority.toUpperCase()}
                           </span>
                         </div>
-                        <div className="ticketSubDetail">
+                        <div>
                           {" "}
-                          <div>
+                          <div className="ticketInline">
                             Raised By: {list.user?.name.toUpperCase()}{" "}
+                            <div className="ticketSubDetail">
+                              {list.status == "blocked" ? (
+                                <>Time Taken</>
+                              ) : list.status !== "completed" ? (
+                                <> Active Time</>
+                              ) : (
+                                <>Resolved Time</>
+                              )}{" "}
+                              : {splitTime(list.time_taken)}
+                            </div>
                           </div>{" "}
-                          <div>
-                            {list.status == "blocked" ? (
-                              <>Time Taken</>
-                            ) : list.status !== "completed" ? (
-                              <> Active Time</>
-                            ) : (
-                              <>Resolved Time</>
-                            )}{" "}
-                            : {splitTime(list.time_taken)}
-                          </div>
                         </div>
                       </div>
                     </div>
