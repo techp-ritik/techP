@@ -197,7 +197,7 @@ export default function Users() {
       toast("User Deleted Successfully", {
         theme: "light",
         autoClose: 1500,
-        position: "top-center",
+        position: "top-right",
       });
       handleClose();
     };

@@ -82,10 +82,10 @@ export default function CreateUserModal({
   //>
   const handleSubmit = () => {
     if (!user.name || !user.email || !user.phone || !user.username) {
-      toast("All fields are Mandatory", {
+      toast.error("All fields are Mandatory", {
         theme: "light",
         autoClose: 1500,
-        position: "top-center",
+        position: "top-right",
       });
       return;
     }
@@ -100,7 +100,7 @@ export default function CreateUserModal({
       toast("User Data Added Successfully", {
         theme: "light",
         autoClose: 1500,
-        position: "top-center",
+        position: "top-right",
       });
     } else {
       let res = UserList.map((list) => {
@@ -116,10 +116,10 @@ export default function CreateUserModal({
       });
       setUserList(res);
       setOpenModal(false);
-      toast("User Updated Successfully", {
+      toast("User Data Added Successfully", {
         theme: "light",
         autoClose: 1500,
-        position: "top-center",
+        position: "top-right",
       });
     }
     setUser(clearForm);
@@ -194,8 +194,7 @@ export default function CreateUserModal({
                   setUser({ ...user, phone: e.target.value });
                 }}
               />
-
-              <div style={{ textAlign: "end", padding: "10px" }}>
+              <div style={{ textAlign: "end", marginRight: "5ch" }}>
                 <Button
                   style={{ marginTop: "10px" }}
                   size="large"
