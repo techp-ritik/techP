@@ -1,4 +1,4 @@
-const baseUrl = "https://746b-210-16-94-100.ngrok-free.app/v1/"
+const baseUrl = "https://e053-103-177-83-247.ngrok-free.app/v1/"
 export const getAllTickets = async () => {
     try {
       const response = await fetch( 

@@ -102,7 +102,6 @@ export default function Categories() {
 
     setIsModalOpen(false);
   };
-
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
