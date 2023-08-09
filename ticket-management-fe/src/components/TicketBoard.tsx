@@ -83,6 +83,22 @@ export default function TicketBoard() {
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
+
+    const sourceStatus = source.droppableId as string;
+    const destStatus = destination?.droppableId as string;
+    if (
+      (sourceStatus === "todo" && destStatus === "completed") ||
+      (sourceStatus === "completed" && destStatus === "todo")
+    ) {
+      toast.error("Invalid Ticket Movement", {
+        theme: "dark",
+        autoClose: false,
+        position: "top-right",
+        closeOnClick: true,
+      });
+      return;
+    }
+
     if (
       source.droppableId !== undefined ||
       (null && destination?.droppableId !== undefined) ||
