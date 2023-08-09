@@ -12,6 +12,7 @@ import { getAllCategories } from "../api/baseapi";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField } from "@mui/material";
+import Button from "@mui/material/Button";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
@@ -53,17 +54,12 @@ export default function Filter({ setLocalTickets }: props) {
 
   const [categories, setCategories] = React.useState([]);
 
-  let api = `https://5e07-210-16-94-100.ngrok-free.app/v1/tickets?${filters.map(
-    (item, index) => {
-      if (item.value !== "") {
-        let param = `${index == 0 ? "" : "&"}` + item.key + "=" + item.value;
-        return param;
-      }
-      return "";
-    }
-  )}`;
-  api = api.replaceAll(",", "");
-  console.log(api);
+ 
+  React.useEffect(() => {
+    getAllCategories().then((res) => {
+      setCategories(res);
+    });
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -89,8 +85,9 @@ export default function Filter({ setLocalTickets }: props) {
         // console.log("Error fetching Tickets");
       }
     });
-    filterTickets(api).then((res) => {
+    filterTickets(filters).then((res) => {
       if (res && res.length > 0) {
+        console.log(res)
         setLocalTickets(res);
       } else {
         // If res is null or the array is empty, set the state with an empty array.
@@ -106,7 +103,7 @@ export default function Filter({ setLocalTickets }: props) {
 
       // setCategories(res);
     });
-  }, [api]);
+  }, [params]);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -250,6 +247,27 @@ export default function Filter({ setLocalTickets }: props) {
                   setParams({ ...params, completed_at: e.target.value });
                 }}
               />
+            </FormControl>
+            <FormControl
+              variant="standard"
+              sx={{ m: 1, position: "relative", top: "5px" }}
+            >
+              <Button
+                style={{ marginTop: "10px" }}
+                size="large"
+                onClick={() => {
+                  setParams({
+                    priority: "",
+                    category: "",
+                    created_at: "",
+                    completed_at: "",
+                    query: "",
+                  });
+                }}
+                variant="text"
+              >
+                Clear
+              </Button>
             </FormControl>
           </div>
         </Typography>

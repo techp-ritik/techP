@@ -79,11 +79,18 @@ export const getAllTickets = async () => {
       console.error(error);
     }
   };
-  export const filterTickets = async (params?:string,value?:string|number|Date) => {
+  export const filterTickets = async (params:any) => {
     try {
+      let query = `tickets/?${params.map((item:any, index:any) => {
+        if (item.value !== "") {
+          let param = `${index == 0 ? "" : "&"}` + item.key + "=" + item.value;
+          return param;
+        }
+        return "";
+      })}`;
+      query = query.replaceAll(",", "");
       const response = await fetch(
-      
-        `${baseUrl}tickets?${params}=${value}`,
+        `${baseUrl+query}`,
         {
           headers: { "ngrok-skip-browser-warning": "true" },
         }
