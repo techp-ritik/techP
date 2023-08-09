@@ -57,7 +57,7 @@ export default function Categories() {
           {
             theme: "dark",
             autoClose: false,
-            position: "top-center",
+            position: "top-right",
             closeOnClick: true,
           }
         );
@@ -102,19 +102,12 @@ export default function Categories() {
 
     setIsModalOpen(false);
   };
+
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    setPage(0); // Reset page to the first page when search query changes
   };
-
-  const filteredCategories = categories.filter((category) => {
-    const nameMatch =
-      category.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
-    const descriptionMatch =
-      category.description.toLowerCase().indexOf(searchQuery.toLowerCase()) !==
-      -1;
-    return nameMatch || descriptionMatch;
-  });
-
   const handleSubmit = async () => {
     if (!category.name || !category.description) {
       toast.error("Fields cannot be empty");
@@ -306,7 +299,12 @@ export default function Categories() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredCategories
+              {categories
+                .filter(
+                  (category) =>
+                    category.name.toLowerCase().includes(searchQuery) ||
+                    category.description.toLowerCase().includes(searchQuery)
+                )
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   return (
@@ -337,7 +335,13 @@ export default function Categories() {
           <TablePagination
             rowsPerPageOptions={[5]}
             component="div"
-            count={categories.length}
+            count={
+              categories.filter(
+                (category) =>
+                  category.name.toLowerCase().includes(searchQuery) ||
+                  category.description.toLowerCase().includes(searchQuery)
+              ).length
+            }
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
