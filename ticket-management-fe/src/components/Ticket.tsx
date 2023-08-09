@@ -71,14 +71,12 @@ function Ticket({
           {
             theme: "dark",
             autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-center",
+            position: "top-right",
             closeOnClick: true, // Allow users to close the toast by clicking
           }
         );
         console.log("Error fetching categories inside open popup");
       }
-
-      // setCategories(res);
     });
     setIsModalOpen(true);
   };
@@ -119,8 +117,8 @@ function Ticket({
   }>({
     title: "",
     description: "",
-    category_id: "Select Category",
-    priority: "Select Priority",
+    category_id: "Select Category*",
+    priority: "Select Priority*",
     assignee: 1,
     filepath: [],
     created_by: 1,
@@ -199,13 +197,13 @@ function Ticket({
     if (
       !ticketInformation.title ||
       !ticketInformation.description ||
-      ticketInformation.category_id === null ||
-      ticketInformation.priority === "Select Priority"
+      ticketInformation.category_id === "Select Category*" ||
+      ticketInformation.priority === "Select Priority*"
     ) {
       toast.error("Please fill all the required fields", {
         theme: "light",
         autoClose: 1500,
-        position: "top-center",
+        position: "top-right",
       });
 
       return;
@@ -239,7 +237,7 @@ function Ticket({
           toast("Ticket created successfully.", {
             theme: "light",
             autoClose: 1500,
-            position: "top-center",
+            position: "top-right",
           });
           getAllTickets().then((res) => {
             setLocaltickets(res);
@@ -251,14 +249,14 @@ function Ticket({
           toast("Unauthorized", {
             theme: "light",
             autoClose: 1500,
-            position: "top-center",
+            position: "top-right",
           });
         }
         if (createResponse === 404) {
           toast("Validation error: invalid data format.", {
             theme: "light",
             autoClose: 1500,
-            position: "top-center",
+            position: "top-right",
           });
         } else {
           toast(
@@ -266,7 +264,7 @@ function Ticket({
             {
               theme: "light",
               autoClose: 1500,
-              position: "top-center",
+              position: "top-right",
             }
           );
         }
@@ -292,7 +290,7 @@ function Ticket({
         toast("Unauthorized", {
           theme: "light",
           autoClose: 1500,
-          position: "top-center",
+          position: "top-right",
         });
       }
       if (editResponse === 404) {
@@ -313,7 +311,7 @@ function Ticket({
     toast(`Ticket#${id} Deleted Successfully`, {
       theme: "light",
       autoClose: 1500,
-      position: "top-center",
+      position: "top-right",
     });
   };
 
@@ -386,8 +384,8 @@ function Ticket({
                 });
               }}
             >
-              <MenuItem value={"Select Category"} disabled>
-                Select Category
+              <MenuItem value={"Select Category*"} disabled>
+                Select Category*
               </MenuItem>
               {/* {id ? "TICKET DETAILS" : "CREATE NEW TICKET"} */}
               {id ? (
@@ -403,30 +401,12 @@ function Ticket({
               ))}
             </Select>
 
-            {/* <TextField
-              value={ticketInformation.assignee}
-              onChange={(e) => {
-                setticketInformation({
-                  ...ticketInformation,
-                  assignee: parseInt(e.target.value),
-                });
-              }}
-              margin="normal"
-              required={id === null || id === 0}
-              fullWidth
-              name="Assignee"
-              label="Assignee"
-              type="number"
-              id="Assignee"
-              sx={{ marginBottom: "20px" }}
-            /> */}
-
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               fullWidth
               required={id === null || id === 0}
-              defaultValue="Select Priority"
+              defaultValue="Select Priority*"
               autoFocus
               name="priority"
               type="text"
@@ -439,8 +419,8 @@ function Ticket({
                 });
               }}
             >
-              <MenuItem value={"Select Priority"} disabled>
-                Select Priority
+              <MenuItem value={"Select Priority*"} disabled>
+                Select Priority*
               </MenuItem>
               <MenuItem value={"low"}>low</MenuItem>
               <MenuItem value={"medium"}>medium</MenuItem>
@@ -505,13 +485,13 @@ function Ticket({
                           rel="noopener noreferrer"
                           style={{
                             border: "1px solid #ccc",
-                            padding: "3px 6px", // Adjusted padding
+                            padding: "3px 6px",
                             borderRadius: "5px",
                             backgroundColor: "#f0f0f0",
                             margin: "4px",
                             textDecoration: "none",
                             color: "#000",
-                            fontSize: "14px", // Adjusted font size
+                            fontSize: "14px",
                           }}
                         >
                           View Attachment {index + 1}
@@ -538,17 +518,17 @@ function Ticket({
                     }}
                   >
                     <Link
-                      href={"https://5e07-210-16-94-100.ngrok-free.app/" + path}
+                      href={"https://746b-210-16-94-100.ngrok-free.app/" + path}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
                         border: "1px solid #ccc",
-                        padding: "3px 6px", // Adjusted padding
+                        padding: "3px 6px",
                         borderRadius: "5px",
                         backgroundColor: "#f0f0f0",
                         textDecoration: "none",
                         color: "#000",
-                        fontSize: "14px", // Adjusted font size
+                        fontSize: "14px",
                       }}
                     >
                       View Attachment {index + 1}
@@ -559,8 +539,9 @@ function Ticket({
             </Stack>
             <DialogActions
               sx={{
-                justifyContent: id ? "space-between" : "flex-end", // Adjusted justifyContent
-                alignItems: "center", // Center align vertically
+                justifyContent: id ? "space-between" : "flex-end",
+                alignItems: "center",
+                padding: "0px",
               }}
             >
               {id ? (
@@ -576,76 +557,19 @@ function Ticket({
                 </Button>
               ) : null}
 
-              <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                style={{ display: "flex", gap: "10px", alignItems: "center" }}
+              >
                 <Button onClick={handleCloseModal} size="small">
                   Cancel
                 </Button>
-
+                <div style={{ flexGrow: 1 }}></div>{" "}
+                {/* This will create a flexible empty space */}
                 <Button variant="contained" onClick={handleSubmit} size="small">
                   {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
                 </Button>
               </div>
             </DialogActions>
-
-            {/* <DialogActions sx={{ justifyContent: "space-between" }}>
-              {id ? (
-                <Button
-                  color="error"
-                  variant="contained"
-                  onClick={() => {
-                    deleteTicketHandler(id);
-                  }}
-                  size="small"
-                >
-                  DELETE TICKET
-                </Button>
-              ) : (
-                ""
-              )}
-
-              <div style={{ display: "flex", gap: "10px" }}>
-                <Button onClick={handleCloseModal} size="small">
-                  Cancel
-                </Button>
-
-                <Button variant="contained" onClick={handleSubmit} size="small">
-                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
-                </Button>
-              </div>
-            </DialogActions> */}
-
-            {/* <DialogActions
-              sx={{ display: "flex", justifyContent: "space-between" }}
-            >
-              {id && (
-                <Button
-                  color="error"
-                  variant="contained"
-                  onClick={() => {
-                    deleteTicketHandler(id);
-                  }}
-                  size="small"
-                >
-                  DELETE TICKET
-                </Button>
-              )}
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Button onClick={handleCloseModal} size="small">
-                  Cancel
-                </Button>
-
-                <Button variant="contained" onClick={handleSubmit} size="small">
-                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
-                </Button>
-              </div> */}
-            {/* {id &&  <Button color="error" variant="contained" onClick={()=>{  deleteTicketHandler(id)  }} size="small">DELETE TICKET</Button>} */}
-            {/* </DialogActions> */}
           </DialogContent>
         </div>
       </Dialog>
