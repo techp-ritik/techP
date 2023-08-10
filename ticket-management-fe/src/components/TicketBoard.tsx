@@ -99,11 +99,7 @@ export default function TicketBoard() {
       return;
     }
 
-    if (
-      source.droppableId !== undefined ||
-      (null && destination?.droppableId !== undefined) ||
-      null
-    ) {
+    if (source.droppableId && destination?.droppableId) {
       if (
         destination?.droppableId !== undefined &&
         source.droppableId !== destination?.droppableId!
