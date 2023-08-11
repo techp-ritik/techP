@@ -10,21 +10,62 @@ import Container from "@mui/material/Container";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useState } from "react";
 import Alert from "@mui/material/Alert";
+import { signIn } from "../api/baseapi";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Usercontext } from "../App";
+
 
 export default function SignIn() {
   const [loader, setLoader] = useState(false);
+  const[token,setToken]=useState("")
   const [credentials, setCredentials] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+  const navigate=useNavigate();
+  const{user,setUser}=React.useContext(Usercontext)
+ 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+    setLoader(true);
+    event.preventDefault();
     if (credentials.password.length < 8) {
+      toast.error("Password should contain minimum 8 characters", {
+        theme: "dark",
+        autoClose: 1500,
+        position: "top-right",
+      })
+      setLoader(false)
       return;
     }
-    event.preventDefault();
-    setLoader(true);
+    const formdata=new FormData();
+    formdata.append("username",credentials.username)
+    formdata.append("password",credentials.password)
+    console.log(credentials)
+    signIn(formdata).then((res)=>{
+    
+      if(res.user){
+        navigate('/dashboard')
+        localStorage.setItem("access_token",JSON.stringify(res))
+        let retrievedObject=JSON.parse(localStorage.getItem("access_token") || '{}')
+        setUser(retrievedObject)
+       
+        
+        localStorage.setItem("Access Token",res.access_token)
+      }
+      else{
+        toast.error("Invalid Username or Password", {
+          theme: "dark",
+          autoClose: 1500,
+          position: "top-right",
+        })
+        setLoader(false)
+      }
+    })
+    
   };
-
+  
   return (
     <Container component="main" maxWidth="xs">
       {""}
@@ -55,9 +96,9 @@ export default function SignIn() {
         <Box component="div" sx={{ mt: 1 }}>
           <form onSubmit={handleSubmit}>
             <TextField
-              value={credentials.email}
+              value={credentials.username}
               onChange={(e) => {
-                setCredentials({ ...credentials, email: e.target.value });
+                setCredentials({ ...credentials, username: e.target.value });
               }}
               margin="normal"
               type="email"

@@ -12,6 +12,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import GroupIcon from "@mui/icons-material/Group";
 import { Link } from "react-router-dom";
 import ListSubheader from "@mui/material/ListSubheader";
+import { Usercontext } from "../App";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -21,6 +22,7 @@ interface SideBarProps {
 }
 
 export default function SideBar({ isOpen, onClose }: SideBarProps) {
+  const {user,setUser}=React.useContext(Usercontext)
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -57,9 +59,12 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
         }}
       >
         TICKET MANAGEMENT SYSTEM
+        
       </ListSubheader>
+     
       <List>
-        <ListItem sx={{ padding: 0 }}>
+        {user.access_token && <>
+          <ListItem sx={{ padding: 0 }}>
           <Link
             to="/dashboard"
             style={{ textDecoration: "none", color: "black", width: "100%" }}
@@ -72,7 +77,9 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
             </ListItemButton>
           </Link>
         </ListItem>
-        <ListItem sx={{ padding: 0, paddingTop: 2 }}>
+        { user &&  user?.user?.role==='admin'?
+        <>
+         <ListItem sx={{ padding: 0, paddingTop: 2 }}>
           <Link
             to="/categories"
             style={{ textDecoration: "none", color: "black", width: "100%" }}
@@ -98,6 +105,9 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
             </ListItemButton>
           </Link>
         </ListItem>
+        </>:""}</>}
+       
+       
       </List>
 
       <Divider />

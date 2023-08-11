@@ -23,7 +23,8 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import CreateUserModal from "./CreateUserForm";
-
+import { Usercontext } from "../App";
+import { Navigate } from "react-router-dom";
 interface Column {
   id:
     | "name"
@@ -61,14 +62,8 @@ export type Data = {
 };
 
 export default function Users() {
-  // useEffect(() => {
-  //   fetch(`ticketapi/UserList`)
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setUserList(data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
+  const token =React.useContext(Usercontext);
+  
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
@@ -241,9 +236,9 @@ export default function Users() {
       </div>
     );
   }
-
+console.log(token)
   return (
-    <>
+    <>{token.user?.user?.role!=="admin" && <Navigate to={"/dashboard"} replace />}
       <DeleteModal />
       <div style={{ textAlign: "end", margin: "20px" }}>
         <CreateUserModal

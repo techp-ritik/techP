@@ -6,7 +6,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -14,15 +13,19 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-
+import { Usercontext } from "../App";
+import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+import LogoutIcon from "@mui/icons-material/Logout";
 export default function Navbar() {
+  const { user, setUser } = React.useContext(Usercontext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
+  const navigate = useNavigate();
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -31,7 +34,10 @@ export default function Navbar() {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
+  const Logout = () => {
+    setUser({});
+    localStorage.clear();
+    navigate("/login");
     setAnchorEl(null);
     handleMobileMenuClose();
   };
@@ -53,9 +59,20 @@ export default function Navbar() {
         horizontal: "right",
       }}
       open={isMenuOpen}
-      onClose={handleMenuClose}
+      onClose={() => {
+        setAnchorEl(null);
+        handleMobileMenuClose();
+      }}
     >
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem> <Button
+        startIcon={<LogoutIcon/>}
+        size="large"
+        onClick={Logout}
+        variant="text"
+      >
+        Log Out
+      </Button> </MenuItem>
+     
     </Menu>
   );
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -99,7 +116,7 @@ export default function Navbar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <MenuIcon onClick={handleSidebarToggle} />
+         {user.access_token &&<MenuIcon onClick={handleSidebarToggle} /> } 
           <Typography
             variant="h6"
             noWrap
@@ -139,7 +156,7 @@ export default function Navbar() {
           </Box>
         </Toolbar>
       </AppBar>
-      <SideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <SideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       {renderMobileMenu}
       {renderMenu}
     </Box>
