@@ -2,10 +2,13 @@ import * as React from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Table from "@mui/material/Table";
-import InputAdornment from "@mui/material/InputAdornment";
+
 import SearchIcon from "@mui/icons-material/Search";
+import { InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import TableBody from "@mui/material/TableBody";
+import { useEffect } from "react";
+import { deleteUserApi } from "../api/baseapi";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -16,6 +19,7 @@ import { useState } from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { getAllUsers } from "../api/baseapi";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -25,144 +29,120 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import CreateUserModal from "./CreateUserForm";
 
 interface Column {
-  id:
-    | "name"
-    | "id"
-    | "email"
-    | "username"
-    | "phone"
-    | "ticketsCreated"
-    | "ticketsAssigned";
+  id: "name" | "id" | "email" | "role" | "phone";
+
   label: string;
   minWidth?: number;
   align?: "center";
   format?: (value: number) => string;
 }
+interface SortLabels {
+  data: "name" | "id" | "email";
+}
 
 const columns: readonly Column[] = [
   { id: "name", label: "Name", minWidth: 100 },
   { id: "email", label: "Email", minWidth: 150 },
-  { id: "username", label: "Username", minWidth: 150 },
+  { id: "role", label: "Role", minWidth: 150 },
   { id: "phone", label: "Phone", minWidth: 150 },
-  { id: "ticketsCreated", label: "Tickets Created", minWidth: 100 },
-  { id: "ticketsAssigned", label: "Tickets Assigned", minWidth: 100 },
+
   { id: "id", label: "Actions", minWidth: 100 },
 ];
 
 export type Data = {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  username: string;
-  phone: string;
-  ticketsCreated: number;
-  ticketsAssigned: number;
+  role: string;
+  phone: number;
+
   actions: any;
 };
 
 export default function Users() {
-  // useEffect(() => {
-  //   fetch(`ticketapi/UserList`)
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setUserList(data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
-  const [sortBy, setSortBy] = useState<"name">("name");
+  const [sortBy, setSortBy] = useState<
+    "name" | "email" | "id" | "phone" | "role"
+  >("id");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [Userlist, setUserList] = useState<Data[]>([
-    {
-      id: "#1",
-      name: "Utkarsh",
-      email: "sethiyautkarsh@gmail.com",
-      username: "utkarsh111",
-      phone: "9999999999",
-      ticketsCreated: 5,
-      ticketsAssigned: 7,
-      actions: "",
-    },
-    {
-      id: "#2",
-      name: "Ram",
-      email: "sethiyautkarsh@gmail.com",
-      username: "utkarsh111",
-      phone: "9999999999",
-      ticketsCreated: 5,
-      ticketsAssigned: 7,
-      actions: "",
-    },
-    {
-      id: "#3",
-      name: "Atharv",
-      email: "sethiyautkarsh@gmail.com",
-      username: "utkarsh111",
-      phone: "9999999999",
-      ticketsCreated: 5,
-      ticketsAssigned: 7,
-      actions: "",
-    },
-    {
-      id: "#4",
-      name: "Varun",
-      email: "sethiyautkarsh@gmail.com",
-      username: "utkarsh111",
-      phone: "9999999999",
-      ticketsCreated: 5,
-      ticketsAssigned: 7,
-      actions: "",
-    },
-    {
-      id: "#5",
-      name: "Shyam",
-      email: "sethiyautkarsh@gmail.com",
-      username: "utkarsh111",
-      phone: "9999999999",
-      ticketsCreated: 5,
-      ticketsAssigned: 7,
-      actions: "",
-    },
-    {
-      id: "#6",
-      name: "Aditya",
-      email: "sethiyautkarsh@gmail.com",
-      username: "utkarsh111",
-      phone: "9999999999",
-      ticketsCreated: 5,
-      ticketsAssigned: 7,
-      actions: "",
-    },
-  ]);
-  const handleSort = (property: "name") => {
-    const isAsc = sortBy === property && sortOrder === "asc";
-    setSortBy(property);
-    setSortOrder(isAsc ? "desc" : "asc");
 
-    const sortedUsers = [...Userlist].sort((a, b) => {
-      if (property === "name") {
-        return isAsc
-          ? a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
-          : b.name
-              .toLocaleLowerCase()
-              .localeCompare(a.name.toLocaleLowerCase());
+  const [Userlist, setUserList] = useState<Data[]>([]);
+
+  useEffect(() => {
+    getAllUsers().then((res) => {
+      if (res && res.length > 0) {
+        const sortedUsers = res.sort((a: Data, b: Data) => a.id - b.id);
+
+        setUserList(sortedUsers);
       } else {
-        return 0;
+        setUserList([]);
+        toast.error(
+          "Error occured while fetching User List from Server . Please try again later ",
+          {
+            theme: "dark",
+            autoClose: false,
+            position: "top-right",
+            closeOnClick: true,
+          }
+        );
+        console.log("Error fetching Tickets");
       }
     });
+  }, []);
 
-    setUserList(sortedUsers);
+  const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setSearchList(query);
+    setPage(0);
   };
+
+  const handleSort = (property: "name" | "email" | "id" | "role" | "phone") => {
+    const isAsc = sortBy === property && sortOrder === "asc";
+
+    if (property === "email") {
+      setUserList((prevList) =>
+        [...prevList].sort((a, b) => {
+          return isAsc
+            ? a.email
+                .toLocaleLowerCase()
+                .localeCompare(b.email.toLocaleLowerCase())
+            : b.email
+                .toLocaleLowerCase()
+                .localeCompare(a.email.toLocaleLowerCase());
+        })
+      );
+    } else {
+      setUserList((prevList) =>
+        [...prevList].sort((a, b) => {
+          if (property === "name") {
+            return isAsc
+              ? a.name
+                  .toLocaleLowerCase()
+                  .localeCompare(b.name.toLocaleLowerCase())
+              : b.name
+                  .toLocaleLowerCase()
+                  .localeCompare(a.name.toLocaleLowerCase());
+          } else if (property === "id") {
+            return isAsc ? a.id - b.id : b.id - a.id;
+          }
+          return 0;
+        })
+      );
+    }
+
+    setSortBy(property);
+    setSortOrder(isAsc ? "desc" : "asc");
+  };
+
   const clearForm = {
-    id: "",
+    id: 0,
     name: "",
     email: "",
-    username: "",
-    phone: "",
-    ticketsCreated: 0,
-    ticketsAssigned: 0,
+    role: "Select Role*",
+    phone: 0,
+
     actions: "",
   };
 
@@ -193,18 +173,36 @@ export default function Users() {
     const handleClose = () => {
       setOpen(false);
     };
-    const deleteUser = () => {
-      let newList = Userlist.filter((list) => {
-        return list.id !== user.id;
-      });
-      //deleteUserHandler();
-      setUserList(newList);
-      toast("User Deleted Successfully", {
-        theme: "light",
-        autoClose: 1500,
-        position: "top-right",
-      });
-      handleClose();
+
+    const deleteUser = async (id: number) => {
+      try {
+        const response = await deleteUserApi(id);
+        if (response === 200) {
+          getAllUsers()
+            .then((res) => {
+              const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
+              setUserList(sortedusers);
+
+              toast("User Deleted Successfully", {
+                theme: "light",
+                autoClose: 1500,
+                position: "top-right",
+              });
+              handleClose();
+            })
+            .catch((error) => {
+              console.error("Error deleting user:", error);
+            });
+        } else if (response === 404) {
+          toast("Invalid Id", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-right",
+          });
+        }
+      } catch (error) {
+        toast("Error occured while deleting ticket");
+      }
     };
 
     return (
@@ -231,7 +229,7 @@ export default function Users() {
             <Button
               color="error"
               onClick={() => {
-                deleteUser();
+                deleteUser(user.id);
               }}
             >
               Delete
@@ -269,18 +267,41 @@ export default function Users() {
           sx={{ width: "300px" }}
           id="search"
           name="search"
+          value={searchList}
           placeholder="Search User"
-          onChange={(e) => {
-            setSearchList(e.target.value);
-          }}
+          onChange={handleSearchQueryChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <SearchIcon />
+                <SearchIcon
+                  onClick={() => setSearchList("")}
+                  sx={{ cursor: "pointer" }}
+                />
               </InputAdornment>
             ),
           }}
         />
+        {/* 
+<TextField
+          type="text"
+          id="search"
+          name="search"
+          value={searchQuery}
+          placeholder="Search Category"
+          onChange={handleSearchQueryChange}
+          style={{ marginRight: "1px" }}
+          sx={{ width: "300px" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon
+                  onClick={() => setSearchQuery("")}
+                  sx={{ cursor: "pointer" }}
+                />
+              </InputAdornment>
+            ),
+          }}
+        /> */}
 
         <Button
           onClick={() => {
@@ -308,19 +329,31 @@ export default function Users() {
                     align={"center"}
                     style={{ minWidth: column.minWidth }}
                   >
-                    <TableSortLabel
+                    {/* <TableSortLabel
                       active={sortBy === column.id}
                       direction={sortOrder}
-                      onClick={() => handleSort("name")}
+                      onClick={() => handleSort(column.id)}
                     >
                       {column.label}
-                    </TableSortLabel>
+                    </TableSortLabel> */}
+
+                    {column.id === "name" || column.id === "email" ? (
+                      <TableSortLabel
+                        active={sortBy === column.id}
+                        direction={sortOrder}
+                        onClick={() => handleSort(column.id)}
+                      >
+                        {column.label}
+                      </TableSortLabel>
+                    ) : (
+                      column.label
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {Userlist.slice(
+              {/* {Userlist.slice(
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage
               )
@@ -330,7 +363,15 @@ export default function Users() {
                     : item.name
                         .toLowerCase()
                         .includes(searchList.toLowerCase());
-                })
+                }) */}
+
+              {Userlist.filter(
+                (item) =>
+                  item.name.toLowerCase().includes(searchList) ||
+                  item.email.toLowerCase().includes(searchList) ||
+                  item.role.toLowerCase().includes(searchList)
+              )
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   return (
                     <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
@@ -342,7 +383,6 @@ export default function Users() {
                             key={column.id}
                             align={"center"}
                             onClick={() => {
-                              console.log(row);
                               setUser(row);
                               if (column.label !== "Actions") {
                                 setOpenModal(true);
