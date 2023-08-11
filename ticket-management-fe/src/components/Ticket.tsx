@@ -518,9 +518,7 @@ function Ticket({
                     }}
                   >
                     <Link
-                      href={
-                        "https://e053-103-177-83-247.ngrok-free.app/" + path
-                      }
+                      href={"https://b49b-210-16-94-99.ngrok-free.app/" + path}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{

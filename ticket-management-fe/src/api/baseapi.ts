@@ -1,19 +1,19 @@
-const baseUrl ="https://b49b-210-16-94-99.ngrok-free.app/v1/";
+const baseUrl = "https://b49b-210-16-94-99.ngrok-free.app/v1/";
 const token = localStorage.getItem("access_token");
-const hearder={
+const header = {
   "ngrok-skip-browser-warning": "true",
   Authorization: `Bearer ${token}`,
   Accept: "application/json",
-}
+};
+console.log(token)
 export const getAllTickets = async () => {
   try {
     const response = await fetch(`${baseUrl}tickets`, {
-      headers: hearder,
+      headers: header,
     });
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-
     const data = await response.json();
     return data;
   } catch (err) {
@@ -23,7 +23,7 @@ export const getAllTickets = async () => {
 export const deleteTicket = async (id: number): Promise<void> => {
   try {
     const response = await fetch(`${baseUrl}ticket/${id}`, {
-      headers: hearder,
+      headers: header,
       method: "DELETE",
     });
     if (!response.ok) {
@@ -39,7 +39,7 @@ export const getTicket = async (id: number): Promise<void> => {
       `${baseUrl}ticket/${id}`,
 
       {
-        headers: hearder,
+        headers: header,
         method: "GET",
       }
     );
@@ -66,7 +66,7 @@ export const updateTicketStatus = async (
         {
           method: "PUT",
           body: formData,
-          headers: hearder,
+          headers: header,
         }
       );
       return response;
@@ -88,7 +88,7 @@ export const filterTickets = async (params: any) => {
     })}`;
     query = query.replaceAll(",", "");
     const response = await fetch(`${baseUrl + query}`, {
-      headers: hearder,
+      headers: header,
     });
 
     if (!response.ok) {
@@ -109,7 +109,7 @@ export const createTicket = async (formData: FormData) => {
       {
         method: "POST",
         body: formData,
-        headers: hearder,
+        headers: header,
       }
     );
     if (!response.ok) {
@@ -126,7 +126,7 @@ export const updateTicket = async (formData: FormData, id: number) => {
     const response = await fetch(`${baseUrl}ticket?id=${id}`, {
       method: "PUT",
       body: formData,
-      headers:hearder,
+      headers: header,
     });
     const editData = await response.status;
     return editData;
@@ -142,7 +142,7 @@ export const createCategory = async (formData: FormData) => {
       {
         method: "POST",
         body: formData,
-        headers: hearder,
+        headers: header,
       }
     );
     if (!response.ok) {
@@ -160,7 +160,7 @@ export const getAllCategories = async () => {
       `${baseUrl}categories/`,
 
       {
-        headers: hearder,
+        headers: header,
         method: "GET",
       }
     );
@@ -178,7 +178,7 @@ export const editCategory = async (id: number, formData: FormData) => {
     const response = await fetch(`${baseUrl}categories/${id}`, {
       method: "PUT",
       body: formData,
-      headers: hearder,
+      headers: header,
     });
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -189,6 +189,74 @@ export const editCategory = async (id: number, formData: FormData) => {
     console.log(err);
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const response = await fetch(
+      `${baseUrl}users/`,
+
+      {
+        headers: header,
+        method: "GET",
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const deleteUserApi = async (id: number) => {
+  try {
+    const response = await fetch(`${baseUrl}users/${id}`, {
+      headers: header,
+      method: "DELETE",
+    });
+    const deleteuser = await response.status;
+
+    return deleteuser;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const createUser = async (userData: any) => {
+  try {
+    const response = await fetch(
+      `${baseUrl}users/`,
+
+      {
+        method: "POST",
+        body: JSON.stringify(userData),
+        headers: header,
+      }
+    );
+
+    const createUserStatus = await response.status;
+
+    return createUserStatus;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const editUser = async (userData: any, id: number) => {
+  console.log(id);
+  try {
+    const response = await fetch(`${baseUrl}users/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(userData),
+      headers: header,
+    });
+    const editData = await response.status;
+    return editData;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const signIn = async (formdata: FormData) => {
   try {
     const response = await fetch(
@@ -198,8 +266,7 @@ export const signIn = async (formdata: FormData) => {
         method: "POST",
         body: formdata,
         headers: {
-          "ngrok-skip-browser-warning": "true"
-          
+          "ngrok-skip-browser-warning": "true",
         },
       }
     );
@@ -212,5 +279,3 @@ export const signIn = async (formdata: FormData) => {
     return error;
   }
 };
-
-export {};

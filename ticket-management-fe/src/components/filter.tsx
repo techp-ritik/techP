@@ -54,13 +54,6 @@ export default function Filter({ setLocalTickets }: props) {
 
   const [categories, setCategories] = React.useState([]);
 
- 
-  React.useEffect(() => {
-    getAllCategories().then((res) => {
-      setCategories(res);
-    });
-  }, []);
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -74,34 +67,16 @@ export default function Filter({ setLocalTickets }: props) {
       if (res && res.length > 0) {
         setCategories(res);
       } else {
-        // If res is null or the array is empty, set the state with an empty array.
         setCategories([]);
-        // toast.error("Error occured while fetching categories ", {
-        //   theme: "dark",
-        //   autoClose: false, // Set autoClose to false to keep the toast open
-        //   position: "top-center",
-        //   closeOnClick: true, // Allow users to close the toast by clicking
-        // });
-        // console.log("Error fetching Tickets");
       }
     });
     filterTickets(filters).then((res) => {
       if (res && res.length > 0) {
-        console.log(res)
+        console.log(res);
         setLocalTickets(res);
       } else {
-        // If res is null or the array is empty, set the state with an empty array.
         setLocalTickets([]);
-        // toast.error("Error occured while fetching categories ", {
-        //   theme: "dark",
-        //   autoClose: false, // Set autoClose to false to keep the toast open
-        //   position: "top-center",
-        //   closeOnClick: true, // Allow users to close the toast by clicking
-        // });
-        // console.log("Error fetching Tickets");
       }
-
-      // setCategories(res);
     });
   }, [params]);
 
