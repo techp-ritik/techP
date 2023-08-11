@@ -4,9 +4,13 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { DialogTitle } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import { ToastContainer, toast } from "react-toastify";
+import { editUser } from "../api/baseapi";
 import "react-toastify/dist/ReactToastify.css";
+import { createUser, getAllUsers } from "../api/baseapi";
 
 import { Data } from "./Users";
 
@@ -27,13 +31,11 @@ interface list {
   user: Data;
   setUser: React.Dispatch<
     React.SetStateAction<{
-      id: string;
+      id: number;
       name: string;
       email: string;
-      username: string;
-      phone: string;
-      ticketsCreated: number;
-      ticketsAssigned: number;
+      role: string;
+      phone: number;
 
       actions: string;
     }>
@@ -50,40 +52,27 @@ export default function CreateUserModal({
   setUser,
 }: list) {
   const clearForm = {
-    id: "",
+    id: 0,
     name: "",
     email: "",
-    username: "",
-    phone: "",
-    ticketsCreated: 0,
-    ticketsAssigned: 0,
+    role: "Select Role*",
+    phone: 0,
 
     actions: "",
   };
 
-  // const addUser = async () => {
-  //   fetch("ticketapi/UserList", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       id: user.id,
-  //       name: user.name,
-  //       email: user.email,
-  //       username: user.username,
-  //       phone: user.phone,
-  //     }),
-  //     headers: {
-  //       "Content-type": "application/json; charset=UTF-8",
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((newData) => {
-  //       setUserList([...UserList, newData]);
-  //     });
-  // };
-  //>
-  const handleSubmit = () => {
-    if (!user.name || !user.email || !user.phone || !user.username) {
-      toast.error("All fields are Mandatory", {
+  const handleSubmit = async () => {
+    if (!user.name || !user.email || !user.phone || !user.role) {
+      toast.error("Fields cannot be empty", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-right",
+      });
+      return;
+    }
+    const namePattern = /^[A-Za-z\s]+$/;
+    if (!namePattern.test(user.name)) {
+      toast.error("Name can only contain leters", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -91,37 +80,143 @@ export default function CreateUserModal({
       return;
     }
 
-    if (user.id == "") {
-      let newUser = user;
-      newUser.id = `#${UserList.length + 1}`;
-      let newUserData = [...UserList, newUser];
-      setUserList(newUserData);
-      setOpenModal(false);
-      //addUser()
-      toast("User Data Added Successfully", {
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(com)$/i;
+
+    if (!emailPattern.test(user.email)) {
+      toast.error("Invalid email format", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
       });
+      return;
+    }
+
+    if (user.role === "Select Role*") {
+      toast.error("Select User Role", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-right",
+      });
+      return;
+    }
+
+    if (
+      user.phone.toString().length > 10 ||
+      user.phone.toString().length < 10
+    ) {
+      toast.error("Contact Number must be exactly 10 digits", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-right",
+      });
+      return;
+    }
+
+    const userData = {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+    };
+
+    if (user.id === 0) {
+      try {
+        const response = await createUser(userData);
+
+        if (response === 200) {
+          getAllUsers()
+            .then((res) => {
+              const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
+              setUserList(sortedusers);
+
+              toast("New User Created Successfully", {
+                theme: "light",
+                autoClose: 1500,
+                position: "top-right",
+              });
+              setOpenModal(false);
+            })
+            .catch((error) => {
+              console.error("Error in creating user :", error);
+            });
+
+          return;
+        }
+
+        if (response === 401) {
+          toast("Unauthorized");
+          return;
+        }
+
+        if (response === 403) {
+          toast("Access Denied");
+          return;
+        }
+        if (response === 422) {
+          toast.error("Enter valid email address ", {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-right",
+          });
+          return;
+        }
+        if (response === 400) {
+          toast("User with the given email already exists");
+          return;
+        } else {
+          toast("An error occurred while creating the categoy .");
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     } else {
-      let res = UserList.map((list) => {
-        return list.id === user.id
-          ? {
-              ...list,
-              name: user.name,
-              email: user.email,
-              username: user.username,
-              phone: user.phone,
-            }
-          : list;
-      });
-      setUserList(res);
-      setOpenModal(false);
-      toast("User Updated Successfully", {
-        theme: "light",
-        autoClose: 1500,
-        position: "top-right",
-      });
+      try {
+        const response = await editUser(userData, user.id);
+
+        if (response === 200) {
+          getAllUsers()
+            .then((res) => {
+              const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
+              setUserList(sortedusers);
+
+              toast("User Updated Successfully", {
+                theme: "light",
+                autoClose: 1500,
+                position: "top-right",
+              });
+              setOpenModal(false);
+            })
+            .catch((error) => {
+              console.error("Error in updating user data:", error);
+            });
+
+          return;
+        }
+
+        if (response === 401) {
+          toast("Unauthorized");
+          return;
+        }
+        if (response === 422) {
+          toast("Enter valid Email Address");
+          return;
+        }
+
+        if (response === 403) {
+          toast("Access Denied");
+          return;
+        }
+        if (response === 400) {
+          toast("User with the given credentials already exists");
+          return;
+        } else {
+          toast("An error occurred while creating the categoy .");
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
     setUser(clearForm);
   };
@@ -141,82 +236,114 @@ export default function CreateUserModal({
             sx={{ borderTopLeftRadius: "8px", borderTopRightRadius: "8px" }}
           >
             {" "}
-            {/* <AccountCircleIcon sx={{ position: "relative", top: "5px" }} /> */}
-            {user.id == "" ? "Create User" : "Update User"}
+            {user.id === 0 ? "CREATE USER" : "USER DETAILS"}
           </DialogTitle>
-
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Box
-              component="form"
-              sx={{
-                "& .MuiTextField-root": { m: 1, width: "30ch" },
-              }}
-              noValidate
-              autoComplete="off"
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <Typography
+              id="modal-modal-description"
+              sx={{ mt: 2, mr: 2, mb: 2, ml: 2 }}
             >
-              <TextField
-                required
-                id="outlined-required"
-                label="Name"
-                value={user.name}
-                onChange={(e) => {
-                  setUser({ ...user, name: e.target.value });
+              <Box
+                sx={{
+                  "& .MuiTextField-root": { m: 1, width: "55ch" },
                 }}
-                defaultValue=""
-              />
-              <TextField
-                required
-                id="outlined-required"
-                type="email"
-                label="Email"
-                value={user.email}
-                onChange={(e) => {
-                  setUser({ ...user, email: e.target.value });
-                }}
-                defaultValue=""
-              />
-              <TextField
-                required
-                id="outlined-required"
-                label="User Name"
-                defaultValue=""
-                value={user.username}
-                onChange={(e) => {
-                  setUser({ ...user, username: e.target.value });
-                }}
-              />
-              <TextField
-                required
-                id="outlined-required"
-                label="Phone"
-                defaultValue=""
-                value={user.phone}
-                onChange={(e) => {
-                  setUser({ ...user, phone: e.target.value });
-                }}
-              />
-              <div style={{ textAlign: "end", marginRight: "5ch" }}>
-                <Button
-                  style={{ marginTop: "10px" }}
-                  size="large"
-                  onClick={() => {
-                    setOpenModal(false);
+              >
+                <TextField
+                  required
+                  id="outlined-required"
+                  label="Name"
+                  type="text"
+                  value={user.name}
+                  onChange={(e) => {
+                    setUser({ ...user, name: e.target.value });
                   }}
-                  variant="text"
+                  defaultValue=""
+                />
+
+                {user.id === 0 && (
+                  <TextField
+                    required
+                    id="outlined-required"
+                    type={"email"}
+                    label="Email"
+                    value={user.email}
+                    onChange={(e) => {
+                      setUser({ ...user, email: e.target.value });
+                    }}
+                    defaultValue=""
+                  />
+                )}
+
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  required
+                  defaultValue="Select Role*"
+                  autoFocus
+                  name="priority"
+                  type="text"
+                  value={user.role}
+                  sx={{
+                    marginBottom: "10px",
+                    width: "490px",
+                    marginTop: "10px",
+                    textAlign: "left",
+                  }}
+                  onChange={(e) => {
+                    setUser({ ...user, role: e.target.value });
+                  }}
                 >
-                  Cancel
-                </Button>
-                <Button
-                  style={{ marginTop: "10px" }}
-                  size="large"
-                  onClick={handleSubmit}
-                  variant="contained"
-                >
-                  {user.id == "" ? "Create User" : "Update "}
-                </Button>
-              </div>
-            </Box>
-          </Typography>
+                  <MenuItem value={"Select Role*"} disabled>
+                    Select Role*
+                  </MenuItem>
+                  <MenuItem value={"admin"}>admin</MenuItem>
+                  <MenuItem value={"user"}>user</MenuItem>
+                </Select>
+
+                <TextField
+                  required
+                  id="outlined-required"
+                  type="number"
+                  label="Phone"
+                  error={user.phone.toString().length !== 10}
+                  helperText={
+                    user.phone.toString().length !== 10
+                      ? "Contact number must be exactly 10 digits"
+                      : ""
+                  }
+                  value={user.phone === 0 ? "" : user.phone}
+                  onChange={(e) => {
+                    setUser({ ...user, phone: parseInt(e.target.value) });
+                  }}
+                />
+                <div style={{ textAlign: "end", marginRight: "15px" }}>
+                  <Button
+                    style={{ marginTop: "10px" }}
+                    size="large"
+                    onClick={() => {
+                      setOpenModal(false);
+                    }}
+                    variant="text"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    style={{ marginTop: "10px", height: "30px" }}
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                  >
+                    {user.id === 0 ? "Create User" : "Update "}
+                  </Button>
+                </div>
+              </Box>
+            </Typography>
+          </form>
         </Box>
       </Modal>
     </div>

@@ -1,10 +1,14 @@
-const baseUrl = "https://e053-103-177-83-247.ngrok-free.app/v1/"
+const baseUrl = "https://b49b-210-16-94-99.ngrok-free.app/v1/"
+const token  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhdGhhcnYudmFzcGF0ZUBnbWFpbC5jb20iLCJleHAiOjE2OTE3NTQ2OTJ9.WoxQyRocuBYaLCf9BQdjQudOUwsEzWKBjIJrEuXztX0"
+
+
+
 export const getAllTickets = async () => {
     try {
       const response = await fetch( 
         `${baseUrl}tickets`,
         {
-          headers: { "ngrok-skip-browser-warning": "true" },
+          headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${token}` },
         }
       );
       if (!response.ok) {
@@ -22,7 +26,7 @@ export const getAllTickets = async () => {
       
         `${baseUrl}ticket/${id}`,
         {
-          headers: { "ngrok-skip-browser-warning": "true" },
+          headers: { "ngrok-skip-browser-warning": "true"  , Authorization: `Bearer ${token}`},
           method: "DELETE",
         }
       );
@@ -41,8 +45,9 @@ export const getAllTickets = async () => {
         `${baseUrl}ticket/${id}`,
        
         {
-          headers: { "ngrok-skip-browser-warning": "true" },
+          headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${token}` },
           method: "GET",
+          
         }
       );
       if (!response.ok) {
@@ -67,7 +72,7 @@ export const getAllTickets = async () => {
             method: "PUT",
             body: formData,
             headers: {
-              "ngrok-skip-browser-warning": "true",
+              "ngrok-skip-browser-warning": "true", Authorization: `Bearer ${token}`
             },
           }
         );
@@ -92,7 +97,7 @@ export const getAllTickets = async () => {
       const response = await fetch(
         `${baseUrl+query}`,
         {
-          headers: { "ngrok-skip-browser-warning": "true" },
+          headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${token}` },
         }
       );
   
@@ -114,7 +119,7 @@ export const getAllTickets = async () => {
             {
               method: "POST",
               body: formData,
-              headers: { "ngrok-skip-browser-warning": "true" },
+              headers: { "ngrok-skip-browser-warning": "true"  , Authorization: `Bearer ${token}`},
             }
           );
           if (!response.ok) {
@@ -135,7 +140,7 @@ export const getAllTickets = async () => {
           method: "PUT",
           body: formData,
           headers: {
-            "ngrok-skip-browser-warning": "true",
+            "ngrok-skip-browser-warning": "true", Authorization: `Bearer ${token}`
           },
         }
       );
@@ -153,7 +158,7 @@ export const getAllTickets = async () => {
             {
               method: "POST",
               body: formData,
-              headers: { "ngrok-skip-browser-warning": "true" },
+              headers: { "ngrok-skip-browser-warning": "true"  , Authorization: `Bearer ${token}`},
             }
           );
           if (!response.ok) {
@@ -171,7 +176,7 @@ export const getAllTickets = async () => {
         `${baseUrl}categories/`,
   
         {
-          headers: { "ngrok-skip-browser-warning": "true" },
+          headers: { "ngrok-skip-browser-warning": "true"  , Authorization: `Bearer ${token}`},
           method: "GET",
         }
       );
@@ -193,7 +198,7 @@ export const getAllTickets = async () => {
           method: "PUT",
           body: formData,
           headers: {
-            "ngrok-skip-browser-warning": "true",
+            "ngrok-skip-browser-warning": "true",Authorization: `Bearer ${token}`
           },
         }
       );
@@ -206,8 +211,99 @@ export const getAllTickets = async () => {
       console.log(err);
     }
   }
+
+  export const getAllUsers = async () => {
+    try {
+      const response = await fetch(
+        `${baseUrl}users/`,
+   
+        {
+          headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${token}`},
+          method: "GET",
+        }
+      );
+ 
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
   
+
+  export const deleteUserApi = async (id: number)=> {
+    try {
+      const response = await fetch(
+      
+        `${baseUrl}users/${id}`,
+        {
+          headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${token}` },
+          method: "DELETE",
+        }
+      );
+      const deleteuser = await response.status;
+    
+      return deleteuser;
+      
+    } catch (err) {
+      console.log(err);
+    }
+
+  };
+
+  export const createUser = async(userData : any) =>{
+    try {
+    
+    
+      const response = await fetch(
+          `${baseUrl}users/`,
+        
+          {
+            method: "POST",
+            body : JSON.stringify(userData),
+            headers: { "ngrok-skip-browser-warning": "true"  , "Content-Type": "application/json" , Authorization: `Bearer ${token}`},
+          }
+        );
+  
+        
+        const createUserStatus = await response.status;
+    
+        return createUserStatus;
+}catch (error) {
+  return error;
+}
+}
+
+export const editUser = async (userData : any , id : number )  =>{
+  console.log(id);
+  try{
+  const response = await fetch(
+      
+      `${baseUrl}users/${id}`,
+      {
+        method: "PUT",
+        body : JSON.stringify(userData),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+           "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`
+        },
+      }
+    );
+    const editData =  await response.status;
+    return editData;
+  }catch (error) {
+    return error;
+  }
+}
+
+
+
+
+
+
+
+
   export{}
   
-  
-  
+ 
