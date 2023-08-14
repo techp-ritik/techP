@@ -8,20 +8,23 @@ const header = {
   Accept: "application/json",
   "ngrok-skip-browser-warning": "true",
 };
-const requestOptions = {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-    Accept: "application/json",
-    "ngrok-skip-browser-warning": "true",
-  },
-};
+// const requestOptions = {
+//   method: "GET",
+//   headers: {
+//     Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+//     Accept: "application/json",
+//     "ngrok-skip-browser-warning": "true",
+//   },
+// };
 
 export const getAllTickets = async () => {
   try {
-    console.log(token);
-    const response = await fetch(`${baseUrl}tickets`, requestOptions);
-    console.log(token);
+    const response = await fetch( 
+      `${baseUrl}tickets`,
+      {
+        headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${token}` },
+      }
+    );
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -315,7 +318,7 @@ export const Forgetpasswordlink = async (formdata: any) => {
   }
 };
 
-export const Forgetpasswordreset = async (formdata: any,email:string) => {
+export const forgetpasswordreset = async (formdata: any,email:string) => {
   try {
     const response = await fetch(
       `${baseUrl}forgot-password/reset/${email}`,

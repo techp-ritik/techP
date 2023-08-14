@@ -129,8 +129,7 @@ export default function Navbar() {
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            {location.pathname !== "/login" &&
-              location.pathname !== "/forgetpassword" && <Profile />}
+            {user.access_token && <Profile />}
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton

@@ -56,6 +56,7 @@ export default function TicketBoard() {
 
   useEffect(() => {
     getAllTickets().then((res) => {
+    
       if (res && res.length > 0) {
         setTickets(res);
         setLocalTickets(res);

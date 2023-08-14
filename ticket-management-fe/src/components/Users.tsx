@@ -61,7 +61,7 @@ export type Data = {
 };
 
 export default function Users() {
-  const token =React.useContext(Usercontext);
+  const User =React.useContext(Usercontext).user.user;
   
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -151,6 +151,7 @@ export default function Users() {
 
   const [user, setUser] = useState(clearForm);
 
+ 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -242,9 +243,9 @@ export default function Users() {
       </div>
     );
   }
-console.log(token)
+
   return (
-    <>{token.user?.user?.role!=="admin" && <Navigate to={"/dashboard"} replace />}
+    <>{User.role!=="admin" && <Navigate to={"/dashboard"} replace />}
       <DeleteModal />
       <div style={{ textAlign: "end", margin: "20px" }}>
         <CreateUserModal

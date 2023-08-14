@@ -8,9 +8,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import Alert from "@mui/material/Alert";
-import { Forgetpasswordlink, Forgetpasswordreset } from "../api/baseapi";
+import { Forgetpasswordlink, forgetpasswordreset } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Usercontext } from "../App";
@@ -43,14 +43,16 @@ export default function Forgetpassword() {
           position: "top-right",
         });
         setLoader(false);
-      } else if (res == 404) {
+      }
+      if (res == 404) {
         toast.error("Invalid email: Mail not found in the database.", {
           theme: "dark",
           autoClose: 1500,
           position: "top-right",
         });
         setLoader(false);
-      } else if (res == 401) {
+      }
+      if (res == 401) {
         toast.error("Invalid credentials or user does not exists. Try Again.", {
           theme: "dark",
           autoClose: 1500,
@@ -92,7 +94,7 @@ export default function Forgetpassword() {
     };
     const email = credentials.email;
     console.log(credentials);
-    Forgetpasswordreset(request, email).then((res: any) => {
+    forgetpasswordreset(request, email).then((res: any) => {
       console.log(res);
       if (res == 400) {
         toast.error("Invalid credentials. Check your otp code or expiry time", {
@@ -101,7 +103,8 @@ export default function Forgetpassword() {
           position: "top-right",
         });
         setLoader(false);
-      } else if (res == 422) {
+      }
+      if (res == 422) {
         toast.error("OTP code should have at most 6 characters", {
           theme: "dark",
           autoClose: 1500,
