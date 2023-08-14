@@ -12,16 +12,17 @@ import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { Usercontext } from "../App";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import LogoutIcon from "@mui/icons-material/Logout";
+import Profile from "./Profile";
 export default function Navbar() {
-  const { user, setUser } = React.useContext(Usercontext);
+  const { user, setUser } = useContext(Usercontext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+    useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -64,15 +65,15 @@ export default function Navbar() {
         handleMobileMenuClose();
       }}
     >
-      <MenuItem> <Button
+      <Profile />
+      {/* <MenuItem> <Button
         startIcon={<LogoutIcon/>}
         size="large"
         onClick={Logout}
         variant="text"
       >
         Log Out
-      </Button> </MenuItem>
-     
+      </Button> </MenuItem> */}
     </Menu>
   );
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -116,7 +117,7 @@ export default function Navbar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-         {user.access_token &&<MenuIcon onClick={handleSidebarToggle} /> } 
+          {user.access_token && <MenuIcon onClick={handleSidebarToggle} />}
           <Typography
             variant="h6"
             noWrap
@@ -128,19 +129,8 @@ export default function Navbar() {
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            {location.pathname !== "/login" && (
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            )}
+            {location.pathname !== "/login" &&
+              location.pathname !== "/forgetpassword" && <Profile />}
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -156,7 +146,7 @@ export default function Navbar() {
           </Box>
         </Toolbar>
       </AppBar>
-        <SideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <SideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       {renderMobileMenu}
       {renderMenu}
     </Box>

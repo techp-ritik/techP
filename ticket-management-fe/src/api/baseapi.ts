@@ -1,16 +1,27 @@
-const baseUrl = "https://b49b-210-16-94-99.ngrok-free.app/v1/";
-const token = localStorage.getItem("access_token");
+const baseUrl = "https://b26c-103-184-105-238.ngrok-free.app/v1/";
+const token = JSON.parse(
+  localStorage.getItem("access_token") || "{}"
+).access_token;
+
 const header = {
-  "ngrok-skip-browser-warning": "true",
-  Authorization: `Bearer ${token}`,
+  Authorization: `Bearer ${token}`, // Include the token in the Authorization header
   Accept: "application/json",
+  "ngrok-skip-browser-warning": "true",
 };
-console.log(token)
+const requestOptions = {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+    Accept: "application/json",
+    "ngrok-skip-browser-warning": "true",
+  },
+};
+
 export const getAllTickets = async () => {
   try {
-    const response = await fetch(`${baseUrl}tickets`, {
-      headers: header,
-    });
+    console.log(token);
+    const response = await fetch(`${baseUrl}tickets`, requestOptions);
+    console.log(token);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -267,6 +278,54 @@ export const signIn = async (formdata: FormData) => {
         body: formdata,
         headers: {
           "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.status;
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  } catch (error) {
+    return error;
+  }
+};
+
+export const Forgetpasswordlink = async (formdata: any) => {
+  try {
+    const response = await fetch(
+      `${baseUrl}forgot-password`,
+
+      {
+        method: "POST",
+        body: JSON.stringify(formdata),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          'Content-Type': 'application/json'
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.status;
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  } catch (error) {
+    return error;
+  }
+};
+
+export const Forgetpasswordreset = async (formdata: any,email:string) => {
+  try {
+    const response = await fetch(
+      `${baseUrl}forgot-password/reset/${email}`,
+
+      {
+        method: "POST",
+        body: JSON.stringify(formdata),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          'Content-Type': 'application/json'
         },
       }
     );

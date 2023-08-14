@@ -43,7 +43,7 @@ export default function Categories() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const{user}=React.useContext(Usercontext);
-  
+  let User=user?.user
  
   useEffect(() => {
     getAllCategories().then((res) => {
@@ -230,7 +230,7 @@ export default function Categories() {
   };
 
   return (
-    <> {  user?.user?.role!=="admin" && <Navigate to={"/dashboard"} replace />}
+    <> {  User?.role!=="admin" && <Navigate to={"/dashboard"} replace />}
       <div
         style={{
           textAlign: "end",

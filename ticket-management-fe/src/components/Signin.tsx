@@ -2,13 +2,13 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
+import { Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import Alert from "@mui/material/Alert";
 import { signIn } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ export default function SignIn() {
     password: "",
   });
   const navigate=useNavigate();
-  const{user,setUser}=React.useContext(Usercontext)
+  const{user,setUser}=useContext(Usercontext)
  
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
@@ -44,7 +44,7 @@ export default function SignIn() {
     formdata.append("password",credentials.password)
     console.log(credentials)
     signIn(formdata).then((res)=>{
-    
+    console.log(res)
       if(res.user){
         navigate('/dashboard')
         localStorage.setItem("access_token",JSON.stringify(res))
@@ -55,7 +55,7 @@ export default function SignIn() {
         localStorage.setItem("Access Token",res.access_token)
       }
       else{
-        toast.error("Invalid Username or Password", {
+        toast.error("Invalid credentials or user does not exists. Try Again.", {
           theme: "dark",
           autoClose: 1500,
           position: "top-right",
@@ -140,7 +140,7 @@ export default function SignIn() {
           </form>{" "}
           <Grid container>
             <Grid item xs>
-              <Link sx={{ fontSize: "12px" }} href="#" variant="body2">
+              <Link  to='/forgetpassword'  style={{ fontSize: "12px" }} >
                 Forgot password?
               </Link>
             </Grid>
