@@ -52,16 +52,6 @@ export default function Categories() {
         setCategories(sortedCategories);
       } else {
         setCategories([]);
-        toast.error(
-          "Error occured while fetching categories from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false,
-            position: "top-right",
-            closeOnClick: true,
-          }
-        );
-        console.log("Error fetching Tickets");
       }
     });
   }, []);
@@ -298,36 +288,44 @@ export default function Categories() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories
-                .filter(
-                  (category) =>
-                    category.name.toLowerCase().includes(searchQuery) ||
-                    category.description.toLowerCase().includes(searchQuery)
-                )
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.description}
-                      onClick={() => handleOpenEditModal(row)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {columns.map((column) => {
-                        const value = row[column.data];
-                        return (
-                          <TableCell key={column.data} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+              {categories.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="left">
+                    No categories to display.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                categories
+                  .filter(
+                    (category) =>
+                      category.name.toLowerCase().includes(searchQuery) ||
+                      category.description.toLowerCase().includes(searchQuery)
+                  )
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.description}
+                        onClick={() => handleOpenEditModal(row)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.data];
+                          return (
+                            <TableCell key={column.data} align={column.align}>
+                              {column.format && typeof value === "number"
+                                ? column.format(value)
+                                : value}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              )}
             </TableBody>
           </Table>
 

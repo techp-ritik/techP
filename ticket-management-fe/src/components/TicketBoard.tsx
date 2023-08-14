@@ -59,22 +59,9 @@ export default function TicketBoard() {
       if (res && res.length > 0) {
         setTickets(res);
         setLocalTickets(res);
-        console.log(res);
       } else {
-        // If res is null or the array is empty, set the state with an empty array.
-        console.log("inside not tickets");
         setTickets([]);
         setLocalTickets([]);
-        toast.error(
-          "Error occured while fetching data from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-right",
-            closeOnClick: true, // Allow users to close the toast by clicking
-          }
-        );
-        console.log("Error fetching Tickets");
       }
     });
   }, []);
@@ -144,7 +131,7 @@ export default function TicketBoard() {
     }
   };
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
-  console.log(localtickets);
+
   return (
     <Box
       sx={{

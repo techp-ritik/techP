@@ -78,16 +78,6 @@ export default function Users() {
         setUserList(sortedUsers);
       } else {
         setUserList([]);
-        toast.error(
-          "Error occured while fetching User List from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false,
-            position: "top-right",
-            closeOnClick: true,
-          }
-        );
-        console.log("Error fetching Tickets");
       }
     });
   }, []);
@@ -281,27 +271,6 @@ export default function Users() {
             ),
           }}
         />
-        {/* 
-<TextField
-          type="text"
-          id="search"
-          name="search"
-          value={searchQuery}
-          placeholder="Search Category"
-          onChange={handleSearchQueryChange}
-          style={{ marginRight: "1px" }}
-          sx={{ width: "300px" }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon
-                  onClick={() => setSearchQuery("")}
-                  sx={{ cursor: "pointer" }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        /> */}
 
         <Button
           onClick={() => {
@@ -329,14 +298,6 @@ export default function Users() {
                     align={"center"}
                     style={{ minWidth: column.minWidth }}
                   >
-                    {/* <TableSortLabel
-                      active={sortBy === column.id}
-                      direction={sortOrder}
-                      onClick={() => handleSort(column.id)}
-                    >
-                      {column.label}
-                    </TableSortLabel> */}
-
                     {column.id === "name" || column.id === "email" ? (
                       <TableSortLabel
                         active={sortBy === column.id}
@@ -353,62 +314,63 @@ export default function Users() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* {Userlist.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
-                .filter((item) => {
-                  return searchList.toLowerCase() === ""
-                    ? item
-                    : item.name
-                        .toLowerCase()
-                        .includes(searchList.toLowerCase());
-                }) */}
+              {Userlist.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="left">
+                    No users to display.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                Userlist.filter(
+                  (item) =>
+                    item.name.toLowerCase().includes(searchList) ||
+                    item.email.toLowerCase().includes(searchList) ||
+                    item.role.toLowerCase().includes(searchList)
+                )
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.id}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
 
-              {Userlist.filter(
-                (item) =>
-                  item.name.toLowerCase().includes(searchList) ||
-                  item.email.toLowerCase().includes(searchList) ||
-                  item.role.toLowerCase().includes(searchList)
-              )
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                      {columns.map((column) => {
-                        const value = row[column.id];
-
-                        return (
-                          <TableCell
-                            key={column.id}
-                            align={"center"}
-                            onClick={() => {
-                              setUser(row);
-                              if (column.label !== "Actions") {
-                                setOpenModal(true);
-                              }
-                            }}
-                          >
-                            {column.label === "Actions" ? (
-                              <Button
-                                sx={{ color: "crimson" }}
-                                onClick={() => {
-                                  setOpen(true);
-                                  setUser(row);
-                                }}
-                                startIcon={<DeleteIcon />}
-                              ></Button>
-                            ) : column.format && typeof value === "number" ? (
-                              column.format(value)
-                            ) : (
-                              value
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+                          return (
+                            <TableCell
+                              key={column.id}
+                              align={"center"}
+                              onClick={() => {
+                                setUser(row);
+                                if (column.label !== "Actions") {
+                                  setOpenModal(true);
+                                }
+                              }}
+                            >
+                              {column.label === "Actions" ? (
+                                <Button
+                                  sx={{ color: "crimson" }}
+                                  onClick={() => {
+                                    setOpen(true);
+                                    setUser(row);
+                                  }}
+                                  startIcon={<DeleteIcon />}
+                                ></Button>
+                              ) : column.format && typeof value === "number" ? (
+                                column.format(value)
+                              ) : (
+                                value
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              )}
             </TableBody>
           </Table>
           <TablePagination

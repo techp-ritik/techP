@@ -5,8 +5,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
-
+import { getAllAssignees } from "../api/baseapi";
 import { getAllCategories } from "../api/baseapi";
+import { baseUrl } from "../api/baseapi";
 
 import {
   Dialog,
@@ -62,20 +63,14 @@ function Ticket({
       if (res && res.length > 0) {
         setCategories(res);
       } else {
-        // If res is null or the array is empty, set the state with an empty array.
-        // console.log("inside not tickets");
         setCategories([]);
-        // setLocalTickets([]);
-        toast.error(
-          "Error occured while fetching category list . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-right",
-            closeOnClick: true, // Allow users to close the toast by clicking
-          }
-        );
-        console.log("Error fetching categories inside open popup");
+      }
+    });
+    getAllAssignees().then((res) => {
+      if (res && res.length > 0) {
+        setAssignee(res);
+      } else {
+        setCategories([]);
       }
     });
     setIsModalOpen(true);
@@ -87,7 +82,7 @@ function Ticket({
       description: "",
       category_id: 0,
       priority: "",
-      assignee: 1,
+      assignee: 0,
 
       file: [],
       filepath: [],
@@ -102,14 +97,18 @@ function Ticket({
     name: string;
     id: number;
   }
-
+  interface Assignee {
+    name: string;
+    id: number;
+  }
   const [categories, setCategories] = useState<Category[]>([]);
+  const [assignees, setAssignee] = useState<Assignee[]>([]);
   const [ticketInformation, setticketInformation] = useState<{
     title: string;
     description: string;
     category_id: number | string;
     priority: string;
-    assignee: number;
+    assignee: number | string;
     created_by: number;
     filepath: string[];
 
@@ -119,7 +118,7 @@ function Ticket({
     description: "",
     category_id: "Select Category*",
     priority: "Select Priority*",
-    assignee: 1,
+    assignee: "Select Assignee*",
     filepath: [],
     created_by: 1,
     file: [],
@@ -149,9 +148,6 @@ function Ticket({
   };
 
   const handleEdit = () => {
-    console.log(selectedTicket.title);
-    console.log(selectedTicket.category.name);
-    console.log(selectedTicket);
     setticketInformation({
       title: selectedTicket.title,
       description: selectedTicket.description,
@@ -164,7 +160,7 @@ function Ticket({
       priority: selectedTicket.priority,
 
       created_by: selectedTicket.created_by,
-      assignee: selectedTicket.assignee,
+      assignee: selectedTicket.assigned_to.id,
       file: [],
     });
 
@@ -198,7 +194,8 @@ function Ticket({
       !ticketInformation.title ||
       !ticketInformation.description ||
       ticketInformation.category_id === "Select Category*" ||
-      ticketInformation.priority === "Select Priority*"
+      ticketInformation.priority === "Select Priority*" ||
+      ticketInformation.assignee === "Select Assignee*"
     ) {
       toast.error("Please fill all the required fields", {
         theme: "light",
@@ -210,27 +207,20 @@ function Ticket({
     }
 
     const formData = new FormData();
-    console.log("final");
-    console.log(ticketInformation.category_id.toString());
-    console.log(ticketInformation.category_id);
+
     formData.append("title", ticketInformation.title);
     formData.append("description", ticketInformation.description);
     formData.append("category_id", ticketInformation.category_id.toString());
     formData.append("priority", ticketInformation.priority);
     formData.append("assignee", ticketInformation.assignee.toString());
     formData.append("created_by", ticketInformation.created_by?.toString());
-    console.log("here working");
-    console.log(formData);
 
     ticketInformation.file.forEach((file) => {
       formData.append("files", file);
     });
-    console.log("check ikde888888888");
 
     if (id === 0) {
       try {
-        console.log(formData);
-
         let createResponse = await createTicket(formData);
 
         if (createResponse === 201) {
@@ -270,8 +260,6 @@ function Ticket({
         }
       } catch (error) {}
     } else {
-      console.log("he ikde bagh");
-      console.log(formData);
       let editResponse = await updateTicket(formData, id);
 
       if (editResponse === 200) {
@@ -301,18 +289,24 @@ function Ticket({
     }
   };
 
-  const deleteTicketHandler = (id: number) => {
-    deleteTicket(id);
-    getAllTickets().then((res) => {
-      console.log(res);
-      setLocaltickets(res);
-    });
-    handleCloseModal();
-    toast(`Ticket#${id} Deleted Successfully`, {
-      theme: "light",
-      autoClose: 1500,
-      position: "top-right",
-    });
+  const deleteTicketHandler = async (id: number) => {
+    try {
+      await deleteTicket(id);
+      const updatedTickets = await getAllTickets();
+      setLocaltickets(updatedTickets);
+      handleCloseModal();
+      toast(`Ticket#${id} Deleted Successfully`, {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-right",
+      });
+    } catch (error) {
+      toast("An error occurred while deleting the ticket. Please try again.", {
+        theme: "light",
+        autoClose: 1500,
+        position: "top-right",
+      });
+    }
   };
 
   return (
@@ -387,16 +381,39 @@ function Ticket({
               <MenuItem value={"Select Category*"} disabled>
                 Select Category*
               </MenuItem>
-              {/* {id ? "TICKET DETAILS" : "CREATE NEW TICKET"} */}
-              {id ? (
-                <MenuItem value={ticketInformation.category_id} disabled>
-                  {ticketInformation.category_id}
-                </MenuItem>
-              ) : null}
 
               {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              fullWidth
+              required={id === null || id === 0}
+              defaultValue={ticketInformation.assignee}
+              autoFocus
+              name="assignee"
+              type="text"
+              value={ticketInformation.assignee}
+              sx={{ marginBottom: "20px" }}
+              onChange={(e) => {
+                setticketInformation({
+                  ...ticketInformation,
+                  assignee: e.target.value,
+                });
+              }}
+            >
+              <MenuItem value={"Select Assignee*"} disabled>
+                Select Assignee*
+              </MenuItem>
+
+              {assignees.map((assigned_to) => (
+                <MenuItem key={assigned_to.id} value={assigned_to.id}>
+                  {assigned_to.name}
                 </MenuItem>
               ))}
             </Select>
@@ -518,7 +535,7 @@ function Ticket({
                     }}
                   >
                     <Link
-                      href={"https://b49b-210-16-94-99.ngrok-free.app/" + path}
+                      href={baseUrl.replace("/v1", "") + path}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
