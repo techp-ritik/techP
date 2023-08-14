@@ -59,10 +59,7 @@ export default function TicketBoard() {
       if (res && res.length > 0) {
         setTickets(res);
         setLocalTickets(res);
-        console.log(res);
-      } else {
-        // If res is null or the array is empty, set the state with an empty array.
-        console.log("inside not tickets");
+      } else if (res === undefined) {
         setTickets([]);
         setLocalTickets([]);
         toast.error(
@@ -74,7 +71,9 @@ export default function TicketBoard() {
             closeOnClick: true, // Allow users to close the toast by clicking
           }
         );
-        console.log("Error fetching Tickets");
+      } else {
+        setTickets([]);
+        setLocalTickets([]);
       }
     });
   }, []);
@@ -144,7 +143,7 @@ export default function TicketBoard() {
     }
   };
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
-  console.log(localtickets);
+
   return (
     <Box
       sx={{

@@ -1,5 +1,6 @@
-const baseUrl = "https://b49b-210-16-94-99.ngrok-free.app/v1/"
-const token  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhdGhhcnYudmFzcGF0ZUBnbWFpbC5jb20iLCJleHAiOjE2OTE3NTQ2OTJ9.WoxQyRocuBYaLCf9BQdjQudOUwsEzWKBjIJrEuXztX0"
+const baseUrl = "https://b26c-103-184-105-238.ngrok-free.app/v1/"
+
+const token  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YWlzaG5hdmkucmFuYmhhcmVAdGVjaHByZXNjaWVudC5jb20iLCJleHAiOjE2OTIwMDQxMDJ9.JAj--pRh46phBAVjx32oHE0R7fNB9CwveEsBrAlQrn8"
 
 
 
@@ -297,7 +298,25 @@ export const editUser = async (userData : any , id : number )  =>{
   }
 }
 
-
+export const getAllAssignees = async () => {
+  try {
+    const response = await fetch(
+      `${baseUrl}users/assignees/`,
+  
+      {
+        headers: { "ngrok-skip-browser-warning": "true"  , Authorization: `Bearer ${token}`},
+        method: "GET",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const assignees = await response.json();
+    return assignees;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 
 

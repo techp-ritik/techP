@@ -44,14 +44,17 @@ export default function Categories() {
 
   useEffect(() => {
     getAllCategories().then((res) => {
+      console.log("check category response");
+      console.log(res);
       if (res && res.length > 0) {
         const sortedCategories = res.sort(
           (a: Category, b: Category) => a.id - b.id
         );
 
         setCategories(sortedCategories);
-      } else {
+      } else if (res === undefined) {
         setCategories([]);
+
         toast.error(
           "Error occured while fetching categories from Server . Please try again later ",
           {
@@ -61,7 +64,8 @@ export default function Categories() {
             closeOnClick: true,
           }
         );
-        console.log("Error fetching Tickets");
+      } else {
+        setCategories([]);
       }
     });
   }, []);
@@ -298,36 +302,44 @@ export default function Categories() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories
-                .filter(
-                  (category) =>
-                    category.name.toLowerCase().includes(searchQuery) ||
-                    category.description.toLowerCase().includes(searchQuery)
-                )
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.description}
-                      onClick={() => handleOpenEditModal(row)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {columns.map((column) => {
-                        const value = row[column.data];
-                        return (
-                          <TableCell key={column.data} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+              {categories.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="left">
+                    No categories to display.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                categories
+                  .filter(
+                    (category) =>
+                      category.name.toLowerCase().includes(searchQuery) ||
+                      category.description.toLowerCase().includes(searchQuery)
+                  )
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.description}
+                        onClick={() => handleOpenEditModal(row)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.data];
+                          return (
+                            <TableCell key={column.data} align={column.align}>
+                              {column.format && typeof value === "number"
+                                ? column.format(value)
+                                : value}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              )}
             </TableBody>
           </Table>
 
