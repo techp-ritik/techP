@@ -7,6 +7,7 @@ import Link from "@mui/material/Link/Link";
 import { useState } from "react";
 import { getAllAssignees } from "../api/baseapi";
 import { getAllCategories } from "../api/baseapi";
+import { baseUrl } from "../api/baseapi";
 
 import {
   Dialog,
@@ -61,47 +62,15 @@ function Ticket({
     getAllCategories().then((res) => {
       if (res && res.length > 0) {
         setCategories(res);
-      } else if (res === undefined) {
-        setCategories([]);
-        // setLocalTickets([]);
-        console.log("ikde check kar");
-        console.log(res);
-        toast.error(
-          "Error occured while fetching category list . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-right",
-            closeOnClick: true, // Allow users to close the toast by clicking
-          }
-        );
       } else {
         setCategories([]);
-
-        console.log("Error fetching categories inside open popup");
       }
     });
     getAllAssignees().then((res) => {
       if (res && res.length > 0) {
         setAssignee(res);
-      } else if (res === undefined) {
-        setCategories([]);
-
-        console.log("ikde check kar");
-        console.log(res);
-        toast.error(
-          "Error occured while fetching assignee list . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-right",
-            closeOnClick: true, // Allow users to close the toast by clicking
-          }
-        );
       } else {
         setCategories([]);
-
-        console.log("Error fetching categories inside open popup");
       }
     });
     setIsModalOpen(true);
@@ -179,11 +148,6 @@ function Ticket({
   };
 
   const handleEdit = () => {
-    console.log(selectedTicket.title);
-    console.log(selectedTicket.category.name);
-    console.log("he bagh 93");
-    console.log(selectedTicket.assigned_to);
-    console.log(selectedTicket);
     setticketInformation({
       title: selectedTicket.title,
       description: selectedTicket.description,
@@ -243,27 +207,20 @@ function Ticket({
     }
 
     const formData = new FormData();
-    console.log("final");
-    console.log(ticketInformation.category_id.toString());
-    console.log(ticketInformation.category_id);
+
     formData.append("title", ticketInformation.title);
     formData.append("description", ticketInformation.description);
     formData.append("category_id", ticketInformation.category_id.toString());
     formData.append("priority", ticketInformation.priority);
     formData.append("assignee", ticketInformation.assignee.toString());
     formData.append("created_by", ticketInformation.created_by?.toString());
-    console.log("here working");
-    console.log(formData);
 
     ticketInformation.file.forEach((file) => {
       formData.append("files", file);
     });
-    console.log("check ikde888888888");
 
     if (id === 0) {
       try {
-        console.log(formData);
-
         let createResponse = await createTicket(formData);
 
         if (createResponse === 201) {
@@ -303,8 +260,6 @@ function Ticket({
         }
       } catch (error) {}
     } else {
-      console.log("he ikde bagh");
-      console.log(formData);
       let editResponse = await updateTicket(formData, id);
 
       if (editResponse === 200) {
@@ -580,9 +535,7 @@ function Ticket({
                     }}
                   >
                     <Link
-                      href={
-                        "https://b26c-103-184-105-238.ngrok-free.app/" + path
-                      }
+                      href={baseUrl.replace("/v1", "") + path}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{

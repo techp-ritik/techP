@@ -1,6 +1,6 @@
-const baseUrl = "https://b26c-103-184-105-238.ngrok-free.app/v1/"
+export const baseUrl = "https://a620-103-177-83-247.ngrok-free.app/v1/"
 
-const token  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YWlzaG5hdmlyYW5iaGFyZUBnbWFpbC5jb20iLCJleHAiOjE2OTIwMDkxNjN9.lqgGChkmgArwYrbP_AFFnFYlHPvFjPLUQqIiJKNNOUs"
+const token  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YWlzaG5hdmkucmFuYmhhcmVAdGVjaHByZXNjaWVudC5jb20iLCJleHAiOjE2OTIwMTk0MzF9.v0Xac219b34rcLd7nnaMsPuMkIgLoxk9HVKrGiDRkIU"
 
 
 

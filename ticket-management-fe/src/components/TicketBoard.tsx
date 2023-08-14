@@ -59,18 +59,6 @@ export default function TicketBoard() {
       if (res && res.length > 0) {
         setTickets(res);
         setLocalTickets(res);
-      } else if (res === undefined) {
-        setTickets([]);
-        setLocalTickets([]);
-        toast.error(
-          "Error occured while fetching data from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-right",
-            closeOnClick: true, // Allow users to close the toast by clicking
-          }
-        );
       } else {
         setTickets([]);
         setLocalTickets([]);

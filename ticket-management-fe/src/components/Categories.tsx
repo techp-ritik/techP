@@ -44,26 +44,12 @@ export default function Categories() {
 
   useEffect(() => {
     getAllCategories().then((res) => {
-      console.log("check category response");
-      console.log(res);
       if (res && res.length > 0) {
         const sortedCategories = res.sort(
           (a: Category, b: Category) => a.id - b.id
         );
 
         setCategories(sortedCategories);
-      } else if (res === undefined) {
-        setCategories([]);
-
-        toast.error(
-          "Error occured while fetching categories from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false,
-            position: "top-right",
-            closeOnClick: true,
-          }
-        );
       } else {
         setCategories([]);
       }

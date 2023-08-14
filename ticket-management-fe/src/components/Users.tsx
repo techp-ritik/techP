@@ -76,17 +76,6 @@ export default function Users() {
         const sortedUsers = res.sort((a: Data, b: Data) => a.id - b.id);
 
         setUserList(sortedUsers);
-      } else if (res === undefined) {
-        setUserList([]);
-        toast.error(
-          "Error occured while fetching User List from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false,
-            position: "top-right",
-            closeOnClick: true,
-          }
-        );
       } else {
         setUserList([]);
       }
