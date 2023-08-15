@@ -96,7 +96,7 @@ export default function Forgetpassword() {
     console.log(credentials);
     forgetpasswordreset(request, email).then((res: any) => {
       console.log(res);
-      if (res == 400) {
+      if (res == 400 || res==401) {
         toast.error("Invalid credentials. Check your otp code or expiry time", {
           theme: "dark",
           autoClose: 1500,
@@ -104,14 +104,16 @@ export default function Forgetpassword() {
         });
         setLoader(false);
       }
-      if (res == 422) {
+    else  if (res == 422) {
         toast.error("OTP code should have at most 6 characters", {
           theme: "dark",
           autoClose: 1500,
           position: "top-right",
         });
         setLoader(false);
-      } else {
+      } 
+      else
+      {
         toast("Password has been successfully updated.", {
           theme: "light",
           autoClose: 1500,
