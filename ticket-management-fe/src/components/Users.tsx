@@ -27,7 +27,8 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import CreateUserModal from "./CreateUserForm";
-
+import { Usercontext } from "../App";
+import { Navigate } from "react-router-dom";
 interface Column {
   id: "name" | "id" | "email" | "role" | "phone";
 
@@ -60,6 +61,8 @@ export type Data = {
 };
 
 export default function Users() {
+  const User =React.useContext(Usercontext).user.user;
+  
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
@@ -138,6 +141,7 @@ export default function Users() {
 
   const [user, setUser] = useState(clearForm);
 
+ 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -231,7 +235,7 @@ export default function Users() {
   }
 
   return (
-    <>
+    <>{User.role!=="admin" && <Navigate to={"/dashboard"} replace />}
       <DeleteModal />
       <div style={{ textAlign: "end", margin: "20px" }}>
         <CreateUserModal

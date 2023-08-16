@@ -13,7 +13,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import Filter from "./filter";
-
 import Ticket from "./Ticket";
 
 export type TicketList = {
@@ -65,8 +64,6 @@ export default function TicketBoard() {
       }
     });
   }, []);
-
-  const [ticketId, setTicketID] = useState<number | string>("");
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;

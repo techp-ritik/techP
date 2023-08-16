@@ -18,7 +18,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
-
+import { Usercontext } from "../App";
+import { Navigate } from "react-router-dom";
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -41,7 +42,9 @@ export default function Categories() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [categories, setCategories] = useState<Category[]>([]);
-
+  const{user}=React.useContext(Usercontext);
+  let User=user?.user
+ 
   useEffect(() => {
     getAllCategories().then((res) => {
       if (res && res.length > 0) {
@@ -217,7 +220,7 @@ export default function Categories() {
   };
 
   return (
-    <>
+    <> {  User?.role!=="admin" && <Navigate to={"/dashboard"} replace />}
       <div
         style={{
           textAlign: "end",
