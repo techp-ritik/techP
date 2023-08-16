@@ -13,7 +13,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import Filter from "./filter";
-
 import Ticket from "./Ticket";
 
 export type TicketList = {
@@ -56,31 +55,15 @@ export default function TicketBoard() {
 
   useEffect(() => {
     getAllTickets().then((res) => {
-    
       if (res && res.length > 0) {
         setTickets(res);
         setLocalTickets(res);
-        console.log(res);
       } else {
-        // If res is null or the array is empty, set the state with an empty array.
-        console.log("inside not tickets");
         setTickets([]);
         setLocalTickets([]);
-        toast.error(
-          "Error occured while fetching data from Server . Please try again later ",
-          {
-            theme: "dark",
-            autoClose: false, // Set autoClose to false to keep the toast open
-            position: "top-right",
-            closeOnClick: true, // Allow users to close the toast by clicking
-          }
-        );
-        console.log("Error fetching Tickets");
       }
     });
   }, []);
-
-  const [ticketId, setTicketID] = useState<number | string>("");
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -145,7 +128,7 @@ export default function TicketBoard() {
     }
   };
   const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
-  console.log(localtickets);
+
   return (
     <Box
       sx={{
