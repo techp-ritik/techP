@@ -1,5 +1,5 @@
 import React from "react";
-// import "./Tickets.css";
+
 import { Button } from "@mui/material";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Typography from "@mui/material/Typography";
