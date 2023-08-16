@@ -1,5 +1,5 @@
 import React from "react";
-import "./Tickets.css";
+
 import { Button } from "@mui/material";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Typography from "@mui/material/Typography";
@@ -8,6 +8,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import Ticket from "./Ticket";
 import { useState } from "react";
 import { TicketList } from "./TicketBoard";
+import styled from "styled-components";
 
 interface list {
   getTickets: {}[];
@@ -43,11 +44,11 @@ function Tickets(props: list) {
     return hour + " hours";
   };
   return (
-    <div className="ticketList">
+    <MainBoard>
       {props.getTickets?.length === 0 || undefined ? (
-        <div className="no_tickets">
+        <NoTickets>
           <>No Tickets</>
-        </div>
+        </NoTickets>
       ) : (
         props.getTickets?.map((list: any, index: number) => {
           let priorityColor = "";
@@ -75,12 +76,10 @@ function Tickets(props: list) {
                   {...provided.draggableProps}
                   {...provided.dragHandleProps}
                   ref={provided.innerRef}
-                  className="ticketContainer"
                 >
-                  <div className="ticket">
-                    <Typography
+                  <TicketLayout>
+                    <SpecialTypography
                       sx={{ display: "flex", justifyContent: "space-between" }}
-                      className="ticketTitle"
                     >
                       Ticket #{list.id}
                       <Button
@@ -94,9 +93,9 @@ function Tickets(props: list) {
                       >
                         <EditIcon sx={{ fontSize: 20 }} />
                       </Button>
-                    </Typography>
+                    </SpecialTypography>
                     <div>
-                      <div className="ticketDetail">
+                      <TicketContent>
                         <div style={{ textAlign: "end" }}></div>
 
                         <div>Title: {list.title}</div>
@@ -108,9 +107,9 @@ function Tickets(props: list) {
                         </div>
                         <div>
                           {" "}
-                          <div className="ticketInline">
-                            Raised By: {list.user?.name.toUpperCase()}{" "}
-                            <div className="ticketSubDetail">
+                          <TicketDetails>
+                            Raised By: {list.user?.name}{" "}
+                            <Time>
                               {list.status == "blocked" ? (
                                 <>Time Taken</>
                               ) : list.status !== "completed" ? (
@@ -119,14 +118,12 @@ function Tickets(props: list) {
                                 <>Resolved Time</>
                               )}{" "}
                               : {splitTime(list.time_taken)}
-                            </div>
-                          </div>{" "}
+                            </Time>
+                          </TicketDetails>{" "}
                         </div>
-                      </div>
+                      </TicketContent>
                     </div>
-                    <div className="ticketSubDetail"></div>
-                  </div>
-                  <div className="ticketShadow"></div>
+                  </TicketLayout>
                 </div>
               )}
             </Draggable>
@@ -143,7 +140,102 @@ function Tickets(props: list) {
           setNewTicketId={setTicketId}
         />
       )}
-    </div>
+    </MainBoard>
   );
 }
+const NoTickets = styled.div`
+  position: relative;
+  top: 40%;
+  text-align: center;
+  color: grey;
+  font-weight: 500;
+  align-items: center;
+  vertical-align: middle;
+`;
+const MainBoard = styled.div`
+  height: 400px;
+  border: 8px solid #dddddd;
+  overflow-y: scroll;
+
+  border-end-end-radius: 6px;
+  background-color: rgb(246, 248, 250);
+  border-bottom-left-radius: 6px;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(223, 223, 223, 0.3);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgb(218, 218, 218);
+    outline: 1px solid rgb(245, 250, 255);
+  }
+`;
+
+const TicketLayout = styled.div`
+  margin: 10px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+  background-color: white;
+  color: darkslategray;
+  border-radius: 12px;
+  cursor: grab;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+
+  &:hover,
+  &:focus,
+  &:active {
+    -webkit-transform: translateY(-8px);
+    transform: translateY(-8px);
+    transition: (5s);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px,
+      rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+  }
+`;
+
+const TicketContent = styled.div`
+  font-size: 13px;
+  font-weight: 400;
+  padding: 4px 10px;
+`;
+
+const TicketDetails = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 3px 2px 0px;
+`;
+
+const Time = styled.div`
+  color: rgb(0, 0, 0);
+
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 3px 2px 0p;
+`;
+
+const SpecialTypography = styled(Typography)`
+  font-size: 18px;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 12px 10px 4px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed grey;
+  font-family: "Roboto, Arial, sans-serif";
+  color: black;
+  align-items: center;
+`;
 export default Tickets;
