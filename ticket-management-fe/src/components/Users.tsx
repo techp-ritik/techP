@@ -1,14 +1,13 @@
 import * as React from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Table from "@mui/material/Table";
-
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import TableBody from "@mui/material/TableBody";
 import { useEffect } from "react";
-import { deleteUserApi } from "../api/baseapi";
+import { deleteUser as deleteUserApi } from "../api/baseapi";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -26,7 +25,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import CreateUserModal from "./CreateUserForm";
+import UserComponent from "./User";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
 interface Column {
@@ -37,10 +36,6 @@ interface Column {
   align?: "center";
   format?: (value: number) => string;
 }
-interface SortLabels {
-  data: "name" | "id" | "email";
-}
-
 const columns: readonly Column[] = [
   { id: "name", label: "Name", minWidth: 100 },
   { id: "email", label: "Email", minWidth: 150 },
@@ -61,8 +56,8 @@ export type Data = {
 };
 
 export default function Users() {
-  const User =React.useContext(Usercontext).user.user;
-  
+  const User = React.useContext(Usercontext).user.user;
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
@@ -141,7 +136,6 @@ export default function Users() {
 
   const [user, setUser] = useState(clearForm);
 
- 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -235,10 +229,11 @@ export default function Users() {
   }
 
   return (
-    <>{User.role!=="admin" && <Navigate to={"/dashboard"} replace />}
+    <>
+      {User.role !== "admin" && <Navigate to={"/dashboard"} replace />}
       <DeleteModal />
       <div style={{ textAlign: "end", margin: "20px" }}>
-        <CreateUserModal
+        <UserComponent
           openModal={openModal}
           setOpenModal={setOpenModal}
           user={user}

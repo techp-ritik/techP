@@ -1,7 +1,5 @@
 import React from "react";
-
 import { Button } from "@mui/material";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import Typography from "@mui/material/Typography";
 import { Draggable } from "react-beautiful-dnd";
 import EditIcon from "@mui/icons-material/Edit";
@@ -30,7 +28,6 @@ function Tickets(props: list) {
   }
   const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
 
-  // Step 2: Update the state variable when the "View Ticket" button is clicked
   const handleViewTicketClick = (list: any, id: number) => {
     setShowTicket(true);
     setTicketId(list.id);
@@ -86,10 +83,8 @@ function Tickets(props: list) {
                         sx={{ display: "flex", justifyContent: "end" }}
                         size="small"
                         type="submit"
-                        // sx={{color:'white'}}
                         variant="text"
                         onClick={() => handleViewTicketClick(list, list.id)}
-                        // startIcon={<ReceiptIcon />}
                       >
                         <EditIcon sx={{ fontSize: 20 }} />
                       </Button>
@@ -110,7 +105,7 @@ function Tickets(props: list) {
                           <TicketDetails>
                             Raised By: {list.user?.name}{" "}
                             <Time>
-                              {list.status == "blocked" ? (
+                              {list.status === "blocked" ? (
                                 <>Time Taken</>
                               ) : list.status !== "completed" ? (
                                 <> Active Time</>

@@ -1,20 +1,17 @@
-
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-
 import IconButton from "@mui/material/IconButton";
-
 import Tooltip from "@mui/material/Tooltip";
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import Logout from "@mui/icons-material/Logout";
 import { Usercontext } from "../App";
-import EmailIcon from "@mui/icons-material/Email";
+
 import { useNavigate } from "react-router-dom";
 export default function Profile() {
-  const [anchorEl, setAnchorEl] =useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -24,14 +21,14 @@ export default function Profile() {
   };
   const navigate = useNavigate();
   const { user, setUser } = useContext(Usercontext);
-  let User=user?.user
+  let User = user?.user;
   const handleLogout = () => {
     setUser({});
     localStorage.clear();
     navigate("/login");
     setAnchorEl(null);
   };
-  console.log(user);
+
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -83,12 +80,12 @@ export default function Profile() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem sx={{fontSize:"13px"}} onClick={handleClose}>
+        <MenuItem sx={{ fontSize: "13px" }} onClick={handleClose}>
           <Avatar /> {User?.name.toUpperCase()} <br />
           {User?.email}
         </MenuItem>
 
-        <MenuItem  sx={{fontSize:"13px"}} onClick={handleLogout}>
+        <MenuItem sx={{ fontSize: "13px" }} onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

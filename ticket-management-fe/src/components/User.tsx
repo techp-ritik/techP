@@ -4,10 +4,10 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { DialogTitle } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { editUser } from "../api/baseapi";
 import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
@@ -43,7 +43,7 @@ interface list {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export default function CreateUserModal({
+export default function User({
   setUserList,
   UserList,
   openModal,

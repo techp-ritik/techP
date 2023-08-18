@@ -8,12 +8,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import Alert from "@mui/material/Alert";
-import { Forgetpasswordlink, forgetpasswordreset } from "../api/baseapi";
+import { forgetpasswordlink, forgetpasswordreset } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Usercontext } from "../App";
 
 export default function Forgetpassword() {
   const [loader, setLoader] = useState(false);
@@ -24,7 +23,6 @@ export default function Forgetpassword() {
     otp: "",
   });
   const navigate = useNavigate();
-  const { user, setUser } = useContext(Usercontext);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setLoader(true);
@@ -33,10 +31,9 @@ export default function Forgetpassword() {
     const request = {
       email: credentials.email,
     };
-    console.log(credentials);
-    Forgetpasswordlink(request).then((res: any) => {
-      console.log(res);
-      if (res == 422) {
+
+    forgetpasswordlink(request).then((res: any) => {
+      if (res === 422) {
         toast.error("  Email Validation Error", {
           theme: "dark",
           autoClose: 1500,
@@ -44,7 +41,7 @@ export default function Forgetpassword() {
         });
         setLoader(false);
       }
-      if (res == 404) {
+      if (res === 404) {
         toast.error("Invalid email: Mail not found in the database.", {
           theme: "dark",
           autoClose: 1500,
@@ -52,7 +49,7 @@ export default function Forgetpassword() {
         });
         setLoader(false);
       }
-      if (res == 401) {
+      if (res === 401) {
         toast.error("Invalid credentials or user does not exists. Try Again.", {
           theme: "dark",
           autoClose: 1500,
@@ -66,11 +63,6 @@ export default function Forgetpassword() {
         );
         setFlag(true);
         setLoader(false);
-        // setCredentials({
-        //   email: "",
-        //   password: "",
-        //   otp: "",
-        // });
       }
     });
   };
@@ -86,34 +78,29 @@ export default function Forgetpassword() {
       setLoader(false);
       return;
     }
-    // const formdata = new FormData();
-    // formdata.append("username", credentials.email);
+
     const request = {
       password: credentials.password,
       otp_code: credentials.otp,
     };
     const email = credentials.email;
-    console.log(credentials);
+
     forgetpasswordreset(request, email).then((res: any) => {
-      console.log(res);
-      if (res == 400 || res==401) {
+      if (res === 400 || res === 401) {
         toast.error("Invalid credentials. Check your otp code or expiry time", {
           theme: "dark",
           autoClose: 1500,
           position: "top-right",
         });
         setLoader(false);
-      }
-    else  if (res == 422) {
+      } else if (res === 422) {
         toast.error("OTP code should have at most 6 characters", {
           theme: "dark",
           autoClose: 1500,
           position: "top-right",
         });
         setLoader(false);
-      } 
-      else
-      {
+      } else {
         toast("Password has been successfully updated.", {
           theme: "light",
           autoClose: 1500,

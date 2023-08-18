@@ -5,9 +5,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
-import { getAllAssignees } from "../api/baseapi";
-import { getAllCategories } from "../api/baseapi";
-import { baseUrl } from "../api/baseapi";
+import { getAllAssignees } from "../../api/baseapi";
+import { getAllCategories } from "../../api/baseapi";
+import { baseUrl } from "../../api/baseapi";
 
 import {
   Dialog,
@@ -16,15 +16,15 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
-import { createTicket, updateTicket } from "../api/baseapi";
+import { createTicket, updateTicket } from "../../api/baseapi";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { deleteTicket } from "../api/baseapi";
+import { deleteTicket } from "../../api/baseapi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
-import { getAllTickets } from "../api/baseapi";
+import { getAllTickets } from "../../api/baseapi";
 
 interface TicketProps {
   id: number;
@@ -56,7 +56,6 @@ function Ticket({
   setLocaltickets,
 }: TicketProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [isCategoriesLoaded , setIsCategoriesLOaded] = (false)
 
   const handleOpenModal = () => {
     getAllCategories().then((res) => {
@@ -260,7 +259,7 @@ function Ticket({
         }
       } catch (error) {}
     } else {
-      let editResponse = await updateTicket(formData, id);
+      let editResponse = await updateTicket(id, formData);
 
       if (editResponse === 200) {
         toast("Ticket Updated successfully.", {
@@ -581,7 +580,6 @@ function Ticket({
                   Cancel
                 </Button>
                 <div style={{ flexGrow: 1 }}></div>{" "}
-                {/* This will create a flexible empty space */}
                 <Button variant="contained" onClick={handleSubmit} size="small">
                   {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
                 </Button>
