@@ -15,6 +15,7 @@ import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useEffect,useContext } from "react";
 import { Usercontext } from "../App";
+import styled from "styled-components";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
@@ -90,9 +91,9 @@ export default function Filter({ setLocalTickets }: props) {
 
   return (
     <div>
-      <span className="filter" onClick={handleClick}>
+      <FilterIcon onClick={handleClick}>
         <FilterListIcon color="primary" />
-      </span>
+      </FilterIcon>
 
       <Popover
         id={id}
@@ -255,3 +256,11 @@ export default function Filter({ setLocalTickets }: props) {
     </div>
   );
 }
+const FilterIcon = styled.span`
+  cursor: pointer;
+  padding: 5px;
+
+  &:hover {
+    background-color: #ebe8ff7b;
+  }
+`;
