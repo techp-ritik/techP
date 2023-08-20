@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { DialogTitle } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { ToastContainer, toast } from "react-toastify";
@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
 
 import { Data } from "./Users";
+import { useTranslation } from "react-i18next";
 
 const style = {
   position: "absolute" as "absolute",
@@ -60,10 +61,10 @@ export default function CreateUserModal({
 
     actions: "",
   };
-
+  const{t,i18n}=useTranslation();
   const handleSubmit = async () => {
     if (!user.name || !user.email || !user.phone || !user.role) {
-      toast.error("Fields cannot be empty", {
+      toast.error(t('toast_user_field_empty_error'), {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -72,7 +73,7 @@ export default function CreateUserModal({
     }
     const namePattern = /^[A-Za-z\s]+$/;
     if (!namePattern.test(user.name)) {
-      toast.error("Name can only contain leters", {
+      toast.error(t('toast_error_user_namecase'), {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -83,7 +84,7 @@ export default function CreateUserModal({
     const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(com)$/i;
 
     if (!emailPattern.test(user.email)) {
-      toast.error("Invalid email format", {
+      toast.error(t('toast_error_email'), {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -92,7 +93,7 @@ export default function CreateUserModal({
     }
 
     if (user.role === "Select Role*") {
-      toast.error("Select User Role", {
+      toast.error(t('toast_error_user_role'), {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -129,7 +130,7 @@ export default function CreateUserModal({
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 
-              toast("New User Created Successfully", {
+              toast(t('toast_user_created'), {
                 theme: "light",
                 autoClose: 1500,
                 position: "top-right",
@@ -144,16 +145,16 @@ export default function CreateUserModal({
         }
 
         if (response === 401) {
-          toast("Unauthorized");
+          toast(t('toast_user_unauthorized'));
           return;
         }
 
         if (response === 403) {
-          toast("Access Denied");
+          toast(t('toast_user_access_denied'));
           return;
         }
         if (response === 422) {
-          toast.error("Enter valid email address ", {
+          toast.error(t('toast_error_emailvalidate'), {
             theme: "light",
             autoClose: 1500,
             position: "top-right",
@@ -161,7 +162,7 @@ export default function CreateUserModal({
           return;
         }
         if (response === 400) {
-          toast("User with the given email already exists");
+          toast(t("toast_email_exist"));
           return;
         } else {
           toast("An error occurred while creating the categoy .");
@@ -220,7 +221,7 @@ export default function CreateUserModal({
     }
     setUser(clearForm);
   };
-
+  
   return (
     <div>
       <Modal

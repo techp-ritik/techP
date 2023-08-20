@@ -1,4 +1,5 @@
-export const baseUrl = "https://853a-103-177-83-247.ngrok-free.app/v1/";
+
+export const baseUrl = "https://5b07-210-16-94-102.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
@@ -36,12 +37,15 @@ const createFetchInstance = (
 
 export const getAllTickets = async () => {
   try {
-    const response = await createFetchInstance(
+    const response =  await fetch( 
       `${baseUrl}tickets`,
-      "GET",
-      ticketHeader
+      {
+        headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${JSON.parse(
+          localStorage.getItem("access_token") || "{}"
+        ).access_token}` },
+      }
     );
-
+    console.log(token)
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -116,7 +120,9 @@ export const filterTickets = async (params: any) => {
     })}`;
     query = query.replaceAll(",", "");
     const response = await fetch(`${baseUrl + query}`, {
-      headers: defaultHeaders,
+      headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${JSON.parse(
+        localStorage.getItem("access_token") || "{}"
+      ).access_token}` },
     });
 
     if (!response.ok) {
@@ -167,10 +173,10 @@ export const createCategory = async (formData: FormData) => {
     const response = await createFetchInstance(
       `${baseUrl}categories`,
       "POST",
-      defaultHeaders,
+      // defaultHeaders,
+      ticketHeader,
       formData
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -187,7 +193,6 @@ export const getAllCategories = async () => {
       "GET",
       defaultHeaders
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -202,10 +207,9 @@ export const editCategory = async (id: number, formData: FormData) => {
     const response = await createFetchInstance(
       `${baseUrl}categories/${id}`,
       "PUT",
-      defaultHeaders,
+      ticketHeader,
       formData
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }

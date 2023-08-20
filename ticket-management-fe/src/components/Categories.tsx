@@ -20,6 +20,7 @@ import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -40,7 +41,7 @@ interface Category {
 export default function Categories() {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const{t,i18n}=useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const{user}=React.useContext(Usercontext);
   let User=user?.user
@@ -102,7 +103,7 @@ export default function Categories() {
   };
   const handleSubmit = async () => {
     if (!category.name || !category.description) {
-      toast.error("Fields cannot be empty");
+      toast.error(t('categories_fields'));
 
       return;
     }
@@ -114,7 +115,7 @@ export default function Categories() {
         let editResponse = await editCategory(category.id, formData);
 
         if (editResponse === 200) {
-          toast("Category Updated successfully.");
+          toast(t('toast_category_update'));
           handleCloseModal();
           getAllCategories().then((res) => {
             const sortedCategories = res.sort(
@@ -127,19 +128,19 @@ export default function Categories() {
           return;
         }
         if (editResponse === 401) {
-          toast("Unauthorized");
+          toast(t('toast_user_unauthorized'));
         }
         if (editResponse === 404) {
-          toast("Validation error: invalid data format.");
+          toast(t('toast_validation_error'));
         } else {
-          toast("An error occurred while creating the categoy .");
+          toast(t('toast_form_error'));
         }
       } catch (error) {
         console.log(error);
       }
     } else {
       if (!category.name || !category.description) {
-        toast.error("Please fill all the required fields");
+        toast.error(t('toast_error_fieldrequired'));
 
         return;
       }
@@ -148,7 +149,7 @@ export default function Categories() {
         let createCategoryResponse = await createCategory(formData);
 
         if (createCategoryResponse === 200) {
-          toast("Category created successfully.");
+          toast(t('toast_category_created'));
           handleCloseModal();
           getAllCategories().then((res) => {
             const sortedCategories = res.sort(
@@ -160,12 +161,12 @@ export default function Categories() {
           return;
         }
         if (createCategoryResponse === 401) {
-          toast("Unauthorized");
+          toast(t('toast_user_unauthorized'));
         }
         if (createCategoryResponse === 404) {
-          toast("Validation error: invalid data format.");
+        toast(t('toast_validation_error'))
         } else {
-          toast("An error occurred while creating the categoy .");
+          toast(t('toast_form_error'));
         }
       } catch (error) {}
     }
@@ -256,7 +257,7 @@ export default function Categories() {
           onClick={handleOpenModal}
           sx={{ height: "40px" }}
         >
-          CREATE NEW CATEGORY
+          {t('toast_createcategory_button')}
         </Button>
       </div>
 
@@ -294,7 +295,7 @@ export default function Categories() {
               {categories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="left">
-                    No categories to display.
+                    {t('no_categories')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -398,14 +399,15 @@ export default function Categories() {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseModal}>Cancel</Button>
+            <Button onClick={handleCloseModal}>{t('cancel_button').toUpperCase()}</Button>
             <Button
               variant="contained"
               size="small"
               onClick={handleSubmit}
               sx={{ marginRight: "15px" }}
             >
-              SUBMIT
+              {t('submit_button')}
+              
             </Button>
           </DialogActions>
         </div>

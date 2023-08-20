@@ -14,6 +14,7 @@ import { signIn } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Usercontext } from "../App";
+import { useTranslation } from "react-i18next";
 
 
 export default function SignIn() {
@@ -25,7 +26,7 @@ export default function SignIn() {
   });
   const navigate=useNavigate();
   const{user,setUser}=useContext(Usercontext)
- 
+  const{t,i18n}=useTranslation();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
     setLoader(true);
@@ -85,7 +86,7 @@ export default function SignIn() {
       >
         {" "}
         <Typography component="h1" variant="h5">
-          Sign in
+          {t("signintitle")}
         </Typography>
         <br />
         {loader && (
@@ -125,7 +126,7 @@ export default function SignIn() {
               autoComplete="current-password"
             />
             {credentials.password !== "" && credentials.password.length < 8 && (
-              <Alert severity="error">Minimum 8 characters required*</Alert>
+              <Alert severity="error">{t("password_length_message")}</Alert>
             )}
 
             <Button
@@ -135,13 +136,13 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              {loader ? "PLEASE WAIT..." : "SIGN IN"}
+              {loader ? t("signinbutton_onload") : t("signinbutton")}
             </Button>
           </form>{" "}
           <Grid container>
             <Grid item xs>
               <Link  to='/forgetpassword'  style={{ fontSize: "12px" }} >
-                Forgot password?
+                {t("forget_password")}
               </Link>
             </Grid>
           </Grid>
