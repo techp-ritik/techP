@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter } from "react-router-dom";
 import TicketTheme from "./components/TicketTheme";
+import './i18'
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

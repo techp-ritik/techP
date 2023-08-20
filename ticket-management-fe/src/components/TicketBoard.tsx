@@ -14,6 +14,7 @@ import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import Filter from "./filter";
 import Ticket from "./Ticket";
+import { useTranslation } from "react-i18next";
 
 export type TicketList = {
   id: string;
@@ -42,7 +43,7 @@ export default function TicketBoard() {
 
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
-
+  const{t,i18n}=useTranslation();
   const getTicketsLength = (status: String) => {
     return 1;
   };
@@ -74,7 +75,7 @@ export default function TicketBoard() {
       (sourceStatus === "todo" && destStatus === "completed") ||
       (sourceStatus === "completed" && destStatus === "todo")
     ) {
-      toast.error("Invalid Ticket Movement", {
+      toast.error(t("toast_invalid_ticket_movement"), {
         theme: "dark",
         autoClose: false,
         position: "top-right",
@@ -102,7 +103,7 @@ export default function TicketBoard() {
             getAllTickets().then((res) => {
               setTickets(res);
               setLocalTickets(res);
-              toast("Ticket Status Updated ", {
+              toast(t("toast_ticketstatus_update"), {
                 theme: "light",
                 autoClose: 1500,
                 position: "top-right",
@@ -110,7 +111,7 @@ export default function TicketBoard() {
             });
           } else {
             setLocalTickets(tickets);
-            toast("Error while updating ticket", {
+            toast(t("toast_ticketstatus_update_error"), {
               theme: "light",
               autoClose: 1500,
               position: "top-right",
@@ -127,7 +128,7 @@ export default function TicketBoard() {
       }
     }
   };
-  const ticketStatus = ["TODO", "INPROGRESS", "BLOCKED", "COMPLETED"];
+  const ticketStatus = [t("status_todo"), t("status_inprogress"), t("status_blocked"), t("status_completed")];
 
   return (
     <Box
@@ -152,7 +153,7 @@ export default function TicketBoard() {
           variant="contained"
           onClick={handleCreateNewTicket}
         >
-          CREATE NEW TICKET
+          {t("create_ticket_button")}
         </Button>
       </div>
 

@@ -18,12 +18,13 @@ import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Profile from "./Profile";
+import { useTranslation } from "react-i18next";
 export default function Navbar() {
   const { user, setUser } = useContext(Usercontext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     useState<null | HTMLElement>(null);
-
+  const{t,i18n}=useTranslation();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const navigate = useNavigate();
@@ -103,11 +104,11 @@ export default function Navbar() {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>{t("profile")}</p>
       </MenuItem>
     </Menu>
   );
-  const location = useLocation();
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSidebarToggle = () => {
@@ -124,7 +125,7 @@ export default function Navbar() {
             component="div"
             sx={{ display: { xs: "none", sm: "block", marginLeft: "20px" } }}
           >
-            Ticket Management System
+            {t("tms_title")}
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />

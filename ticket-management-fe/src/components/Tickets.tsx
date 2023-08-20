@@ -8,6 +8,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import Ticket from "./Ticket";
 import { useState } from "react";
 import { TicketList } from "./TicketBoard";
+import { useTranslation } from "react-i18next";
 
 interface list {
   getTickets: {}[];
@@ -28,7 +29,7 @@ function Tickets(props: list) {
     completedAt: string;
   }
   const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
-
+  const{t,i18n}=useTranslation();
   // Step 2: Update the state variable when the "View Ticket" button is clicked
   const handleViewTicketClick = (list: any, id: number) => {
     setShowTicket(true);
@@ -46,7 +47,7 @@ function Tickets(props: list) {
     <div className="ticketList">
       {props.getTickets?.length === 0 || undefined ? (
         <div className="no_tickets">
-          <>No Tickets</>
+          <>{t("no_tickets")}</>
         </div>
       ) : (
         props.getTickets?.map((list: any, index: number) => {
@@ -82,7 +83,7 @@ function Tickets(props: list) {
                       sx={{ display: "flex", justifyContent: "space-between" }}
                       className="ticketTitle"
                     >
-                      Ticket #{list.id}
+                      {t('ticket_no')}{list.id}
                       <Button
                         sx={{ display: "flex", justifyContent: "end" }}
                         size="small"
@@ -109,14 +110,14 @@ function Tickets(props: list) {
                         <div>
                           {" "}
                           <div className="ticketInline">
-                            Raised By: {list.user?.name.toUpperCase()}{" "}
+                            {t("ticket_raised_by")}: {list.user?.name.toUpperCase()}{" "}
                             <div className="ticketSubDetail">
                               {list.status == "blocked" ? (
-                                <>Time Taken</>
+                                <>{t('ticket_time_taken')}</>
                               ) : list.status !== "completed" ? (
-                                <> Active Time</>
+                                <>{t('ticket_active_time')}</>
                               ) : (
-                                <>Resolved Time</>
+                                <>{t('ticket_resolved_time')}</>
                               )}{" "}
                               : {splitTime(list.time_taken)}
                             </div>

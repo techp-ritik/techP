@@ -13,6 +13,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import { Link } from "react-router-dom";
 import ListSubheader from "@mui/material/ListSubheader";
 import { Usercontext } from "../App";
+import { useTranslation } from "react-i18next";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -23,6 +24,7 @@ interface SideBarProps {
 
 export default function SideBar({ isOpen, onClose }: SideBarProps) {
   const {user,setUser}=React.useContext(Usercontext)
+  const{t,i18n}=useTranslation();
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -58,7 +60,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
           height: "64px",
         }}
       >
-        TICKET MANAGEMENT SYSTEM
+        {t("tms_title")}
         
       </ListSubheader>
      
@@ -73,7 +75,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" />
+              <ListItemText primary={t("sidebar_dashboard")} />
             </ListItemButton>
           </Link>
         </ListItem>
@@ -88,7 +90,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
               <ListItemIcon>
                 <CategoryIcon />
               </ListItemIcon>
-              <ListItemText primary="Categories" />
+              <ListItemText primary={t("sidebar_categories")} />
             </ListItemButton>
           </Link>
         </ListItem>
@@ -101,7 +103,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
               <ListItemIcon>
                 <GroupIcon />
               </ListItemIcon>
-              <ListItemText primary="Users" />
+              <ListItemText primary={t("sidebar_users")} />
             </ListItemButton>
           </Link>
         </ListItem>

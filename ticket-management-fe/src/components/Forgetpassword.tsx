@@ -14,6 +14,7 @@ import { Forgetpasswordlink, forgetpasswordreset } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Usercontext } from "../App";
+import { useTranslation } from "react-i18next";
 
 export default function Forgetpassword() {
   const [loader, setLoader] = useState(false);
@@ -25,7 +26,7 @@ export default function Forgetpassword() {
   });
   const navigate = useNavigate();
   const { user, setUser } = useContext(Usercontext);
-
+  const{t,i18n}=useTranslation();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setLoader(true);
     event.preventDefault();
@@ -52,7 +53,7 @@ export default function Forgetpassword() {
         });
         setLoader(false);
       }
-      if (res == 401) {
+     else if (res == 401) {
         toast.error("Invalid credentials or user does not exists. Try Again.", {
           theme: "dark",
           autoClose: 1500,
@@ -150,7 +151,7 @@ export default function Forgetpassword() {
       >
         {" "}
         <Typography component="h1" variant="h5">
-          Reset Password
+          {t("reset_password_title")}
         </Typography>
         <br />
         {loader && (
@@ -183,7 +184,7 @@ export default function Forgetpassword() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                {loader ? "PLEASE WAIT..." : "SEND RESET LINK "}
+                {loader ? t("signinbutton_onload") : t("reset_link_button")}
               </Button>
             </form>
           ) : (
@@ -204,7 +205,7 @@ export default function Forgetpassword() {
               />
               {credentials.password !== "" &&
                 credentials.password.length < 8 && (
-                  <Alert severity="error">Minimum 8 characters required*</Alert>
+                  <Alert severity="error">{t("password_length_message")}</Alert>
                 )}
 
               <TextField
@@ -228,7 +229,7 @@ export default function Forgetpassword() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                {loader ? "PLEASE WAIT..." : "SUBMIT"}
+                {loader ? t("signinbutton_onload") : t("submit_button")}
               </Button>
             </form>
           )}
@@ -236,7 +237,7 @@ export default function Forgetpassword() {
           <Grid container>
             <Grid item xs>
               <Link to="/login" style={{ fontSize: "12px" }}>
-                Back to Login
+                {t("back_to_login")}
               </Link>
             </Grid>
           </Grid>

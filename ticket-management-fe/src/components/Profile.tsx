@@ -31,7 +31,7 @@ export default function Profile() {
     navigate("/login");
     setAnchorEl(null);
   };
-  console.log(user);
+ 
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
