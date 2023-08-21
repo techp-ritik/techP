@@ -1,6 +1,5 @@
 import React from "react";
-import TicketBoard from "./TicketBoard";
-import { Usercontext } from "../App";
+import TicketBoard from "./Tickets/TicketBoard";
 
 export default function Dashboard() {
   return (

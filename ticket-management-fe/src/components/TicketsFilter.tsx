@@ -5,23 +5,21 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { filterTickets, getAllTickets } from "../api/baseapi";
-import { TicketList } from "./TicketBoard";
+import Select from "@mui/material/Select";
+import { filterTickets } from "../api/baseapi";
+import { TicketList } from "./Tickets/TicketBoard";
 import { getAllCategories } from "../api/baseapi";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useEffect,useContext } from "react";
-import { Usercontext } from "../App";
 import styled from "styled-components";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
-export default function Filter({ setLocalTickets }: props) {
+export default function TicketsFilter({ setLocalTickets }: props) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -56,8 +54,6 @@ export default function Filter({ setLocalTickets }: props) {
   ];
 
   const [categories, setCategories] = React.useState([]);
-  const{user}=useContext(Usercontext)
-  let token =user.access_token
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -67,8 +63,7 @@ export default function Filter({ setLocalTickets }: props) {
     setAnchorEl(null);
   };
 
-
-  useEffect(() => {
+  React.useEffect(() => {
     getAllCategories().then((res) => {
       if (res && res.length > 0) {
         setCategories(res);
@@ -78,7 +73,6 @@ export default function Filter({ setLocalTickets }: props) {
     });
     filterTickets(filters).then((res) => {
       if (res && res.length > 0) {
-        console.log(res)
         setLocalTickets(res);
       } else {
         setLocalTickets([]);
@@ -177,7 +171,6 @@ export default function Filter({ setLocalTickets }: props) {
                   setParams({ ...params, query: e.target.value });
                 }}
                 id="standard-basic"
-                // label="Search Ticket"
                 placeholder="Search Ticket"
                 variant="standard"
                 InputProps={{

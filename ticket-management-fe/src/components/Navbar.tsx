@@ -1,6 +1,5 @@
 import * as React from "react";
 import SideBar from "./SideBar";
-import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
@@ -11,12 +10,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { useLocation } from "react-router-dom";
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import { Usercontext } from "../App";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import LogoutIcon from "@mui/icons-material/Logout";
 import Profile from "./Profile";
 import { useTranslation } from "react-i18next";
 export default function Navbar() {
@@ -24,7 +20,7 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     useState<null | HTMLElement>(null);
-  const{t,i18n}=useTranslation();
+  const { t, i18n } = useTranslation();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const navigate = useNavigate();
@@ -67,14 +63,6 @@ export default function Navbar() {
       }}
     >
       <Profile />
-      {/* <MenuItem> <Button
-        startIcon={<LogoutIcon/>}
-        size="large"
-        onClick={Logout}
-        variant="text"
-      >
-        Log Out
-      </Button> </MenuItem> */}
     </Menu>
   );
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -108,7 +96,7 @@ export default function Navbar() {
       </MenuItem>
     </Menu>
   );
-  
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSidebarToggle = () => {

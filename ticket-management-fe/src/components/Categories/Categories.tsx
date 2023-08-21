@@ -3,24 +3,19 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
-import { createCategory, editCategory, getAllCategories } from "../api/baseapi";
-import { toast } from "react-toastify";
+import { getAllCategories } from "../../api/baseapi";
 import TableCell from "@mui/material/TableCell";
+import CategoryComponent from "./Category";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { Button, Typography, InputAdornment } from "@mui/material";
-import DialogContent from "@mui/material/DialogContent";
 import { useState, useEffect } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogTitle from "@mui/material/DialogTitle";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import { Usercontext } from "../App";
+import { Usercontext } from "../../App";
 import { Navigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -41,11 +36,11 @@ interface Category {
 export default function Categories() {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const{t,i18n}=useTranslation();
+
   const [categories, setCategories] = useState<Category[]>([]);
-  const{user}=React.useContext(Usercontext);
-  let User=user?.user
- 
+  const { user } = React.useContext(Usercontext);
+  let User = user?.user;
+
   useEffect(() => {
     getAllCategories().then((res) => {
       if (res && res.length > 0) {
@@ -101,84 +96,6 @@ export default function Categories() {
     setSearchQuery(query);
     setPage(0); // Reset page to the first page when search query changes
   };
-  const handleSubmit = async () => {
-    if (!category.name || !category.description) {
-      toast.error(t('categories_fields'));
-
-      return;
-    }
-    const formData = new FormData();
-    formData.append("name", category.name);
-    formData.append("description", category.description);
-    if (category.id) {
-      try {
-        let editResponse = await editCategory(category.id, formData);
-
-        if (editResponse === 200) {
-          toast(t('toast_category_update'));
-          handleCloseModal();
-          getAllCategories().then((res) => {
-            const sortedCategories = res.sort(
-              (a: Category, b: Category) => a.id - b.id
-            );
-
-            setCategories(sortedCategories);
-          });
-
-          return;
-        }
-        if (editResponse === 401) {
-          toast(t('toast_user_unauthorized'));
-        }
-        if (editResponse === 404) {
-          toast(t('toast_validation_error'));
-        } else {
-          toast(t('toast_form_error'));
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      if (!category.name || !category.description) {
-        toast.error(t('toast_error_fieldrequired'));
-
-        return;
-      }
-
-      try {
-        let createCategoryResponse = await createCategory(formData);
-
-        if (createCategoryResponse === 200) {
-          toast(t('toast_category_created'));
-          handleCloseModal();
-          getAllCategories().then((res) => {
-            const sortedCategories = res.sort(
-              (a: Category, b: Category) => a.id - b.id
-            );
-
-            setCategories(sortedCategories);
-          });
-          return;
-        }
-        if (createCategoryResponse === 401) {
-          toast(t('toast_user_unauthorized'));
-        }
-        if (createCategoryResponse === 404) {
-        toast(t('toast_validation_error'))
-        } else {
-          toast(t('toast_form_error'));
-        }
-      } catch (error) {}
-    }
-
-    setCategory({
-      name: "",
-      description: "",
-      id: 0,
-    });
-
-    handleCloseModal();
-  };
 
   const handleOpenEditModal = (category: Category) => {
     setCategory({
@@ -221,7 +138,9 @@ export default function Categories() {
   };
 
   return (
-    <> {  User?.role!=="admin" && <Navigate to={"/dashboard"} replace />}
+    <>
+      {" "}
+      {User?.role !== "admin" && <Navigate to={"/dashboard"} replace />}
       <div
         style={{
           textAlign: "end",
@@ -257,10 +176,9 @@ export default function Categories() {
           onClick={handleOpenModal}
           sx={{ height: "40px" }}
         >
-          {t('toast_createcategory_button')}
+          CREATE NEW CATEGORY
         </Button>
       </div>
-
       <Typography
         className="table"
         sx={{ margin: "20px", textAlign: "center" }}
@@ -295,7 +213,7 @@ export default function Categories() {
               {categories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="left">
-                    {t('no_categories')}
+                    No categories to display.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -350,68 +268,13 @@ export default function Categories() {
           />
         </TableContainer>
       </Typography>
-
-      <Dialog
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        fullWidth
-        maxWidth="sm"
-      >
-        <div>
-          <DialogTitle>
-            {category.id ? "EDIT CATEGORY" : "CREATE NEW CATEGORY"}
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              margin="normal"
-              type="string"
-              required
-              fullWidth
-              id="title"
-              label="Enter Category"
-              name="title"
-              value={category.name}
-              onChange={(e) =>
-                setCategory({
-                  ...category,
-                  name: e.target.value,
-                })
-              }
-              autoFocus
-            />
-            <TextField
-              value={category.description}
-              onChange={(e) =>
-                setCategory({
-                  ...category,
-                  description: e.target.value,
-                })
-              }
-              margin="normal"
-              required
-              fullWidth
-              name="Description"
-              multiline
-              label="Enter Description"
-              type="text"
-              id="Description"
-              rows={2}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModal}>{t('cancel_button').toUpperCase()}</Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleSubmit}
-              sx={{ marginRight: "15px" }}
-            >
-              {t('submit_button')}
-              
-            </Button>
-          </DialogActions>
-        </div>
-      </Dialog>
+      <CategoryComponent
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        category={category}
+        setCategory={setCategory}
+        setCategories={setCategories}
+      />
     </>
   );
 }
