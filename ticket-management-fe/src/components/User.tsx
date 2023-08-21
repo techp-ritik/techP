@@ -168,7 +168,7 @@ export default function User({
           return;
         }
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     } else {
       try {
@@ -215,7 +215,7 @@ export default function User({
           return;
         }
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     }
     setUser(clearForm);

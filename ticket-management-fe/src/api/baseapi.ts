@@ -1,4 +1,4 @@
-export const baseUrl = "https://13e1-103-177-83-247.ngrok-free.app/v1/";
+export const baseUrl = "https://ed09-103-177-83-247.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
@@ -36,24 +36,24 @@ const createFetchInstance = (
 
 export const getAllTickets = async () => {
   try {
-    const response = await createFetchInstance(
+    const response =  await fetch( 
       `${baseUrl}tickets`,
-      "GET",
-      ticketHeader
+      {
+        headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${JSON.parse(
+          localStorage.getItem("access_token") || "{}"
+        ).access_token}` },
+      }
     );
-
+  
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
     return data;
   } catch (err) {
-  
-    return err;
-    
+    throw(err);
   }
 };
-
 export const deleteTicket = async (id: number): Promise<void> => {
   try {
     const response = await createFetchInstance(
@@ -66,9 +66,7 @@ export const deleteTicket = async (id: number): Promise<void> => {
       throw new Error("Network response was not ok");
     }
   } catch (err) {
-   
-    throw err
-    
+    throw(err);
   }
 };
 export const getTicket = async (id: number): Promise<void> => {
@@ -85,7 +83,7 @@ export const getTicket = async (id: number): Promise<void> => {
     const data = await response.json();
     return data;
   } catch (err) {
- throw err;
+    throw(err);
   }
 };
 
@@ -100,7 +98,9 @@ export const filterTickets = async (params: any) => {
     })}`;
     query = query.replaceAll(",", "");
     const response = await fetch(`${baseUrl + query}`, {
-      headers: defaultHeaders,
+      headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${JSON.parse(
+        localStorage.getItem("access_token") || "{}"
+      ).access_token}` },
     });
 
     if (!response.ok) {
@@ -110,8 +110,7 @@ export const filterTickets = async (params: any) => {
     const data = await response.json();
     return data;
   } catch (err) {
-  
-    return err;
+    throw(err);
   }
 };
 export const createTicket = async (formData: FormData) => {
@@ -136,14 +135,9 @@ export const createTicket = async (formData: FormData) => {
 export const updateTicket = async (
   id: number | string,
   formData?: FormData,
-  status?: string
+
 ) => {
   try {
-    if (status !== undefined) {
-
-      try {
-            const formData = new FormData();
-            formData.append("status", status);
             if (id !== "") {
               const response = await createFetchInstance(
                 `${baseUrl}ticket/?id=${id}`,
@@ -157,34 +151,20 @@ export const updateTicket = async (
               console.log("nochange", id);
             }
           } catch (error) {
-            console.error(error);
+            return error;
           }
-    } else {
-      const response = await createFetchInstance(
-        `${baseUrl}ticket?id=${id}`,
-        "PUT",
-        ticketHeader,
-        formData
-      );
-
-      const editData = response.status;
-      return editData;
-    }
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
+     
+ 
 };
 export const createCategory = async (formData: FormData) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}categories`,
       "POST",
-
+  
       ticketHeader,
       formData
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -201,15 +181,13 @@ export const getAllCategories = async () => {
       "GET",
       defaultHeaders
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
     return data;
   } catch (err) {
-   return err;
-
+    throw(err);
   }
 };
 export const editCategory = async (id: number, formData: FormData) => {
@@ -220,14 +198,13 @@ export const editCategory = async (id: number, formData: FormData) => {
       ticketHeader,
       formData
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const editData = await response.status;
     return editData;
   } catch (err) {
-  return err;
+    throw(err);
   }
 };
 
@@ -242,7 +219,7 @@ export const getAllUsers = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-   return err;
+    throw(err);
   }
 };
 
@@ -258,7 +235,7 @@ export const deleteUser = async (id: number) => {
 
     return deleteuser;
   } catch (err) {
-  return err;
+    throw(err);
   }
 };
 
@@ -288,7 +265,6 @@ export const editUser = async (userData: any, id: number) => {
 
 export const signIn = async (formdata: FormData) => {
   try {
-   
     const response = await createFetchInstance(
       `${baseUrl}users/token`,
       "POST",
@@ -298,7 +274,7 @@ export const signIn = async (formdata: FormData) => {
 
     if (!response.ok) {
       return response.status;
-   
+    
     }
     return response.json();
   } catch (error) {
@@ -317,7 +293,7 @@ export const forgetpasswordlink = async (formdata: any) => {
 
     if (!response.ok) {
       return response.status;
-
+      
     }
     return response.json();
   } catch (error) {
@@ -336,7 +312,7 @@ export const forgetpasswordreset = async (formdata: any, email: string) => {
 
     if (!response.ok) {
       return response.status;
-  
+   
     }
     return response.json();
   } catch (error) {
@@ -363,6 +339,6 @@ export const getAllAssignees = async () => {
     const assignees = await response.json();
     return assignees;
   } catch (err) {
-  return err;
+  throw(err);
   }
 };

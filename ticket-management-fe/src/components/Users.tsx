@@ -28,6 +28,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import UserComponent from "./User";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 interface Column {
   id: "name" | "id" | "email" | "role" | "phone";
 
@@ -135,6 +136,7 @@ export default function Users() {
   };
 
   const [user, setUser] = useState(clearForm);
+  const { t, i18n } = useTranslation();
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -171,7 +173,7 @@ export default function Users() {
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 
-              toast("User Deleted Successfully", {
+              toast(t("toast_user_deleted"), {
                 theme: "light",
                 autoClose: 1500,
                 position: "top-right",
@@ -189,7 +191,7 @@ export default function Users() {
           });
         }
       } catch (error) {
-        toast("Error occured while deleting ticket");
+        throw error;
       }
     };
 
@@ -206,21 +208,21 @@ export default function Users() {
           <DialogTitle>{"Do you want to delete this User?"}</DialogTitle>
           <DialogContent sx={{ marginTop: "15px" }}>
             <DialogContentText id="alert-dialog-slide-description">
-              Name: {user.name}
+              {t("users_name")}: {user.name}
             </DialogContentText>
             <DialogContentText id="alert-dialog-slide-description">
-              Email: {user.email}
+              {t("users_email")}: {user.email}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>{t("cancel_button")}</Button>
             <Button
               color="error"
               onClick={() => {
                 deleteUser(user.id);
               }}
             >
-              Delete
+              {t("delete_ticket_button")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -278,7 +280,7 @@ export default function Users() {
           }}
           variant="contained"
         >
-          Add New User
+          {t("button_add_new_uer")}
         </Button>
       </Typography>
       <Typography className="table" sx={{ margin: "20px" }}>
@@ -316,7 +318,7 @@ export default function Users() {
               {Userlist.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="left">
-                    No users to display.
+                    {t("no_user_mesage")}
                   </TableCell>
                 </TableRow>
               ) : (
