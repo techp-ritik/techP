@@ -6,7 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { filterTickets } from "../api/baseapi";
+import { filterTickets, getAllUsers } from "../api/baseapi";
 import { TicketList } from "./Tickets/TicketBoard";
 import { getAllCategories } from "../api/baseapi";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -14,6 +14,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import styled from "styled-components";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { Usercontext } from "../App";
+import { useState, useContext } from "react";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
@@ -23,12 +27,17 @@ export default function TicketsFilter({ setLocalTickets }: props) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const [params, setParams] = React.useState({
+  const { user } = useContext(Usercontext).user;
+
+  const [params, setParams] = useState({
     priority: "",
     category: "",
     created_at: "",
     completed_at: "",
     query: "",
+    user: "",
+    assignee: "",
+    admin_data: false,
   });
   let filters = [
     {
@@ -51,9 +60,22 @@ export default function TicketsFilter({ setLocalTickets }: props) {
       key: "query",
       value: params.query,
     },
+    {
+      key: "admin_data",
+      value: params.admin_data,
+    },
+    {
+      key: "user",
+      value: params.user,
+    },
+    {
+      key: "assignee",
+      value: params.assignee,
+    },
   ];
 
   const [categories, setCategories] = React.useState([]);
+  const [userList, setUserList] = React.useState([]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -71,6 +93,13 @@ export default function TicketsFilter({ setLocalTickets }: props) {
         setCategories([]);
       }
     });
+    getAllUsers().then((res) => {
+      if (res && res.length > 0) {
+        setUserList(res);
+      } else {
+        setUserList([]);
+      }
+    });
     filterTickets(filters).then((res) => {
       if (res && res.length > 0) {
         setLocalTickets(res);
@@ -82,7 +111,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
+  console.log(user);
   return (
     <div>
       <FilterIcon onClick={handleClick}>
@@ -106,18 +135,39 @@ export default function TicketsFilter({ setLocalTickets }: props) {
         <Typography>
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
+              maxWidth: 700,
+              padding: "10px",
               alignItems: "center",
             }}
           >
+            <FormControl
+              variant="standard"
+              sx={{ m: 1, minWidth: 100, marginTop: "25px" }}
+            >
+              <TextField
+                onChange={(e) => {
+                  setParams({ ...params, query: e.target.value });
+                }}
+                sx={{ maxWidth: 200 }}
+                id="standard-basic"
+                placeholder="Search Ticket"
+                variant="standard"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </FormControl>
             <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
               <InputLabel id="demo-simple-select-standard-label">
                 Priority
               </InputLabel>
               <Select
                 labelId="demo-simple-select-standard-label"
-                sx={{ minWidth: 150 }}
+                sx={{ minWidth: 200 }}
                 id="demo-simple-select-standard"
                 value={params.priority}
                 onChange={(e) => {
@@ -140,7 +190,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
               </InputLabel>
               <Select
                 labelId="demo-simple-select-standard-label"
-                sx={{ minWidth: 150 }}
+                sx={{ minWidth: 200 }}
                 id="demo-simple-select-standard"
                 value={params.category}
                 onChange={(e) => {
@@ -161,28 +211,89 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                   })}
               </Select>
             </FormControl>
+            {user.role == "admin" && (
+              <>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+                  {" "}
+                  <InputLabel id="demo-simple-select-standard-label">
+                    Raised by
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    sx={{ minWidth: 200 }}
+                    id="demo-simple-select-standard"
+                    value={params.user}
+                    onChange={(e) => {
+                      setParams({ ...params, user: e.target.value });
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
 
-            <FormControl
-              variant="standard"
-              sx={{ m: 1, minWidth: 100, marginTop: "25px" }}
-            >
-              <TextField
-                onChange={(e) => {
-                  setParams({ ...params, query: e.target.value });
-                }}
-                id="standard-basic"
-                placeholder="Search Ticket"
-                variant="standard"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                    {userList.length > 0 &&
+                      userList.map((item: any) => {
+                        console.log(item);
+                        return (
+                          <MenuItem value={item.id}>
+                            {item?.name.toUpperCase()}
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </FormControl>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+                  {" "}
+                  <InputLabel id="demo-simple-select-standard-label">
+                    Assigned To
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    sx={{ minWidth: 200 }}
+                    id="demo-simple-select-standard"
+                    value={params.assignee}
+                    onChange={(e) => {
+                      setParams({ ...params, assignee: e.target.value });
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+
+                    {userList.length > 0 &&
+                      userList.map((item: any) => {
+                        console.log(item);
+                        return (
+                          <MenuItem value={item.id}>
+                            {item?.name.toUpperCase()}
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </FormControl>
+                <FormControl
+                  variant="standard"
+                  sx={{ m: 1, position: "relative", top: "10px" }}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            admin_data: !params.admin_data,
+                          });
+                        }}
+                        defaultChecked={params.admin_data}
+                      />
+                    }
+                    label="Raised by self"
+                  />
+                </FormControl>
+              </>
+            )}
+
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
               <label
                 style={{
                   fontSize: "12px",
@@ -202,7 +313,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                 }}
               />
             </FormControl>
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
               <label
                 style={{
                   fontSize: "12px",
@@ -236,11 +347,28 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                     created_at: "",
                     completed_at: "",
                     query: "",
+                    admin_data: false,
+                    assignee: "",
+                    user: "",
                   });
                 }}
                 variant="text"
               >
                 Clear
+              </Button>
+             
+            </FormControl>
+            <FormControl
+              variant="standard"
+              sx={{ m: 1, position: "relative", top: "5px" }}
+            >
+               <Button
+                style={{ marginTop: "10px" }}
+                variant="contained"
+                size="medium"
+                onClick={handleClose}
+              >
+                Close
               </Button>
             </FormControl>
           </div>

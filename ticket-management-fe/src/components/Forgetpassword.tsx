@@ -211,6 +211,7 @@ export default function Forgetpassword() {
               />
               <Button
                 disabled={loader}
+                data-testid='SEND RESET LINK'
                 type="submit"
                 fullWidth
                 variant="contained"

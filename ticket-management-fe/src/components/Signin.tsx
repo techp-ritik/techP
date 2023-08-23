@@ -51,6 +51,7 @@ export default function SignIn() {
         setUser(retrievedObject);
 
         localStorage.setItem("Access Token", res.access_token);
+        window.location.reload(); 
       } else {
         toast.error("Invalid credentials or user does not exists. Try Again.", {
           theme: "dark",
@@ -60,6 +61,7 @@ export default function SignIn() {
         setLoader(false);
       }
     });
+
   };
 
   return (
