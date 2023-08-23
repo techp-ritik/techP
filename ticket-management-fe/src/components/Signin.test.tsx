@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './App';
-
-import SignIn from './components/Signin';
+import SignIn from './Signin';
 
 test('render login page',()=>{
   const component=render(<SignIn/>)

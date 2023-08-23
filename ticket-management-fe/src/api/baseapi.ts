@@ -1,5 +1,5 @@
 
-export const baseUrl = "https://5b07-210-16-94-102.ngrok-free.app/v1/";
+export const baseUrl = "https://cae6-103-177-83-247.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
