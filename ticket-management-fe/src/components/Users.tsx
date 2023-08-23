@@ -1,14 +1,13 @@
 import * as React from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Table from "@mui/material/Table";
-
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import TableBody from "@mui/material/TableBody";
 import { useEffect } from "react";
-import { deleteUserApi } from "../api/baseapi";
+import { deleteUser as deleteUserApi } from "../api/baseapi";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -26,7 +25,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import CreateUserModal from "./CreateUserForm";
+import UserComponent from "./User";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -38,10 +37,6 @@ interface Column {
   align?: "center";
   format?: (value: number) => string;
 }
-interface SortLabels {
-  data: "name" | "id" | "email";
-}
-
 const columns: readonly Column[] = [
   { id: "name", label: "Name", minWidth: 100 },
   { id: "email", label: "Email", minWidth: 150 },
@@ -62,8 +57,8 @@ export type Data = {
 };
 
 export default function Users() {
-  const User =React.useContext(Usercontext).user.user;
-  
+  const User = React.useContext(Usercontext).user.user;
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchList, setSearchList] = useState("");
@@ -141,8 +136,8 @@ export default function Users() {
   };
 
   const [user, setUser] = useState(clearForm);
-  const{t,i18n}=useTranslation();
- 
+  const { t, i18n } = useTranslation();
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -178,7 +173,7 @@ export default function Users() {
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 
-              toast(t('toast_user_deleted'), {
+              toast(t("toast_user_deleted"), {
                 theme: "light",
                 autoClose: 1500,
                 position: "top-right",
@@ -196,7 +191,7 @@ export default function Users() {
           });
         }
       } catch (error) {
-       console.log(error)
+        throw error;
       }
     };
 
@@ -213,21 +208,21 @@ export default function Users() {
           <DialogTitle>{"Do you want to delete this User?"}</DialogTitle>
           <DialogContent sx={{ marginTop: "15px" }}>
             <DialogContentText id="alert-dialog-slide-description">
-              {t('users_name')}: {user.name}
+              {t("users_name")}: {user.name}
             </DialogContentText>
             <DialogContentText id="alert-dialog-slide-description">
-              {t('users_email')}: {user.email}
+              {t("users_email")}: {user.email}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>{t('cancel_button')}</Button>
+            <Button onClick={handleClose}>{t("cancel_button")}</Button>
             <Button
               color="error"
               onClick={() => {
                 deleteUser(user.id);
               }}
             >
-              {t('delete_ticket_button')}
+              {t("delete_ticket_button")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -236,10 +231,11 @@ export default function Users() {
   }
 
   return (
-    <>{User.role!=="admin" && <Navigate to={"/dashboard"} replace />}
+    <>
+      {User.role !== "admin" && <Navigate to={"/dashboard"} replace />}
       <DeleteModal />
       <div style={{ textAlign: "end", margin: "20px" }}>
-        <CreateUserModal
+        <UserComponent
           openModal={openModal}
           setOpenModal={setOpenModal}
           user={user}
@@ -284,7 +280,7 @@ export default function Users() {
           }}
           variant="contained"
         >
-          {t('button_add_new_uer')}
+          {t("button_add_new_uer")}
         </Button>
       </Typography>
       <Typography className="table" sx={{ margin: "20px" }}>
@@ -322,7 +318,7 @@ export default function Users() {
               {Userlist.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="left">
-                    {t('no_user_mesage')}
+                    {t("no_user_mesage")}
                   </TableCell>
                 </TableRow>
               ) : (

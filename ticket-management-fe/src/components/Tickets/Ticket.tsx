@@ -5,9 +5,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link/Link";
 import { useState } from "react";
-import { getAllAssignees } from "../api/baseapi";
-import { getAllCategories } from "../api/baseapi";
-import { baseUrl } from "../api/baseapi";
+import { getAllAssignees } from "../../api/baseapi";
+import { getAllCategories } from "../../api/baseapi";
+import { baseUrl } from "../../api/baseapi";
 
 import {
   Dialog,
@@ -16,16 +16,15 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
-import { createTicket, updateTicket } from "../api/baseapi";
+import { createTicket, updateTicket } from "../../api/baseapi";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { deleteTicket } from "../api/baseapi";
+import { deleteTicket } from "../../api/baseapi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
-import { getAllTickets } from "../api/baseapi";
-import { useTranslation } from "react-i18next";
+import { getAllTickets } from "../../api/baseapi";
 
 interface TicketProps {
   id: number;
@@ -57,7 +56,6 @@ function Ticket({
   setLocaltickets,
 }: TicketProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [isCategoriesLoaded , setIsCategoriesLOaded] = (false)
 
   const handleOpenModal = () => {
     getAllCategories().then((res) => {
@@ -147,7 +145,7 @@ function Ticket({
       });
     }
   };
-  const{t,i18n}=useTranslation();
+
   const handleEdit = () => {
     setticketInformation({
       title: selectedTicket.title,
@@ -225,7 +223,7 @@ function Ticket({
         let createResponse = await createTicket(formData);
 
         if (createResponse === 201) {
-          toast(t("toast_ticket_created"), {
+          toast("Ticket created successfully.", {
             theme: "light",
             autoClose: 1500,
             position: "top-right",
@@ -237,21 +235,21 @@ function Ticket({
           return;
         }
         if (createResponse === 401) {
-          toast(t("toast_unauthorized"), {
+          toast("Unauthorized", {
             theme: "light",
             autoClose: 1500,
             position: "top-right",
           });
         }
         if (createResponse === 404) {
-          toast(t("toast_validation_error"), {
+          toast("Validation error: invalid data format.", {
             theme: "light",
             autoClose: 1500,
             position: "top-right",
           });
         } else {
           toast(
-            t("toast_form_error"),
+            "An error occurred while submitting the form. Please try again ",
             {
               theme: "light",
               autoClose: 1500,
@@ -261,10 +259,10 @@ function Ticket({
         }
       } catch (error) {}
     } else {
-      let editResponse = await updateTicket(formData, id);
+      let editResponse = await updateTicket(id, formData);
 
       if (editResponse === 200) {
-        toast(t("toast_ticket_update"), {
+        toast("Ticket Updated successfully.", {
           theme: "light",
           autoClose: 1500,
           position: "top-right",
@@ -276,16 +274,16 @@ function Ticket({
         return;
       }
       if (editResponse === 401) {
-        toast(t("toast_unauthorized"), {
+        toast("Unauthorized", {
           theme: "light",
           autoClose: 1500,
           position: "top-right",
         });
       }
       if (editResponse === 404) {
-        toast(t("toast_validation_error"));
+        toast("Validation error: invalid data format.");
       } else {
-        t("toast_form_error");
+        toast("An error occurred while editing the form. Please try again");
       }
     }
   };
@@ -302,7 +300,7 @@ function Ticket({
         position: "top-right",
       });
     } catch (error) {
-      toast(t("toast_ticket_delete_error"), {
+      toast("An error occurred while deleting the ticket. Please try again.", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -320,7 +318,7 @@ function Ticket({
       >
         <div>
           <DialogTitle>
-            {id ? t("edit_ticket_modal_title") : t("create_ticket_modal_title")}
+            {id ? "TICKET DETAILS" : "CREATE NEW TICKET"}
           </DialogTitle>
 
           <DialogContent>
@@ -380,7 +378,7 @@ function Ticket({
               }}
             >
               <MenuItem value={"Select Category*"} disabled>
-                {t("menu_select_category")}
+                Select Category*
               </MenuItem>
 
               {categories.map((category) => (
@@ -409,7 +407,7 @@ function Ticket({
               }}
             >
               <MenuItem value={"Select Assignee*"} disabled>
-              {t("menu_select_assignee")}
+                Select Assignee*
               </MenuItem>
 
               {assignees.map((assigned_to) => (
@@ -438,7 +436,7 @@ function Ticket({
               }}
             >
               <MenuItem value={"Select Priority*"} disabled>
-                {t("menu_select_priority")}
+                Select Priority*
               </MenuItem>
               <MenuItem value={"low"}>low</MenuItem>
               <MenuItem value={"medium"}>medium</MenuItem>
@@ -453,7 +451,7 @@ function Ticket({
             >
               <label htmlFor="upload-image">
                 <Button variant="contained" component="span" size="small">
-                  {t("upload_button")}
+                  Upload
                 </Button>
                 <input
                   id="upload-image"
@@ -512,7 +510,7 @@ function Ticket({
                             fontSize: "14px",
                           }}
                         >
-                          {t("button_view_attachment")} {index + 1}
+                          View Attachment {index + 1}
                         </Link>
                         <IconButton
                           onClick={() => handleDeleteAttachment(index)}
@@ -549,7 +547,7 @@ function Ticket({
                         fontSize: "14px",
                       }}
                     >
-                      {t("button_view_attachment")} {index + 1} {index + 1}
+                      View Attachment {index + 1}
                     </Link>
                   </div>
                 ))}
@@ -571,7 +569,7 @@ function Ticket({
                   }}
                   size="small"
                 >
-                  {t("delete_ticket_button")}
+                  DELETE TICKET
                 </Button>
               ) : null}
 
@@ -579,12 +577,11 @@ function Ticket({
                 style={{ display: "flex", gap: "10px", alignItems: "center" }}
               >
                 <Button onClick={handleCloseModal} size="small">
-                  {t('cancel_button')}
+                  Cancel
                 </Button>
                 <div style={{ flexGrow: 1 }}></div>{" "}
-                {/* This will create a flexible empty space */}
                 <Button variant="contained" onClick={handleSubmit} size="small">
-                  {id ? t("edit_ticket_buton") : t("create_ticket_modal_title")}
+                  {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
                 </Button>
               </div>
             </DialogActions>

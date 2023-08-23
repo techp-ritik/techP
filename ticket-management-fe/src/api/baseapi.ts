@@ -45,14 +45,14 @@ export const getAllTickets = async () => {
         ).access_token}` },
       }
     );
-    console.log(token)
+  
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
     return data;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 export const deleteTicket = async (id: number): Promise<void> => {
@@ -67,7 +67,7 @@ export const deleteTicket = async (id: number): Promise<void> => {
       throw new Error("Network response was not ok");
     }
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 export const getTicket = async (id: number): Promise<void> => {
@@ -84,36 +84,15 @@ export const getTicket = async (id: number): Promise<void> => {
     const data = await response.json();
     return data;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
-export const updateTicketStatus = async (
-  id: number | string,
-  status: string
-) => {
-  try {
-    const formData = new FormData();
-    formData.append("status", status);
-    if (id !== "") {
-      const response = await createFetchInstance(
-        `${baseUrl}ticket/?id=${id}`,
-        "PUT",
-        ticketHeader,
-        formData
-      );
-      return response;
-    } else {
-      console.log("nochange", id);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
+
 export const filterTickets = async (params: any) => {
   try {
     let query = `tickets/?${params.map((item: any, index: any) => {
       if (item.value !== "") {
-        let param = `${index == 0 ? "" : "&"}` + item.key + "=" + item.value;
+        let param = `${index === 0 ? "" : "&"}` + item.key + "=" + item.value;
         return param;
       }
       return "";
@@ -132,7 +111,7 @@ export const filterTickets = async (params: any) => {
     const data = await response.json();
     return data;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 export const createTicket = async (formData: FormData) => {
@@ -153,27 +132,37 @@ export const createTicket = async (formData: FormData) => {
     return error;
   }
 };
-export const updateTicket = async (formData: FormData, id: number) => {
-  try {
-    const response = await createFetchInstance(
-      `${baseUrl}ticket?id=${id}`,
-      "PUT",
-      ticketHeader,
-      formData
-    );
 
-    const editData = response.status;
-    return editData;
-  } catch (error) {
-    return error;
-  }
+export const updateTicket = async (
+  id: number | string,
+  formData?: FormData,
+
+) => {
+  try {
+            if (id !== "") {
+              const response = await createFetchInstance(
+                `${baseUrl}ticket/?id=${id}`,
+                "PUT",
+                ticketHeader,
+                formData
+              );
+        
+              return response.status;
+            } else {
+              console.log("nochange", id);
+            }
+          } catch (error) {
+            return error;
+          }
+     
+ 
 };
 export const createCategory = async (formData: FormData) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}categories`,
       "POST",
-      // defaultHeaders,
+  
       ticketHeader,
       formData
     );
@@ -199,7 +188,7 @@ export const getAllCategories = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 export const editCategory = async (id: number, formData: FormData) => {
@@ -216,7 +205,7 @@ export const editCategory = async (id: number, formData: FormData) => {
     const editData = await response.status;
     return editData;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 
@@ -231,11 +220,11 @@ export const getAllUsers = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 
-export const deleteUserApi = async (id: number) => {
+export const deleteUser = async (id: number) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}users/${id}`,
@@ -247,7 +236,7 @@ export const deleteUserApi = async (id: number) => {
 
     return deleteuser;
   } catch (err) {
-    console.log(err);
+    throw(err);
   }
 };
 
@@ -286,7 +275,7 @@ export const signIn = async (formdata: FormData) => {
 
     if (!response.ok) {
       return response.status;
-      throw new Error("Network response was not ok");
+    
     }
     return response.json();
   } catch (error) {
@@ -294,7 +283,7 @@ export const signIn = async (formdata: FormData) => {
   }
 };
 
-export const Forgetpasswordlink = async (formdata: any) => {
+export const forgetpasswordlink = async (formdata: any) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}forgot-password`,
@@ -305,7 +294,7 @@ export const Forgetpasswordlink = async (formdata: any) => {
 
     if (!response.ok) {
       return response.status;
-      throw new Error("Network response was not ok");
+      
     }
     return response.json();
   } catch (error) {
@@ -324,7 +313,7 @@ export const forgetpasswordreset = async (formdata: any, email: string) => {
 
     if (!response.ok) {
       return response.status;
-      throw new Error("Network response was not ok");
+   
     }
     return response.json();
   } catch (error) {
@@ -351,6 +340,6 @@ export const getAllAssignees = async () => {
     const assignees = await response.json();
     return assignees;
   } catch (err) {
-    console.log(err);
+  throw(err);
   }
 };

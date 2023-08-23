@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import Alert from "@mui/material/Alert";
 import { signIn } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
@@ -16,19 +16,16 @@ import { toast } from "react-toastify";
 import { Usercontext } from "../App";
 import { useTranslation } from "react-i18next";
 
-
 export default function SignIn() {
   const [loader, setLoader] = useState(false);
-  const[token,setToken]=useState("")
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
-  const navigate=useNavigate();
-  const{user,setUser}=useContext(Usercontext)
-  const{t,i18n}=useTranslation();
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(Usercontext);
+  const { t, i18n } = useTranslation();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-
     setLoader(true);
     event.preventDefault();
     if (credentials.password.length < 8) {
@@ -36,37 +33,35 @@ export default function SignIn() {
         theme: "dark",
         autoClose: 1500,
         position: "top-right",
-      })
-      setLoader(false)
+      });
+      setLoader(false);
       return;
     }
-    const formdata=new FormData();
-    formdata.append("username",credentials.username)
-    formdata.append("password",credentials.password)
-    console.log(credentials)
-    signIn(formdata).then((res)=>{
-    console.log(res)
-      if(res.user){
-        navigate('/dashboard')
-        localStorage.setItem("access_token",JSON.stringify(res))
-        let retrievedObject=JSON.parse(localStorage.getItem("access_token") || '{}')
-        setUser(retrievedObject)
-       
-        
-        localStorage.setItem("Access Token",res.access_token)
-      }
-      else{
+    const formdata = new FormData();
+    formdata.append("username", credentials.username);
+    formdata.append("password", credentials.password);
+
+    signIn(formdata).then((res) => {
+      if (res.user) {
+        navigate("/dashboard");
+        localStorage.setItem("access_token", JSON.stringify(res));
+        let retrievedObject = JSON.parse(
+          localStorage.getItem("access_token") || "{}"
+        );
+        setUser(retrievedObject);
+
+        localStorage.setItem("Access Token", res.access_token);
+      } else {
         toast.error("Invalid credentials or user does not exists. Try Again.", {
           theme: "dark",
           autoClose: 1500,
           position: "top-right",
-        })
-        setLoader(false)
+        });
+        setLoader(false);
       }
-    })
-    
+    });
   };
-  
+
   return (
     <Container component="main" maxWidth="xs">
       {""}
@@ -141,7 +136,7 @@ export default function SignIn() {
           </form>{" "}
           <Grid container>
             <Grid item xs>
-              <Link  to='/forgetpassword'  style={{ fontSize: "12px" }} >
+              <Link to="/forgetpassword" style={{ fontSize: "12px" }}>
                 {t("forget_password")}
               </Link>
             </Grid>

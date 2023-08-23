@@ -30,7 +30,7 @@ function Tickets(props: list) {
     completedAt: string;
   }
   const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
-  const{t,i18n}=useTranslation();
+  const { t, i18n } = useTranslation();
   // Step 2: Update the state variable when the "View Ticket" button is clicked
   const handleViewTicketClick = (list: any, id: number) => {
     setShowTicket(true);
@@ -48,7 +48,7 @@ function Tickets(props: list) {
     <MainBoard>
       {props.getTickets?.length === 0 || undefined ? (
         <NoTickets>
-           <>{t("no_tickets")}</>
+          <>{t("no_tickets")}</>
         </NoTickets>
       ) : (
         props.getTickets?.map((list: any, index: number) => {
@@ -82,7 +82,8 @@ function Tickets(props: list) {
                     <SpecialTypography
                       sx={{ display: "flex", justifyContent: "space-between" }}
                     >
-                      {t('ticket_no')}{list.id}
+                      {t("ticket_no")}
+                      {list.id}
                       <Button
                         sx={{ display: "flex", justifyContent: "end" }}
                         size="small"
@@ -99,9 +100,11 @@ function Tickets(props: list) {
                       <TicketContent>
                         <div style={{ textAlign: "end" }}></div>
 
-                        <div>{t('ticket_title')}: {list.title}</div>
                         <div>
-                          {t('ticket_priority')}:{" "}
+                          {t("ticket_title")}: {list.title}
+                        </div>
+                        <div>
+                          {t("ticket_priority")}:{" "}
                           <span style={{ color: priorityColor }}>
                             {list.priority.toUpperCase()}
                           </span>
@@ -109,14 +112,14 @@ function Tickets(props: list) {
                         <div>
                           {" "}
                           <TicketDetails>
-                            {t('ticket_raised_by')}: {list.user?.name}{" "}
+                            {t("ticket_raised_by")}: {list.user?.name}{" "}
                             <Time>
                               {list.status == "blocked" ? (
-                                <>{t('ticket_time_taken')}</>
+                                <>{t("ticket_time_taken")}</>
                               ) : list.status !== "completed" ? (
-                                <>{t('ticket_active_time')}</>
+                                <>{t("ticket_active_time")}</>
                               ) : (
-                                <>{t('ticket_resolved_time')}</>
+                                <>{t("ticket_resolved_time")}</>
                               )}{" "}
                               : {splitTime(list.time_taken)}
                             </Time>

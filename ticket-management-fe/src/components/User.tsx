@@ -4,16 +4,15 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { DialogTitle } from "@mui/material";
-import React, { useEffect, useState, useTransition } from "react";
+import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { editUser } from "../api/baseapi";
 import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
 
 import { Data } from "./Users";
-import { useTranslation } from "react-i18next";
 
 const style = {
   position: "absolute" as "absolute",
@@ -44,7 +43,7 @@ interface list {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export default function CreateUserModal({
+export default function User({
   setUserList,
   UserList,
   openModal,
@@ -61,10 +60,10 @@ export default function CreateUserModal({
 
     actions: "",
   };
-  const{t,i18n}=useTranslation();
+
   const handleSubmit = async () => {
     if (!user.name || !user.email || !user.phone || !user.role) {
-      toast.error(t('toast_user_field_empty_error'), {
+      toast.error("Fields cannot be empty", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -73,7 +72,7 @@ export default function CreateUserModal({
     }
     const namePattern = /^[A-Za-z\s]+$/;
     if (!namePattern.test(user.name)) {
-      toast.error(t('toast_error_user_namecase'), {
+      toast.error("Name can only contain leters", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -84,7 +83,7 @@ export default function CreateUserModal({
     const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(com)$/i;
 
     if (!emailPattern.test(user.email)) {
-      toast.error(t('toast_error_email'), {
+      toast.error("Invalid email format", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -93,7 +92,7 @@ export default function CreateUserModal({
     }
 
     if (user.role === "Select Role*") {
-      toast.error(t('toast_error_user_role'), {
+      toast.error("Select User Role", {
         theme: "light",
         autoClose: 1500,
         position: "top-right",
@@ -130,7 +129,7 @@ export default function CreateUserModal({
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 
-              toast(t('toast_user_created'), {
+              toast("New User Created Successfully", {
                 theme: "light",
                 autoClose: 1500,
                 position: "top-right",
@@ -145,16 +144,16 @@ export default function CreateUserModal({
         }
 
         if (response === 401) {
-          toast(t('toast_user_unauthorized'));
+          toast("Unauthorized");
           return;
         }
 
         if (response === 403) {
-          toast(t('toast_user_access_denied'));
+          toast("Access Denied");
           return;
         }
         if (response === 422) {
-          toast.error(t('toast_error_emailvalidate'), {
+          toast.error("Enter valid email address ", {
             theme: "light",
             autoClose: 1500,
             position: "top-right",
@@ -162,14 +161,14 @@ export default function CreateUserModal({
           return;
         }
         if (response === 400) {
-          toast(t("toast_email_exist"));
+          toast("User with the given email already exists");
           return;
         } else {
           toast("An error occurred while creating the categoy .");
           return;
         }
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     } else {
       try {
@@ -216,12 +215,12 @@ export default function CreateUserModal({
           return;
         }
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     }
     setUser(clearForm);
   };
-  
+
   return (
     <div>
       <Modal

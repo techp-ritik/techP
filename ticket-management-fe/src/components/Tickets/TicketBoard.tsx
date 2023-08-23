@@ -1,3 +1,4 @@
+import * as React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Badge from "@mui/material/Badge";
@@ -5,14 +6,13 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import React, { useState, useEffect } from "react";
-import { filterTickets } from "../api/baseapi";
-import { getAllTickets, getTicket } from "../api/baseapi";
-import { updateTicketStatus } from "../api/baseapi";
-import { ToastContainer, toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { getAllTickets } from "../../api/baseapi";
+import { updateTicket as updateTicketStatus } from "../../api/baseapi";
+import { toast } from "react-toastify";
 import { Button } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
-import Filter from "./filter";
+import TicketsFilter from "../TicketsFilter";
 import Ticket from "./Ticket";
 import { useTranslation } from "react-i18next";
 
@@ -31,6 +31,8 @@ export type TicketList = {
   updated_at: string;
 };
 
+const formData = new FormData();
+
 export default function TicketBoard() {
   const [newTicketId, setNewTicketId] = useState<number | null>(null);
   const [showTicket, setShowTicket] = useState(false);
@@ -43,7 +45,7 @@ export default function TicketBoard() {
 
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
-  const{t,i18n}=useTranslation();
+  const { t, i18n } = useTranslation();
   const getTicketsLength = (status: String) => {
     return 1;
   };
@@ -58,6 +60,7 @@ export default function TicketBoard() {
     getAllTickets().then((res) => {
       if (res && res.length > 0) {
         setTickets(res);
+
         setLocalTickets(res);
       } else {
         setTickets([]);
@@ -96,10 +99,10 @@ export default function TicketBoard() {
           return list;
         });
         setLocalTickets(updateTicket);
-
-        let res = updateTicketStatus(draggableId, destination?.droppableId!);
+        formData.append("status", destination?.droppableId);
+        let res = updateTicketStatus(draggableId, formData);
         res.then((response) => {
-          if (response?.status === 200) {
+          if (response === 200) {
             getAllTickets().then((res) => {
               setTickets(res);
               setLocalTickets(res);
@@ -128,7 +131,12 @@ export default function TicketBoard() {
       }
     }
   };
-  const ticketStatus = [t("status_todo"), t("status_inprogress"), t("status_blocked"), t("status_completed")];
+  const ticketStatus = [
+    t("status_todo"),
+    t("status_inprogress"),
+    t("status_blocked"),
+    t("status_completed"),
+  ];
 
   return (
     <Box
@@ -145,7 +153,7 @@ export default function TicketBoard() {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <span>
           {" "}
-          <Filter setLocalTickets={setLocalTickets} />
+          <TicketsFilter setLocalTickets={setLocalTickets} />
         </span>
 
         <Button
@@ -156,8 +164,6 @@ export default function TicketBoard() {
           {t("create_ticket_button")}
         </Button>
       </div>
-
-      {/* <ToastContainer position="top-center" autoClose={1000} /> */}
 
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid container>
@@ -203,7 +209,7 @@ export default function TicketBoard() {
                           fontWeight: "600",
                         }}
                       >
-                        {status == "INPROGRESS" ? "IN PROGRESS" : status}{" "}
+                        {status === "INPROGRESS" ? "IN PROGRESS" : status}{" "}
                         <Badge
                           sx={{ marginLeft: "11px", marginBottom: "3px" }}
                           badgeContent={badgeContent}
