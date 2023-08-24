@@ -271,25 +271,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                       })}
                   </Select>
                 </FormControl>
-                <FormControl
-                  variant="standard"
-                  sx={{ m: 1, position: "relative", top: "10px" }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        onChange={(e) => {
-                          setParams({
-                            ...params,
-                            admin_data: !params.admin_data,
-                          });
-                        }}
-                        defaultChecked={params.admin_data}
-                      />
-                    }
-                    label="Raised by self"
-                  />
-                </FormControl>
+               
               </>
             )}
 
