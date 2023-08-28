@@ -6,13 +6,16 @@ import { mswHandlers } from "../../api/mswhandlers";
 import { setupWorker } from "msw";
 import { Usercontext } from "../../App";
 import { MemoryRouter } from "react-router";
+import { ToastContainer } from "react-toastify";
+import { ThemeProvider } from "@mui/private-theming";
+import TicketTheme from "../TicketTheme";
 
 export default {
   title: "Components/Categories",
   component: Categories,
 } as Meta;
 type scenarioProps = {
-  scenario: "no-data" | "default";
+  scenario: "no-data" | "default" | "createcategory" | "editcategory";
 };
 
 const MockUserContext = {
@@ -32,7 +35,10 @@ const Template: React.FC<scenarioProps> = ({ scenario }) => {
   return (
     <Usercontext.Provider value={MockUserContext}>
       <MemoryRouter>
-        <Categories />
+        <ToastContainer position="top-right" autoClose={2000} />
+        <ThemeProvider theme={TicketTheme}>
+          <Categories />
+        </ThemeProvider>
       </MemoryRouter>
     </Usercontext.Provider>
   );
@@ -40,3 +46,5 @@ const Template: React.FC<scenarioProps> = ({ scenario }) => {
 
 export const NoData = () => <Template scenario="no-data" />;
 export const Default = () => <Template scenario="default" />;
+export const CreateCategory = () => <Template scenario="createcategory" />;
+export const EditCategory = () => <Template scenario="editcategory" />;
