@@ -11,7 +11,7 @@ import {
   getAllCategories,
   createCategory,
 } from "../../api/baseapi";
-interface TicketProps {
+export interface TicketProps {
   isModalOpen: boolean;
   handleCloseModal: any;
   category: any;

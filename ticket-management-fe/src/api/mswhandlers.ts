@@ -11,7 +11,9 @@ export const mswHandlers = (scenario :{}) => [
         
         case 'no-data':
           return res(ctx.status(200), ctx.json([]));
+     
 
+        
           
   
         default:
@@ -36,28 +38,29 @@ export const mswHandlers = (scenario :{}) => [
   rest.post(`${baseUrl}categories`, (req, res, ctx) => {
    
     const category = req.body;
+ 
 
-    if (scenario === 'createcategory') {
+
       
       
      
       return res(ctx.status(201), ctx.json({ id: 4, category }));
    
       
-    } 
+
     
   }),
   rest.put(`${baseUrl}categories/:id`, (req, res, ctx) => {
  
     const category = req.body;
   
-    if (scenario === 'editcategory') {
+  
 
 
      
       return res(ctx.status(200), ctx.json({ id: 4, category }));
    
       
-    }
+ 
   }),
 ];

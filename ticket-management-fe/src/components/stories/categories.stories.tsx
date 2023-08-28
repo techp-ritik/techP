@@ -46,5 +46,3 @@ const Template: React.FC<scenarioProps> = ({ scenario }) => {
 
 export const NoData = () => <Template scenario="no-data" />;
 export const Default = () => <Template scenario="default" />;
-export const CreateCategory = () => <Template scenario="createcategory" />;
-export const EditCategory = () => <Template scenario="editcategory" />;
