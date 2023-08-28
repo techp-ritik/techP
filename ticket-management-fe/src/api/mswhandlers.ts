@@ -1,58 +1,22 @@
-// // src/api/mswHandlers.js
-
-// import { rest } from 'msw';
-// import {baseUrl} from './baseapi'
-// // Define your request handlers using `rest` from MSW
-// export const mswHandlers = [
-//   rest.get(`${baseUrl}/categories`, (req, res, ctx) => {
-//     // Mock response data
-//     const categories = [
-//       { id: 1, name: 'Category 1', description: 'Description 1' },
-//       { id: 2, name: 'Category 2', description: 'Description 2' },
-//       // ... other mock categories ...
-//     ];
-
-//     return res(ctx.status(200), ctx.json(categories));
-//   }),
-
-//   // Define more handlers for other types of requests...
-// ];
-
-// src/api/mswhandlers.js
 import { rest } from 'msw';
+import { baseUrl } from './baseapi';
 
-export const mswHandlers = [
-  // Mock API handler for getAllCategories
+export const mswHandlers = (scenario :{}) => [
+  rest.get(`${baseUrl}categories`, (req, res, ctx) => {
 
-  rest.get('https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/', (req, res, ctx) => {
-     console.log("3")
-    return res(
-   
-      ctx.status(200),
-      ctx.json([
-        { id: 1, name: 'Category 1', description: 'Description 1' },
-        { id: 2, name: 'Category 2', description: 'Description 2' },
-        // Add more mock data as needed
-      ])
-      
-    );
+    switch (scenario) {
+        case 'no-data':
+          return res(ctx.status(200), ctx.json([]));
+  
+        default:
+          return res(
+            ctx.status(200),
+            ctx.json([
+              { id: 3, name: 'Category 3', description: 'This is a very  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsumlong description that exceeds the usual length of descriptions.' },
+              { id: 2, name: 'Category 2', description: 'Description 2' },
+          
+            ])
+          )
+        }
   }),
-    // Mock API handler for getAllCategories with no data
-    rest.get('https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/no-data', (req, res, ctx) => {
-        console.log("1")
-        return res(ctx.status(200), ctx.json([]));
-        
-      }),
-    
-      // Mock API handler for getAllCategories with long description
-   
-      rest.get('https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/long-desc/', (req, res, ctx) => {
-        console.log("2")
-        const categories = [
-          { id: 3, name: 'Category 3', description: 'This is a very long description that exceeds the usual length of descriptions.' },
-          // ... other mock categories ...
-        ];
-    
-        return res(ctx.status(200), ctx.json(categories));
-      }),
 ];
