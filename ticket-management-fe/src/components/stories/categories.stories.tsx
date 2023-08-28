@@ -152,7 +152,7 @@ console.log("2131312");
 Default.args = {
   msw: [
     rest.get(
-      "https://91db-210-16-94-102.ngrok-free.app/categories",
+      "https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/",
       (req, res, ctx) => {
         console.log("2131312");
         return res(
@@ -171,8 +171,9 @@ export const NoData = Template.bind({});
 NoData.args = {
   msw: [
     rest.get(
-      "https://91db-210-16-94-102.ngrok-free.app/categories/no-data/",
+      "https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/no-data",
       (req, res, ctx) => {
+        console.log("dadasda");
         return res(ctx.status(200), ctx.json([]));
       }
     ),
@@ -183,7 +184,7 @@ export const LongDescription = Template.bind({});
 LongDescription.args = {
   msw: [
     rest.get(
-      "https://91db-210-16-94-102.ngrok-free.app/categories/long-desc/",
+      "https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/long-desc",
       (req, res, ctx) => {
         const longDescriptionData = [
           {

@@ -23,26 +23,30 @@ import { rest } from 'msw';
 
 export const mswHandlers = [
   // Mock API handler for getAllCategories
-  rest.get('https://91db-210-16-94-102.ngrok-free.app/categories/nodata/', (req, res, ctx) => {
+
+  rest.get('https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/', (req, res, ctx) => {
      console.log("3")
     return res(
+   
       ctx.status(200),
       ctx.json([
         { id: 1, name: 'Category 1', description: 'Description 1' },
         { id: 2, name: 'Category 2', description: 'Description 2' },
         // Add more mock data as needed
       ])
+      
     );
   }),
     // Mock API handler for getAllCategories with no data
-    rest.get('https://91db-210-16-94-102.ngrok-free.app/categories/', (req, res, ctx) => {
+    rest.get('https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/no-data', (req, res, ctx) => {
         console.log("1")
         return res(ctx.status(200), ctx.json([]));
+        
       }),
     
       // Mock API handler for getAllCategories with long description
    
-      rest.get('https://91db-210-16-94-102.ngrok-free.app/categories/long-desc/', (req, res, ctx) => {
+      rest.get('https://8fe2-103-177-83-247.ngrok-free.app/v1/categories/long-desc/', (req, res, ctx) => {
         console.log("2")
         const categories = [
           { id: 3, name: 'Category 3', description: 'This is a very long description that exceeds the usual length of descriptions.' },
