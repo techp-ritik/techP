@@ -111,7 +111,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  console.log(user);
+  
   return (
     <div>
       <FilterIcon onClick={handleClick}>
@@ -211,7 +211,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                   })}
               </Select>
             </FormControl>
-            {user.role == "admin" && (
+       
               <>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
                   {" "}
@@ -273,7 +273,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                 </FormControl>
                
               </>
-            )}
+           
 
             <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
               <label

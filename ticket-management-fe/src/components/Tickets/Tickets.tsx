@@ -52,6 +52,7 @@ function Tickets(props: list) {
         </NoTickets>
       ) : (
         props.getTickets?.map((list: any, index: number) => {
+          console.log(list)
           let priorityColor = "";
           switch (list.priority) {
             case "high":

@@ -64,3 +64,71 @@ export const mswHandlers = (scenario :{}) => [
  
   }),
 ];
+export const mockTickets = () => [
+  rest.get(`${baseUrl}tickets`, (req, res, ctx) => {
+
+       return res(
+           
+            ctx.json([
+              {
+                id: 90,
+                title: "Test Ticket",
+                description: "This is a test ticket.",
+                category: {
+                  name: "HR department s",
+                  description: "HR department s",
+                },
+                status: "inprogress",
+                priority: "high",
+                assigned_to: {
+                  id: 1,
+                  name: "Vaishnavi Ranbhare",
+                },
+                user: {
+                  id: 2,
+                  name: "Vaishnavi",
+                },
+                completed_at: null,
+                created_at: "2023-08-23T04:41:53.97292",
+                attachments: [
+                  {
+                    id: 48,
+                    filename: "picture.jpg",
+                    filepath:
+                      "uploads/61f69a70-59ac-4685-ae25-e2dd2f449e45_picture.jpg",
+                  },
+                ],
+                time_taken: 122,
+              }
+          
+            ])
+          )
+        }
+  ),
+  rest.get(`${baseUrl}categories`, (req, res, ctx) => {
+      return res(
+        ctx.json([
+          {
+            name: "HR department s",
+            description: "HR department s",
+            id: 33,
+          },
+        ])
+      );
+    }
+  ),
+  rest.get(`${baseUrl}users`, (req, res, ctx) => {
+      return res(
+        ctx.json([
+          {
+            id: 133,
+            name: "utkarsh TechP",
+            email: "utkarsh.sethiya@techprescient.com",
+            role: "user",
+            phone: 9845374536,
+          },
+        ])
+      );
+    }
+  )
+];
