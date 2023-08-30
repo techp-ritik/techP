@@ -1,26 +1,31 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import Categories from "../Categories/Categories";
+
+import Categories from "./Categories/Categories";
 import { rest } from "msw";
-import { mswHandlers } from "../../api/mswhandlers";
+
+import { mswHandlers } from "../api/mswhandlers";
 import { setupWorker } from "msw";
-import { Usercontext } from "../../App";
+
+import { Usercontext } from "../App";
 import { MemoryRouter } from "react-router";
 import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "@mui/private-theming";
-import TicketTheme from "../TicketTheme";
+import TicketTheme from "./TicketTheme";
+import Users from "./Users";
 
 export default {
-  title: "Components/Categories",
-  component: Categories,
+  title: "Components/Users",
+  component: Users,
 } as Meta;
 type scenarioProps = {
-  scenario: "no-data" | "default" | "createcategory" | "editcategory";
+  scenario: "no-data" | "default";
 };
 
 const MockUserContext = {
   user: {
     role: "admin",
+    user: "admin",
   },
 };
 
@@ -37,7 +42,7 @@ const Template: React.FC<scenarioProps> = ({ scenario }) => {
       <MemoryRouter>
         <ToastContainer position="top-right" autoClose={2000} />
         <ThemeProvider theme={TicketTheme}>
-          <Categories />
+          <Users />
         </ThemeProvider>
       </MemoryRouter>
     </Usercontext.Provider>

@@ -25,7 +25,7 @@ const style = {
   borderRadius: "8px",
   padding: "0px 0px 20px 0px",
 };
-interface list {
+export interface list {
   UserList: Data[];
   setUserList: React.Dispatch<React.SetStateAction<Data[]>>;
   user: Data;
@@ -123,7 +123,7 @@ export default function User({
       try {
         const response = await createUser(userData);
 
-        if (response === 200) {
+        if (response === 201) {
           getAllUsers()
             .then((res) => {
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);

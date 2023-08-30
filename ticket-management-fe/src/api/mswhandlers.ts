@@ -1,21 +1,13 @@
 import { rest } from 'msw';
 import { baseUrl } from './baseapi';
-import { positions } from '@mui/system';
-import { toast } from "react-toastify";
 
 export const mswHandlers = (scenario :{}) => [
-
   rest.get(`${baseUrl}categories`, (req, res, ctx) => {
-
     switch (scenario) {
         
         case 'no-data':
           return res(ctx.status(200), ctx.json([]));
-     
 
-        
-          
-  
         default:
           return res(
             ctx.status(200),
@@ -38,29 +30,118 @@ export const mswHandlers = (scenario :{}) => [
   rest.post(`${baseUrl}categories`, (req, res, ctx) => {
    
     const category = req.body;
- 
-
-
-      
-      
-     
       return res(ctx.status(201), ctx.json({ id: 4, category }));
-   
-      
 
-    
   }),
   rest.put(`${baseUrl}categories/:id`, (req, res, ctx) => {
  
     const category = req.body;
-  
-  
-
-
-     
       return res(ctx.status(200), ctx.json({ id: 4, category }));
-   
-      
- 
   }),
+  rest.get(`${baseUrl}users`, (req, res, ctx) => {
+
+    switch (scenario) {
+        
+        case 'no-data':
+          return res(ctx.status(200), ctx.json([]));
+        default:
+          return res(
+            ctx.status(200),
+            ctx.json([
+                {
+                    id: 994,
+                    name: "atharv",
+                    email: "vaspate@gmail.com",
+                    role: "admin",
+                    phone: 1234567890,
+           
+                  },
+                  {
+                    id: 519,
+                    name: "utkarsh",
+                    email: "u@gmail.com",
+                    role: "user",
+                    phone: 1234567390,
+                  
+                  },
+                  {
+                    id: 354,
+                    name: "atharv",
+                    email: "vaspate@gmail.com",
+                    role: "admin",
+                    phone: 1234567890,
+               
+                  },
+                  {
+                    id: 99,
+                    name: "utkarsh",
+                    email: "u@gmail.com",
+                    role: "user",
+                    phone: 1234567390,
+                
+                  },
+                  {
+                    id: 43,
+                    name: "atharv",
+                    email: "vaspate@gmail.com",
+                    role: "admin",
+                    phone: 1234567890,
+                   
+                  },
+                  {
+                    id: 94,
+                    name: "utkarsh",
+                    email: "u@gmail.com",
+                    role: "user",
+                    phone: 1234567390,
+                  
+                  },
+                  {
+                    id: 4,
+                    name: "atharv",
+                    email: "vaspate@gmail.com",
+                    role: "admin",
+                    phone: 1234567890,
+             
+                  },
+                  {
+                    id: 9,
+                    name: "utkarsh",
+                    email: "u@gmail.com",
+                    role: "user",
+                    phone: 1234567390,
+                  
+                  },
+            ])
+          )
+        }
+  }),
+  rest.post(`${baseUrl}users/`, (req, res, ctx) => {
+    const category = req.body;
+      return res(ctx.status(201), ctx.json({ id: 4, category }));
+  }),
+  rest.put(`${baseUrl}users/:id`, (req, res, ctx) => {
+    const category = req.body;
+      return res(ctx.status(200), ctx.json({ id: 4, category }));
+  
+  }),
+
+  rest.post(`${baseUrl}users/token`, (req, res, ctx) => {
+    const details = req.body;
+    const responsePayload = {
+    user: {
+      details , 
+    }
+    };
+      return res(ctx.status(200), ctx.json(responsePayload));
+
+  }),
+  rest.post(`${baseUrl}forgot-password`, (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json([]));
+  }),
+  rest.post(`${baseUrl}forgot-password/reset/:email`, (req, res, ctx) => {
+return res(ctx.status(200), ctx.json([]));
+
+  }),
+  
 ];

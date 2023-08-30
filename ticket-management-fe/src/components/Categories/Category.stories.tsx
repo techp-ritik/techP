@@ -1,26 +1,36 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import Category from "../Categories/Category";
+import Category from "./Category";
 import { ThemeProvider } from "@emotion/react";
 import TicketTheme from "../TicketTheme";
 import { ToastContainer } from "react-toastify";
 import { I18nextProvider } from "react-i18next";
-import { TicketProps } from "../Categories/Category";
-
+import { TicketProps } from "./Category";
+import { Usercontext } from "../../App";
+import { MemoryRouter } from "react-router";
 export default {
   title: "Components/Category",
   component: Category,
+  parameters: {},
 } as Meta;
-
+const MockUserContext = {
+  user: {
+    role: "admin",
+  },
+};
 const Template: Story<TicketProps> = (args) => (
-  <ThemeProvider theme={TicketTheme}>
-    <ToastContainer position="top-center" autoClose={3000} />
-    <Category {...args} />;
-  </ThemeProvider>
+  <Usercontext.Provider value={MockUserContext}>
+    <MemoryRouter>
+      <ToastContainer position="top-right" autoClose={2000} />
+      <ThemeProvider theme={TicketTheme}>
+        <Category {...args} />
+      </ThemeProvider>
+    </MemoryRouter>
+  </Usercontext.Provider>
 );
 
-export const CreateNewCategory = Template.bind({});
-CreateNewCategory.args = {
+export const _CreateNewCategory = Template.bind({});
+_CreateNewCategory.args = {
   isModalOpen: true,
   handleCloseModal: () => {},
   category: {
@@ -32,8 +42,8 @@ CreateNewCategory.args = {
   setCategory: () => {},
 };
 
-export const EditCategory = Template.bind({});
-EditCategory.args = {
+export const _EditCategory = Template.bind({});
+_EditCategory.args = {
   isModalOpen: true,
   handleCloseModal: () => {},
   category: {
