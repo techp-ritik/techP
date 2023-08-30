@@ -27,7 +27,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const { user } = useContext(Usercontext).user;
+ 
 
   const [params, setParams] = useState({
     priority: "",
@@ -233,7 +233,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
                     {userList.length > 0 &&
                       userList.map((item: any) => {
-                        console.log(item);
+                       
                         return (
                           <MenuItem value={item.id}>
                             {item?.name.toUpperCase()}
@@ -262,7 +262,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
                     {userList.length > 0 &&
                       userList.map((item: any) => {
-                        console.log(item);
+                       
                         return (
                           <MenuItem value={item.id}>
                             {item?.name.toUpperCase()}
