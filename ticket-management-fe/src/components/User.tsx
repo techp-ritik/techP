@@ -221,7 +221,7 @@ const User=React.memo(
       }
       setUser(clearForm);
     };
-    console.log("usermodel")
+    
     return (
       <div>
         <Modal
