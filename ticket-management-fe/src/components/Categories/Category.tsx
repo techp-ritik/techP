@@ -6,6 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
+import {memo} from "react"
 import {
   editCategory,
   getAllCategories,
@@ -24,20 +25,21 @@ interface Category {
   id: number;
 }
 
-function Category({
+const CategoryModal=  React.memo(({
   isModalOpen,
   handleCloseModal,
   category,
   setCategory,
   setCategories,
-}: TicketProps) {
+}: TicketProps)=> {
+  
   const handleSubmit = async () => {
     if (!category.name || !category.description) {
       toast.error("Fields cannot be empty");
 
       return;
     }
-
+    console.log("submit")
     const categoryData = {
       name: category.name,
       description: category.description,
@@ -122,7 +124,7 @@ function Category({
 
     handleCloseModal();
   };
-
+console.log("create category modal")
   return (
     <Dialog
       open={isModalOpen}
@@ -184,5 +186,6 @@ function Category({
     </Dialog>
   );
 }
+)
 
-export default Category;
+export default CategoryModal;

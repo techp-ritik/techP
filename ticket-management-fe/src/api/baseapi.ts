@@ -1,4 +1,4 @@
-export const baseUrl = "https://a40f-210-16-94-98.ngrok-free.app/v1/";
+export const baseUrl = "https://aea9-210-16-94-101.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
@@ -51,7 +51,7 @@ export const getAllTickets = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    
   }
 };
 export const deleteTicket = async (id: number): Promise<void> => {
@@ -66,7 +66,7 @@ export const deleteTicket = async (id: number): Promise<void> => {
       throw new Error("Network response was not ok");
     }
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 export const getTicket = async (id: number): Promise<void> => {
@@ -83,7 +83,7 @@ export const getTicket = async (id: number): Promise<void> => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 
@@ -110,7 +110,7 @@ export const getTicket = async (id: number): Promise<void> => {
 //     const data = await response.json();
 //     return data;
 //   } catch (err) {
-//     throw(err);
+//     ;
 //   }
 // };
 export const filterTickets = async (params: any) => {
@@ -136,7 +136,7 @@ export const filterTickets = async (params: any) => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 export const createTicket = async (formData: FormData) => {
@@ -218,7 +218,7 @@ export const getAllCategories = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 export const editCategory = async (id: number, categoryData: any) => {
@@ -237,7 +237,7 @@ export const editCategory = async (id: number, categoryData: any) => {
     const editData = await response.status;
     return editData;
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 
@@ -252,7 +252,7 @@ export const getAllUsers = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 
@@ -268,7 +268,7 @@ export const deleteUser = async (id: number) => {
 
     return deleteuser;
   } catch (err) {
-    throw(err);
+    ;
   }
 };
 
@@ -372,6 +372,6 @@ export const getAllAssignees = async () => {
     const assignees = await response.json();
     return assignees;
   } catch (err) {
-  throw(err);
+  ;
   }
 };

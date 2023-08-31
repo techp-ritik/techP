@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef,useCallback } from "react";
 import { getAllTickets } from "../../api/baseapi";
 import { updateTicket as updateTicketStatus } from "../../api/baseapi";
 import { toast } from "react-toastify";
@@ -35,14 +35,18 @@ const formData = new FormData();
 
 export default function TicketBoard() {
   const [newTicketId, setNewTicketId] = useState<number | null>(null);
+  const butRef=useRef(null)
   const [showTicket, setShowTicket] = useState(false);
-  const handleCreateNewTicket = () => {
+  const handleCreateNewTicket = useCallback(() => {
+    
     setShowTicket(true);
     setNewTicketId(0);
-  };
+  },[])
+  
+
 
   let data: TicketList[] = [];
-
+//  console.log("Ticketboard")
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
   const { t, i18n } = useTranslation();
@@ -68,7 +72,7 @@ export default function TicketBoard() {
       }
     });
   }, []);
-
+  
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
 
