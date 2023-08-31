@@ -4,17 +4,31 @@ import User, { list } from "./User";
 import { ThemeProvider } from "@emotion/react";
 import TicketTheme from "./TicketTheme";
 import { I18nextProvider } from "react-i18next";
-
+import i18n from "../i18";
+import { MemoryRouter } from "react-router";
+import { Usercontext } from "../App";
 import { ToastContainer } from "react-toastify";
 export default {
   title: "Components/User",
   component: User,
 } as Meta;
 
+const MockUserContext = {
+  user: {
+    role: "admin",
+  },
+};
+
 const Template: Story<list> = (args) => (
   <ThemeProvider theme={TicketTheme}>
-    <ToastContainer position="top-right" autoClose={2000} />
-    <User {...args} />;
+    <MemoryRouter>
+      <Usercontext.Provider value={MockUserContext}>
+        <I18nextProvider i18n={i18n}>
+          <ToastContainer position="top-right" autoClose={2000} />
+          <User {...args} />
+        </I18nextProvider>
+      </Usercontext.Provider>
+    </MemoryRouter>
   </ThemeProvider>
 );
 

@@ -3,13 +3,15 @@ import { baseUrl } from './baseapi';
 
 export const mswHandlers = (scenario :{}) => [
   rest.get(`${baseUrl}categories`, (req, res, ctx) => {
-    switch (scenario) {
-        
-        case 'no-data':
-          return res(ctx.status(200), ctx.json([]));
 
-        default:
+    if(scenario === 'no-data'){
+
+
+          return res(ctx.status(200), ctx.json([]));
+    }
+   
           return res(
+          
             ctx.status(200),
             ctx.json([
               { id: 3, name: 'Category 3', description: 'This is a very  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsumlong description that exceeds the usual length of descriptions.' },
@@ -25,8 +27,8 @@ export const mswHandlers = (scenario :{}) => [
           
             ])
           )
-        }
-  }),
+        }),
+
   rest.post(`${baseUrl}categories`, (req, res, ctx) => {
    
     const category = req.body;
@@ -38,13 +40,14 @@ export const mswHandlers = (scenario :{}) => [
     const category = req.body;
       return res(ctx.status(200), ctx.json({ id: 4, category }));
   }),
+
   rest.get(`${baseUrl}users`, (req, res, ctx) => {
 
-    switch (scenario) {
-        
-        case 'no-data':
-          return res(ctx.status(200), ctx.json([]));
-        default:
+
+    if(scenario === "no-data"){
+   
+      return res(ctx.status(200), ctx.json([]));
+    }
           return res(
             ctx.status(200),
             ctx.json([
@@ -114,7 +117,7 @@ export const mswHandlers = (scenario :{}) => [
                   },
             ])
           )
-        }
+
   }),
   rest.post(`${baseUrl}users/`, (req, res, ctx) => {
     const category = req.body;
@@ -143,5 +146,14 @@ export const mswHandlers = (scenario :{}) => [
 return res(ctx.status(200), ctx.json([]));
 
   }),
+    rest.delete(`${baseUrl}users/:id`, (req, res, ctx) => {
+      const { id } = req.params;
+  return res(ctx.status(200), ctx.json({ message: 'User deleted successfully' }));
+    
+    }),
+  
+
+
+  
   
 ];

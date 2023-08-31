@@ -1,9 +1,9 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-
+import i18n from "../i18";
 import Categories from "./Categories/Categories";
 import { rest } from "msw";
-
+import { I18nextProvider } from "react-i18next";
 import { mswHandlers } from "../api/mswhandlers";
 import { setupWorker } from "msw";
 
@@ -18,6 +18,7 @@ export default {
   title: "Components/Users",
   component: Users,
 } as Meta;
+
 type scenarioProps = {
   scenario: "no-data" | "default";
 };
@@ -38,14 +39,16 @@ const Template: React.FC<scenarioProps> = ({ scenario }) => {
   }, [scenario]);
 
   return (
-    <Usercontext.Provider value={MockUserContext}>
+    <ThemeProvider theme={TicketTheme}>
       <MemoryRouter>
-        <ToastContainer position="top-right" autoClose={2000} />
-        <ThemeProvider theme={TicketTheme}>
-          <Users />
-        </ThemeProvider>
+        <Usercontext.Provider value={MockUserContext}>
+          <I18nextProvider i18n={i18n}>
+            <ToastContainer position="top-right" autoClose={2000} />
+            <Users />
+          </I18nextProvider>
+        </Usercontext.Provider>
       </MemoryRouter>
-    </Usercontext.Provider>
+    </ThemeProvider>
   );
 };
 
