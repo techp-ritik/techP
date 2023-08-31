@@ -11,7 +11,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { Button, Typography, InputAdornment } from "@mui/material";
-import { useState, useEffect,useMemo,useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { Usercontext } from "../../App";
@@ -40,7 +40,7 @@ export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const { user } = React.useContext(Usercontext);
   let User = user?.user;
- 
+
   useEffect(() => {
     getAllCategories().then((res) => {
       if (res && res.length > 0) {
@@ -82,7 +82,7 @@ export default function Categories() {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = useCallback(()=>{
+  const handleCloseModal = useCallback(() => {
     setCategory({
       name: "",
       description: "",
@@ -90,16 +90,14 @@ export default function Categories() {
     });
 
     setIsModalOpen(false);
-  },[])  
+  }, []);
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("serach")
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     setPage(0); // Reset page to the first page when search query changes
   };
 
   const handleOpenEditModal = (category: Category) => {
-    console.log("editmodal")
     setCategory({
       name: category.name,
       description: category.description,
@@ -110,7 +108,6 @@ export default function Categories() {
   };
 
   const handleSort = (property: "name" | "description" | "id") => {
-    console.log("sort")
     const isAsc = sortBy === property && sortOrder === "asc";
     setSortBy(property);
     setSortOrder(isAsc ? "desc" : "asc");
@@ -271,13 +268,13 @@ export default function Categories() {
           />
         </TableContainer>
       </Typography>
-    <CategoryModal
-    isModalOpen={isModalOpen}
-    handleCloseModal={handleCloseModal}
-    category={category}
-    setCategory={setCategory}
-    setCategories={setCategories}
-    />
+      <CategoryModal
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        category={category}
+        setCategory={setCategory}
+        setCategories={setCategories}
+      />
     </>
   );
 }

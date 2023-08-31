@@ -46,7 +46,7 @@ export default function TicketBoard() {
 
 
   let data: TicketList[] = [];
-//  console.log("Ticketboard")
+
   const [tickets, setTickets] = useState(data);
   const [localtickets, setLocalTickets] = useState(data);
   const { t, i18n } = useTranslation();
