@@ -1,4 +1,3 @@
-
 export const baseUrl = "https://aea9-210-16-94-101.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
@@ -88,6 +87,32 @@ export const getTicket = async (id: number): Promise<void> => {
   }
 };
 
+// export const filterTickets = async (params: any) => {
+//   try {
+//     let query = `tickets/?${params.map((item: any, index: any) => {
+//       if (item.value !== "") {
+//         let param = `${index === 0 ? "" : "&"}` + item.key + "=" + item.value;
+//         return param;
+//       }
+//       return "";
+//     })}`;
+//     query = query.replaceAll(",", "");
+//     const response = await fetch(`${baseUrl + query}`, {
+//       headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${JSON.parse(
+//         localStorage.getItem("access_token") || "{}"
+//       ).access_token}` },
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+
+//     const data = await response.json();
+//     return data;
+//   } catch (err) {
+//     ;
+//   }
+// };
 export const filterTickets = async (params: any) => {
   try {
     let query = `tickets/?${params.map((item: any, index: any) => {
@@ -157,14 +182,19 @@ export const updateTicket = async (
      
  
 };
-export const createCategory = async (formData: FormData) => {
+export const createCategory = async (categoryData: any) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}categories`,
       "POST",
   
-      ticketHeader,
-      formData
+      defaultHeaders,JSON.stringify(categoryData)
+
+   
+
+
+
+
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -191,13 +221,15 @@ export const getAllCategories = async () => {
     console.log(err);
   }
 };
-export const editCategory = async (id: number, formData: FormData) => {
+export const editCategory = async (id: number, categoryData: any) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}categories/${id}`,
       "PUT",
-      ticketHeader,
-      formData
+      // ticketHeader,
+      // formData
+
+      defaultHeaders,JSON.stringify(categoryData)
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
