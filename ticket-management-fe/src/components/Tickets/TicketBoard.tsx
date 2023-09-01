@@ -43,8 +43,8 @@ export default function TicketBoard() {
 
   let data: TicketList[] = [];
 
-  const [tickets, setTickets] = useState(data);
-  const [localtickets, setLocalTickets] = useState(data);
+  const [tickets, setTickets] = useState<TicketList[]>(data);
+  const [localtickets, setLocalTickets] = useState<TicketList[]>(data);
   const { t, i18n } = useTranslation();
   const getTicketsLength = (status: String) => {
     return 1;
@@ -57,7 +57,7 @@ export default function TicketBoard() {
   });
 
   useEffect(() => {
-    getAllTickets().then((res) => {
+    getAllTickets().then((res: TicketList[]) => {
       if (res && res.length > 0) {
         setTickets(res);
 
@@ -103,7 +103,7 @@ export default function TicketBoard() {
         let res = updateTicketStatus(draggableId, formData);
         res.then((response) => {
           if (response === 200) {
-            getAllTickets().then((res) => {
+            getAllTickets().then((res: TicketList[]) => {
               setTickets(res);
               setLocalTickets(res);
               toast(t("toast_ticketstatus_update"), {

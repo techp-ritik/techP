@@ -34,7 +34,7 @@ export default function Forgetpassword() {
       email: credentials.email,
     };
 
-    forgetpasswordlink(request).then((res: any) => {
+    forgetpasswordlink(request).then((res: number) => {
       if (res === 422) {
         toast.error("  Email Validation Error", {
           theme: "dark",
@@ -86,7 +86,7 @@ export default function Forgetpassword() {
     };
     const email = credentials.email;
 
-    forgetpasswordreset(request, email).then((res: any) => {
+    forgetpasswordreset(request, email).then((res: number) => {
       if (res === 400 || res === 401) {
         toast.error("Invalid credentials. Check your otp code or expiry time", {
           theme: "dark",
@@ -211,7 +211,6 @@ export default function Forgetpassword() {
               />
               <Button
                 disabled={loader}
-                
                 type="submit"
                 fullWidth
                 variant="contained"

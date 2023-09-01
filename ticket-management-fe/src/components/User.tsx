@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
 
 import { Data } from "./Users";
+import { TicketList } from "./Tickets/TicketBoard";
 
 const style = {
   position: "absolute" as "absolute",
@@ -125,7 +126,7 @@ export default function User({
 
         if (response === 201) {
           getAllUsers()
-            .then((res) => {
+            .then((res: Data[]) => {
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 
@@ -176,7 +177,7 @@ export default function User({
 
         if (response === 200) {
           getAllUsers()
-            .then((res) => {
+            .then((res: Data[]) => {
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 

@@ -18,9 +18,21 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Usercontext } from "../App";
 import { useState, useContext } from "react";
+import { Category } from "./Categories/Categories";
+import { User } from "./Tickets/Ticket";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
+}
+export interface params {
+  priority: string;
+  category: string;
+  created_at: string;
+  completed_at: string;
+  query: string;
+  user: string;
+  assignee: string;
+  admin_data: boolean;
 }
 
 export default function TicketsFilter({ setLocalTickets }: props) {
@@ -29,7 +41,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
   );
   const { user } = useContext(Usercontext).user;
 
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<params>({
     priority: "",
     category: "",
     created_at: "",
@@ -74,8 +86,8 @@ export default function TicketsFilter({ setLocalTickets }: props) {
     },
   ];
 
-  const [categories, setCategories] = React.useState([]);
-  const [userList, setUserList] = React.useState([]);
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [userList, setUserList] = React.useState<User[]>([]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -86,21 +98,21 @@ export default function TicketsFilter({ setLocalTickets }: props) {
   };
 
   React.useEffect(() => {
-    getAllCategories().then((res) => {
+    getAllCategories().then((res: Category[]) => {
       if (res && res.length > 0) {
         setCategories(res);
       } else {
         setCategories([]);
       }
     });
-    getAllUsers().then((res) => {
+    getAllUsers().then((res: User[]) => {
       if (res && res.length > 0) {
         setUserList(res);
       } else {
         setUserList([]);
       }
     });
-    filterTickets(filters).then((res) => {
+    filterTickets(filters).then((res: TicketList[]) => {
       if (res && res.length > 0) {
         setLocalTickets(res);
       } else {
@@ -111,7 +123,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  console.log(user);
+
   return (
     <div>
       <FilterIcon onClick={handleClick}>
@@ -202,7 +214,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                 </MenuItem>
 
                 {categories.length > 0 &&
-                  categories.map((item: any) => {
+                  categories.map((item: Category) => {
                     return (
                       <MenuItem value={item.id}>
                         {item?.name.toUpperCase()}
@@ -211,7 +223,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                   })}
               </Select>
             </FormControl>
-            {user.role == "admin" && (
+            {user.role === "admin" && (
               <>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
                   {" "}
@@ -232,8 +244,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                     </MenuItem>
 
                     {userList.length > 0 &&
-                      userList.map((item: any) => {
-                        console.log(item);
+                      userList.map((item: User) => {
                         return (
                           <MenuItem value={item.id}>
                             {item?.name.toUpperCase()}
@@ -261,8 +272,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                     </MenuItem>
 
                     {userList.length > 0 &&
-                      userList.map((item: any) => {
-                        console.log(item);
+                      userList.map((item: User) => {
                         return (
                           <MenuItem value={item.id}>
                             {item?.name.toUpperCase()}
@@ -271,7 +281,6 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                       })}
                   </Select>
                 </FormControl>
-               
               </>
             )}
 
@@ -338,13 +347,12 @@ export default function TicketsFilter({ setLocalTickets }: props) {
               >
                 Clear
               </Button>
-             
             </FormControl>
             <FormControl
               variant="standard"
               sx={{ m: 1, position: "relative", top: "5px" }}
             >
-               <Button
+              <Button
                 style={{ marginTop: "10px" }}
                 variant="contained"
                 size="medium"

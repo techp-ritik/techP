@@ -10,29 +10,44 @@ import { useState } from "react";
 import { TicketList } from "./TicketBoard";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-
+export interface TicketDetails {
+  assigned_to: { id: number; name: string };
+  attachments: [];
+  category: { name: string; description: string; id: number };
+  completed_at: string;
+  created_at: string;
+  description: string;
+  id: number;
+  priority: string;
+  status: string;
+  time_taken: number;
+  title: string;
+  user: { id: number; name: string };
+}
 interface list {
   getTickets: {}[];
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
-
+export interface TicketData {
+  id: number;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  raisedBy: string;
+  createdAt: string;
+  completedAt: string;
+}
 function Tickets(props: list) {
   const [showTicket, setShowTicket] = useState(false);
   const [ticketId, setTicketId] = useState(0);
-  interface TicketData {
-    id: number;
-    title: string;
-    description: string;
-    status: string;
-    priority: string;
-    raisedBy: string;
-    createdAt: string;
-    completedAt: string;
-  }
-  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+
+  const [selectedTicket, setSelectedTicket] = useState<TicketDetails | null>(
+    null
+  );
   const { t, i18n } = useTranslation();
-  // Step 2: Update the state variable when the "View Ticket" button is clicked
-  const handleViewTicketClick = (list: any, id: number) => {
+
+  const handleViewTicketClick = (list: TicketDetails, id: number) => {
     setShowTicket(true);
     setTicketId(list.id);
     setSelectedTicket(list);
@@ -88,10 +103,8 @@ function Tickets(props: list) {
                         sx={{ display: "flex", justifyContent: "end" }}
                         size="small"
                         type="submit"
-                        // sx={{color:'white'}}
                         variant="text"
                         onClick={() => handleViewTicketClick(list, list.id)}
-                        // startIcon={<ReceiptIcon />}
                       >
                         <EditIcon sx={{ fontSize: 20 }} />
                       </Button>

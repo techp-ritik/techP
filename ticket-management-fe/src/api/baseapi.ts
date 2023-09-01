@@ -1,9 +1,33 @@
-export const baseUrl = "https://a40f-210-16-94-98.ngrok-free.app/v1/";
+export const baseUrl = "https://a6ff-210-16-94-101.ngrok-free.app/v1/";
+
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
 
-const loginHeader = {
+
+  interface CategoryData {
+    name : string,
+    description : string
+  }
+  interface TicketParams {
+    key : string , 
+    value : string | boolean | number
+  }
+
+  interface PasswordResetLink{
+email : string
+  }
+  interface PasswordReset{
+    password: string,
+     otp_code: string
+  }
+interface UserData{
+  email: string
+name: string
+phone: number
+role: string
+}
+const loginHeader  = {
   "ngrok-skip-browser-warning": "true",
 };
 
@@ -22,7 +46,7 @@ const defaultHeaders = {
 };
 
 const createFetchInstance = (
-  url: any,
+  url: string,
   method: string,
   defaultHeaders: any,
   body?: any
@@ -87,35 +111,10 @@ export const getTicket = async (id: number): Promise<void> => {
   }
 };
 
-// export const filterTickets = async (params: any) => {
-//   try {
-//     let query = `tickets/?${params.map((item: any, index: any) => {
-//       if (item.value !== "") {
-//         let param = `${index === 0 ? "" : "&"}` + item.key + "=" + item.value;
-//         return param;
-//       }
-//       return "";
-//     })}`;
-//     query = query.replaceAll(",", "");
-//     const response = await fetch(`${baseUrl + query}`, {
-//       headers: { "ngrok-skip-browser-warning": "true" , Authorization: `Bearer ${JSON.parse(
-//         localStorage.getItem("access_token") || "{}"
-//       ).access_token}` },
-//     });
-
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-
-//     const data = await response.json();
-//     return data;
-//   } catch (err) {
-//     throw(err);
-//   }
-// };
-export const filterTickets = async (params: any) => {
+export const filterTickets = async (params: TicketParams[]) => {
   try {
-    let query = `tickets/?${params.map((item: any, index: any) => {
+    let query = `tickets/?${params.map((item: TicketParams, index: number) => {
+
       if (item.value !== "") {
         let param = `${index === 0 ? "" : "&"}` + item.key + "=" + item.value;
         return param;
@@ -182,10 +181,11 @@ export const updateTicket = async (
      
  
 };
-export const createCategory = async (categoryData: any) => {
+export const createCategory = async (categoryData: CategoryData) => {
   try {
+
     const response = await createFetchInstance(
-      `${baseUrl}categories`,
+      `${baseUrl}categories/`,
       "POST",
   
       defaultHeaders,JSON.stringify(categoryData)
@@ -221,13 +221,12 @@ export const getAllCategories = async () => {
     throw(err);
   }
 };
-export const editCategory = async (id: number, categoryData: any) => {
+export const editCategory = async (id: number, categoryData: CategoryData) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}categories/${id}`,
       "PUT",
-      // ticketHeader,
-      // formData
+   
 
       defaultHeaders,JSON.stringify(categoryData)
     );
@@ -272,7 +271,7 @@ export const deleteUser = async (id: number) => {
   }
 };
 
-export const createUser = async (userData: any) => {
+export const createUser = async (userData: UserData) => {
   try {
     const response = await createFetchInstance(`${baseUrl}users/`,"POST",defaultHeaders,JSON.stringify(userData))
 
@@ -285,7 +284,7 @@ export const createUser = async (userData: any) => {
   }
 };
 
-export const editUser = async (userData: any, id: number) => {
+export const editUser = async (userData: UserData, id: number) => {
   try {
     const response = await createFetchInstance(`${baseUrl}users/${id}`,"PUT",defaultHeaders,JSON.stringify(userData))
    
@@ -315,7 +314,7 @@ export const signIn = async (formdata: FormData) => {
   }
 };
 
-export const forgetpasswordlink = async (formdata: any) => {
+export const forgetpasswordlink = async (formdata: PasswordResetLink) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}forgot-password`,
@@ -334,7 +333,7 @@ export const forgetpasswordlink = async (formdata: any) => {
   }
 };
 
-export const forgetpasswordreset = async (formdata: any, email: string) => {
+export const forgetpasswordreset = async (formdata: PasswordReset, email: string) => {
   try {
     const response = await createFetchInstance(
       `${baseUrl}forgot-password/reset/${email}`,
@@ -372,6 +371,6 @@ export const getAllAssignees = async () => {
     const assignees = await response.json();
     return assignees;
   } catch (err) {
-  throw(err);
+    throw(err);
   }
 };

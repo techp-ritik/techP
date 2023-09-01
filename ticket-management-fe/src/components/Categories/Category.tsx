@@ -13,10 +13,10 @@ import {
 } from "../../api/baseapi";
 export interface TicketProps {
   isModalOpen: boolean;
-  handleCloseModal: any;
-  category: any;
-  setCategories: any;
-  setCategory: any;
+  handleCloseModal: () => void;
+  category: Category;
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
+  setCategory: React.Dispatch<React.SetStateAction<Category>>;
 }
 interface Category {
   description: string;
@@ -49,8 +49,8 @@ function Category({
         if (editResponse === 200) {
           toast("Category Updated successfully.");
           handleCloseModal();
-          getAllCategories().then((res) => {
-            const sortedCategories = res.sort(
+          getAllCategories().then((res: Category[]) => {
+            const sortedCategories: Category[] = res.sort(
               (a: Category, b: Category) => a.id - b.id
             );
 
@@ -86,8 +86,8 @@ function Category({
         if (createCategoryResponse === 201) {
           toast("Category created successfully.");
           handleCloseModal();
-          getAllCategories().then((res) => {
-            const sortedCategories = res.sort(
+          getAllCategories().then((res: Category[]) => {
+            const sortedCategories: Category[] = res.sort(
               (a: Category, b: Category) => a.id - b.id
             );
 
