@@ -25,7 +25,7 @@ const style = {
   borderRadius: "8px",
   padding: "0px 0px 20px 0px",
 };
-interface list {
+export interface list {
   UserList: Data[];
   setUserList: React.Dispatch<React.SetStateAction<Data[]>>;
   user: Data;
