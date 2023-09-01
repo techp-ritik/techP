@@ -11,7 +11,7 @@ import {
   getAllCategories,
   createCategory,
 } from "../../api/baseapi";
-interface TicketProps {
+export interface TicketProps {
   isModalOpen: boolean;
   handleCloseModal: any;
   category: any;
@@ -37,12 +37,14 @@ function Category({
 
       return;
     }
-    const formData = new FormData();
-    formData.append("name", category.name);
-    formData.append("description", category.description);
+
+    const categoryData = {
+      name: category.name,
+      description: category.description,
+    };
     if (category.id) {
       try {
-        let editResponse = await editCategory(category.id, formData);
+        let editResponse = await editCategory(category.id, categoryData);
 
         if (editResponse === 200) {
           toast("Category Updated successfully.");
@@ -60,6 +62,9 @@ function Category({
         if (editResponse === 401) {
           toast("Unauthorized");
         }
+        if (editResponse === 422) {
+          toast("Category Name too long");
+        }
         if (editResponse === 404) {
           toast("Validation error: invalid data format.");
         } else {
@@ -76,9 +81,9 @@ function Category({
       }
 
       try {
-        let createCategoryResponse = await createCategory(formData);
+        let createCategoryResponse = await createCategory(categoryData);
 
-        if (createCategoryResponse === 200) {
+        if (createCategoryResponse === 201) {
           toast("Category created successfully.");
           handleCloseModal();
           getAllCategories().then((res) => {
@@ -92,6 +97,14 @@ function Category({
         }
         if (createCategoryResponse === 401) {
           toast("Unauthorized");
+        }
+        if (createCategoryResponse === 422) {
+          toast("Category Name too long");
+        }
+        if (createCategoryResponse === 400) {
+          toast(
+            "Integrity Error: duplicate key value violates unique constraint"
+          );
         }
         if (createCategoryResponse === 404) {
           toast("Validation error: invalid data format.");
