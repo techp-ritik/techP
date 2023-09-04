@@ -3,10 +3,8 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
 import { useQuery } from "react-query";
-import { useGetAllCategories } from "../../api/baseapi";
 import SearchIcon from "@mui/icons-material/Search";
 import { getAllCategories } from "../../api/baseapi";
-
 import TableCell from "@mui/material/TableCell";
 import CategoryModal from "./Category";
 import TableContainer from "@mui/material/TableContainer";
@@ -21,7 +19,6 @@ import { Usercontext } from "../../App";
 import { Navigate } from "react-router-dom";
 import { Toast } from "react-toastify/dist/components";
 import { toast } from "react-toastify";
-
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -38,52 +35,25 @@ export interface Category {
   name: string;
   id: number;
 }
-
 export default function Categories() {
   const [page, setPage] = useState(0);
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const [categories, setCategories] = useState<Category[]>([]);
   const { user } = React.useContext(Usercontext);
   let User = user?.user;
-  const {
-    data: CategoriesData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery("allCategories", getAllCategories);
-
-  // if (CategoriesData) {
-  //   setCategories(CategoriesData);
-  // }
-
   useEffect(() => {
-    if (CategoriesData) {
-      setCategories(CategoriesData);
-      const sortedCategories: Category[] = CategoriesData.sort(
-        (a: Category, b: Category) => a.id - b.id
-      );
+    getAllCategories().then((res: Category[]) => {
+      if (res && res.length > 0) {
+        const sortedCategories: Category[] = res.sort(
+          (a: Category, b: Category) => a.id - b.id
+        );
 
-      setCategories(sortedCategories);
-    } else {
-      setCategories([]);
-    }
-  }, [CategoriesData]);
-
-  // useEffect(() => {
-  //   getAllCategories().then((res: Category[]) => {
-  //     if (res && res.length > 0) {
-  //       const sortedCategories: Category[] = res.sort(
-  //         (a: Category, b: Category) => a.id - b.id
-  //       );
-
-  //       setCategories(sortedCategories);
-  //     } else {
-  //       setCategories([]);
-  //     }
-  //   });
-  // }, []);
+        setCategories(sortedCategories);
+      } else {
+        setCategories([]);
+      }
+    });
+  }, []);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
