@@ -6,16 +6,21 @@ import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter } from "react-router-dom";
 import TicketTheme from "./components/TicketTheme";
-import './i18'
+import "./i18";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ToastContainer } from "react-toastify";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+export const queryClient = new QueryClient();
 
 root.render(
   <BrowserRouter>
     <ThemeProvider theme={TicketTheme}>
-      <App />
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
     </ThemeProvider>
   </BrowserRouter>
 );

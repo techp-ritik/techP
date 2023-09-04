@@ -1,4 +1,5 @@
-export const baseUrl = "https://a6ff-210-16-94-101.ngrok-free.app/v1/";
+import { useQuery } from 'react-query';
+export const baseUrl = "https://138a-103-177-83-247.ngrok-free.app/v1/";
 
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
@@ -57,6 +58,28 @@ const createFetchInstance = (
     body,
   });
 };
+
+
+// export const useGetAllTickets = () => {
+//   console.log("ikde yetay??????")
+//   return useQuery('allTickets', async () => {
+//     const response = await fetch(`${baseUrl}tickets`, {
+//       headers: {
+//         "ngrok-skip-browser-warning": "true",
+//         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+//       },
+
+
+          
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+
+//     return response.json();
+//   });
+// }
 
 export const getAllTickets = async () => {
   try {
@@ -205,6 +228,18 @@ export const createCategory = async (categoryData: CategoryData) => {
     return error;
   }
 };
+export const useGetAllCategories = () => {
+  return useQuery('allCategories', async () => {
+    const response = await createFetchInstance(`${baseUrl}categories/`, "GET", defaultHeaders);
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    return response.json();
+  });
+}
+
 export const getAllCategories = async () => {
   try {
     const response = await createFetchInstance(

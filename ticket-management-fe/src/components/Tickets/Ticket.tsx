@@ -63,7 +63,10 @@ function Ticket({
   setLocaltickets,
 }: TicketProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  console.log("ikde tari????/");
+  // const { data: tickets, isLoading, isError } = useGetAllTickets();
+  console.log("ikde bagh bara ");
+  // console.log(tickets);
   const handleOpenModal = () => {
     getAllCategories().then((res: Category[]) => {
       if (res && res.length > 0) {
@@ -240,6 +243,8 @@ function Ticket({
           getAllTickets().then((res) => {
             setLocaltickets(res);
           });
+
+          // setLocaltickets(res);
           handleCloseModal();
           return;
         }
