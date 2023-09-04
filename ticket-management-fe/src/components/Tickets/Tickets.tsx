@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import { Draggable } from "react-beautiful-dnd";
 import EditIcon from "@mui/icons-material/Edit";
 import Ticket from "./Ticket";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TicketList } from "./TicketBoard";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -28,30 +28,33 @@ interface list {
   getTickets: {}[];
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
-export interface TicketData {
-  id: number;
-  title: string;
-  description: string;
-  status: string;
-  priority: string;
-  raisedBy: string;
-  createdAt: string;
-  completedAt: string;
-}
-function Tickets(props: list) {
+
+const Tickets = React.memo((props: list) => {
   const [showTicket, setShowTicket] = useState(false);
   const [ticketId, setTicketId] = useState(0);
-
+  interface TicketData {
+    id: number;
+    title: string;
+    description: string;
+    status: string;
+    priority: string;
+    raisedBy: string;
+    createdAt: string;
+    completedAt: string;
+  }
   const [selectedTicket, setSelectedTicket] = useState<TicketDetails | null>(
     null
   );
   const { t, i18n } = useTranslation();
 
-  const handleViewTicketClick = (list: TicketDetails, id: number) => {
-    setShowTicket(true);
-    setTicketId(list.id);
-    setSelectedTicket(list);
-  };
+  const handleViewTicketClick = useCallback(
+    (list: TicketDetails, id: number) => {
+      setShowTicket(true);
+      setTicketId(list.id);
+      setSelectedTicket(list);
+    },
+    []
+  );
   const splitTime = (hour: number) => {
     if (hour >= 24) {
       var totaldays = hour / 24;
@@ -59,6 +62,7 @@ function Tickets(props: list) {
     }
     return hour + " hours";
   };
+
   return (
     <MainBoard>
       {props.getTickets?.length === 0 || undefined ? (
@@ -159,7 +163,7 @@ function Tickets(props: list) {
       )}
     </MainBoard>
   );
-}
+});
 const NoTickets = styled.div`
   position: relative;
   top: 40%;
@@ -255,4 +259,5 @@ const SpecialTypography = styled(Typography)`
   color: black;
   align-items: center;
 `;
+
 export default Tickets;

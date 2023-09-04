@@ -17,7 +17,7 @@ import styled from "styled-components";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Usercontext } from "../App";
-import { useState, useContext } from "react";
+import { useState, useContext, useMemo } from "react";
 import { Category } from "./Categories/Categories";
 import { User } from "./Tickets/Ticket";
 
@@ -35,11 +35,10 @@ export interface params {
   admin_data: boolean;
 }
 
-export default function TicketsFilter({ setLocalTickets }: props) {
+const TicketFilter = ({ setLocalTickets }: props) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const { user } = useContext(Usercontext).user;
 
   const [params, setParams] = useState<params>({
     priority: "",
@@ -97,7 +96,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
     setAnchorEl(null);
   };
 
-  React.useEffect(() => {
+  useMemo(() => {
     getAllCategories().then((res: Category[]) => {
       if (res && res.length > 0) {
         setCategories(res);
@@ -223,66 +222,65 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                   })}
               </Select>
             </FormControl>
-            {user.role === "admin" && (
-              <>
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
-                  {" "}
-                  <InputLabel id="demo-simple-select-standard-label">
-                    Raised by
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-standard-label"
-                    sx={{ minWidth: 200 }}
-                    id="demo-simple-select-standard"
-                    value={params.user}
-                    onChange={(e) => {
-                      setParams({ ...params, user: e.target.value });
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
 
-                    {userList.length > 0 &&
-                      userList.map((item: User) => {
-                        return (
-                          <MenuItem value={item.id}>
-                            {item?.name.toUpperCase()}
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
-                  {" "}
-                  <InputLabel id="demo-simple-select-standard-label">
-                    Assigned To
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-standard-label"
-                    sx={{ minWidth: 200 }}
-                    id="demo-simple-select-standard"
-                    value={params.assignee}
-                    onChange={(e) => {
-                      setParams({ ...params, assignee: e.target.value });
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
+            <>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+                {" "}
+                <InputLabel id="demo-simple-select-standard-label">
+                  Raised by
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  sx={{ minWidth: 200 }}
+                  id="demo-simple-select-standard"
+                  value={params.user}
+                  onChange={(e) => {
+                    setParams({ ...params, user: e.target.value });
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
 
-                    {userList.length > 0 &&
-                      userList.map((item: User) => {
-                        return (
-                          <MenuItem value={item.id}>
-                            {item?.name.toUpperCase()}
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-              </>
-            )}
+                  {userList.length > 0 &&
+                    userList.map((item: User) => {
+                      return (
+                        <MenuItem value={item.id}>
+                          {item?.name.toUpperCase()}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormControl>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+                {" "}
+                <InputLabel id="demo-simple-select-standard-label">
+                  Assigned To
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  sx={{ minWidth: 200 }}
+                  id="demo-simple-select-standard"
+                  value={params.assignee}
+                  onChange={(e) => {
+                    setParams({ ...params, assignee: e.target.value });
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+
+                  {userList.length > 0 &&
+                    userList.map((item: User) => {
+                      return (
+                        <MenuItem value={item.id}>
+                          {item?.name.toUpperCase()}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormControl>
+            </>
 
             <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
               <label
@@ -366,7 +364,8 @@ export default function TicketsFilter({ setLocalTickets }: props) {
       </Popover>
     </div>
   );
-}
+};
+export default React.memo(TicketFilter);
 const FilterIcon = styled.span`
   cursor: pointer;
   padding: 5px;

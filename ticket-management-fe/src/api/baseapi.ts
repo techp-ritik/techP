@@ -98,7 +98,7 @@ export const getAllTickets = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+throw(err);
   }
 };
 export const deleteTicket = async (id: number): Promise<void> => {
@@ -113,7 +113,7 @@ export const deleteTicket = async (id: number): Promise<void> => {
       throw new Error("Network response was not ok");
     }
   } catch (err) {
-    throw(err);
+throw(err);
   }
 };
 export const getTicket = async (id: number): Promise<void> => {
