@@ -6,22 +6,30 @@ import Typography from "@mui/material/Typography";
 import { Draggable } from "react-beautiful-dnd";
 import EditIcon from "@mui/icons-material/Edit";
 import Ticket from "./Ticket";
-import { useState,useCallback} from "react";
+import { useState, useCallback } from "react";
 import { TicketList } from "./TicketBoard";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-
+export interface TicketDetails {
+  assigned_to: { id: number; name: string };
+  attachments: [];
+  category: { name: string; description: string; id: number };
+  completed_at: string;
+  created_at: string;
+  description: string;
+  id: number;
+  priority: string;
+  status: string;
+  time_taken: number;
+  title: string;
+  user: { id: number; name: string };
+}
 interface list {
   getTickets: {}[];
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
-
-
-
-
-const Tickets=React.memo((props: list)=> {
-
+const Tickets = React.memo((props: list) => {
   const [showTicket, setShowTicket] = useState(false);
   const [ticketId, setTicketId] = useState(0);
   interface TicketData {
@@ -34,14 +42,19 @@ const Tickets=React.memo((props: list)=> {
     createdAt: string;
     completedAt: string;
   }
-  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<TicketDetails | null>(
+    null
+  );
   const { t, i18n } = useTranslation();
-  // Step 2: Update the state variable when the "View Ticket" button is clicked
-  const handleViewTicketClick = useCallback((list: any, id: number) => {
-    setShowTicket(true);
-    setTicketId(list.id);
-    setSelectedTicket(list);
-  },[])
+
+  const handleViewTicketClick = useCallback(
+    (list: TicketDetails, id: number) => {
+      setShowTicket(true);
+      setTicketId(list.id);
+      setSelectedTicket(list);
+    },
+    []
+  );
   const splitTime = (hour: number) => {
     if (hour >= 24) {
       var totaldays = hour / 24;
@@ -50,18 +63,14 @@ const Tickets=React.memo((props: list)=> {
     return hour + " hours";
   };
 
- 
   return (
     <MainBoard>
-      
       {props.getTickets?.length === 0 || undefined ? (
         <NoTickets>
           <>{t("no_tickets")}</>
         </NoTickets>
-      ) : 
-      (
+      ) : (
         props.getTickets?.map((list: any, index: number) => {
-         
           let priorityColor = "";
           switch (list.priority) {
             case "high":
@@ -98,10 +107,8 @@ const Tickets=React.memo((props: list)=> {
                         sx={{ display: "flex", justifyContent: "end" }}
                         size="small"
                         type="submit"
-                        // sx={{color:'white'}}
                         variant="text"
                         onClick={() => handleViewTicketClick(list, list.id)}
-                        // startIcon={<ReceiptIcon />}
                       >
                         <EditIcon sx={{ fontSize: 20 }} />
                       </Button>
@@ -156,8 +163,7 @@ const Tickets=React.memo((props: list)=> {
       )}
     </MainBoard>
   );
-}
-)
+});
 const NoTickets = styled.div`
   position: relative;
   top: 40%;

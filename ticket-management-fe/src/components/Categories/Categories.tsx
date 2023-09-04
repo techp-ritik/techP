@@ -2,6 +2,7 @@ import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
+import { useQuery } from "react-query";
 import SearchIcon from "@mui/icons-material/Search";
 import { getAllCategories } from "../../api/baseapi";
 import TableCell from "@mui/material/TableCell";
@@ -16,6 +17,8 @@ import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { Usercontext } from "../../App";
 import { Navigate } from "react-router-dom";
+import { Toast } from "react-toastify/dist/components";
+import { toast } from "react-toastify";
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -27,24 +30,21 @@ const columns: readonly Column[] = [
   { data: "name", label: "CATEGORY", minWidth: 150 },
   { data: "description", label: "DESCRIPTION", minWidth: 100 },
 ];
-interface Category {
+export interface Category {
   description: string;
   name: string;
   id: number;
 }
-
 export default function Categories() {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [categories, setCategories] = useState<Category[]>([]);
   const { user } = React.useContext(Usercontext);
   let User = user?.user;
-
   useEffect(() => {
-    getAllCategories().then((res) => {
+    getAllCategories().then((res: Category[]) => {
       if (res && res.length > 0) {
-        const sortedCategories = res.sort(
+        const sortedCategories: Category[] = res.sort(
           (a: Category, b: Category) => a.id - b.id
         );
 
@@ -69,7 +69,7 @@ export default function Categories() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [category, setCategory] = useState({
+  const [category, setCategory] = useState<Category>({
     name: "",
     description: "",
     id: 0,
@@ -94,7 +94,7 @@ export default function Categories() {
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    setPage(0); // Reset page to the first page when search query changes
+    setPage(0);
   };
 
   const handleOpenEditModal = (category: Category) => {

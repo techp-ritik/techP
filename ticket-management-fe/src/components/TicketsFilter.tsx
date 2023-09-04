@@ -17,19 +17,30 @@ import styled from "styled-components";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Usercontext } from "../App";
-import { useState, useContext,useMemo } from "react";
+import { useState, useContext, useMemo } from "react";
+import { Category } from "./Categories/Categories";
+import { User } from "./Tickets/Ticket";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
+export interface params {
+  priority: string;
+  category: string;
+  created_at: string;
+  completed_at: string;
+  query: string;
+  user: string;
+  assignee: string;
+  admin_data: boolean;
+}
 
-const TicketFilter=({ setLocalTickets }: props)=> {
+const TicketFilter = ({ setLocalTickets }: props) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
- 
 
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<params>({
     priority: "",
     category: "",
     created_at: "",
@@ -74,49 +85,44 @@ const TicketFilter=({ setLocalTickets }: props)=> {
     },
   ];
 
-  const [categories, setCategories] = React.useState([]);
-  const [userList, setUserList] = React.useState([]);
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [userList, setUserList] = React.useState<User[]>([]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-
-    useMemo(()=>{
-      getAllCategories().then((res) => {
-        
-        if (res && res.length > 0) {
-          setCategories(res);
-        } else {
-          setCategories([]);
-        }
-      });
-      getAllUsers().then((res) => {
-        if (res && res.length > 0) {
-          setUserList(res);
-        } else {
-          setUserList([]);
-        }
-      });
-      filterTickets(filters).then((res) => {
-        if (res && res.length > 0) {
-         
-          setLocalTickets(res);
-        } else {
-          setLocalTickets([]);
-        }
-      });
-    },[params])
-    
- 
+  useMemo(() => {
+    getAllCategories().then((res: Category[]) => {
+      if (res && res.length > 0) {
+        setCategories(res);
+      } else {
+        setCategories([]);
+      }
+    });
+    getAllUsers().then((res: User[]) => {
+      if (res && res.length > 0) {
+        setUserList(res);
+      } else {
+        setUserList([]);
+      }
+    });
+    filterTickets(filters).then((res: TicketList[]) => {
+      if (res && res.length > 0) {
+        setLocalTickets(res);
+      } else {
+        setLocalTickets([]);
+      }
+    });
+  }, [params]);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  
+
   return (
     <div>
       <FilterIcon onClick={handleClick}>
@@ -207,7 +213,7 @@ const TicketFilter=({ setLocalTickets }: props)=> {
                 </MenuItem>
 
                 {categories.length > 0 &&
-                  categories.map((item: any) => {
+                  categories.map((item: Category) => {
                     return (
                       <MenuItem value={item.id}>
                         {item?.name.toUpperCase()}
@@ -216,69 +222,65 @@ const TicketFilter=({ setLocalTickets }: props)=> {
                   })}
               </Select>
             </FormControl>
-       
-              <>
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
-                  {" "}
-                  <InputLabel id="demo-simple-select-standard-label">
-                    Raised by
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-standard-label"
-                    sx={{ minWidth: 200 }}
-                    id="demo-simple-select-standard"
-                    value={params.user}
-                    onChange={(e) => {
-                      setParams({ ...params, user: e.target.value });
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
 
-                    {userList.length > 0 &&
-                      userList.map((item: any) => {
-                       
-                        return (
-                          <MenuItem value={item.id}>
-                            {item?.name.toUpperCase()}
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
-                  {" "}
-                  <InputLabel id="demo-simple-select-standard-label">
-                    Assigned To
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-standard-label"
-                    sx={{ minWidth: 200 }}
-                    id="demo-simple-select-standard"
-                    value={params.assignee}
-                    onChange={(e) => {
-                      setParams({ ...params, assignee: e.target.value });
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
+            <>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+                {" "}
+                <InputLabel id="demo-simple-select-standard-label">
+                  Raised by
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  sx={{ minWidth: 200 }}
+                  id="demo-simple-select-standard"
+                  value={params.user}
+                  onChange={(e) => {
+                    setParams({ ...params, user: e.target.value });
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
 
-                    {userList.length > 0 &&
-                      userList.map((item: any) => {
-                       
-                        return (
-                          <MenuItem value={item.id}>
-                            {item?.name.toUpperCase()}
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-               
-              </>
-           
+                  {userList.length > 0 &&
+                    userList.map((item: User) => {
+                      return (
+                        <MenuItem value={item.id}>
+                          {item?.name.toUpperCase()}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormControl>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
+                {" "}
+                <InputLabel id="demo-simple-select-standard-label">
+                  Assigned To
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  sx={{ minWidth: 200 }}
+                  id="demo-simple-select-standard"
+                  value={params.assignee}
+                  onChange={(e) => {
+                    setParams({ ...params, assignee: e.target.value });
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+
+                  {userList.length > 0 &&
+                    userList.map((item: User) => {
+                      return (
+                        <MenuItem value={item.id}>
+                          {item?.name.toUpperCase()}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormControl>
+            </>
 
             <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
               <label
@@ -343,13 +345,12 @@ const TicketFilter=({ setLocalTickets }: props)=> {
               >
                 Clear
               </Button>
-             
             </FormControl>
             <FormControl
               variant="standard"
               sx={{ m: 1, position: "relative", top: "5px" }}
             >
-               <Button
+              <Button
                 style={{ marginTop: "10px" }}
                 variant="contained"
                 size="medium"
@@ -363,8 +364,8 @@ const TicketFilter=({ setLocalTickets }: props)=> {
       </Popover>
     </div>
   );
-}
-export default React.memo(TicketFilter)
+};
+export default React.memo(TicketFilter);
 const FilterIcon = styled.span`
   cursor: pointer;
   padding: 5px;

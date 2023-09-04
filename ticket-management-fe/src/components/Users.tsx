@@ -53,7 +53,7 @@ export type Data = {
   role: string;
   phone: number;
 
-  actions: any;
+  actions: string;
 };
 
 export default function Users() {
@@ -70,7 +70,7 @@ export default function Users() {
   const [Userlist, setUserList] = useState<Data[]>([]);
 
   useEffect(() => {
-    getAllUsers().then((res) => {
+    getAllUsers().then((res: Data[]) => {
       if (res && res.length > 0) {
         const sortedUsers = res.sort((a: Data, b: Data) => a.id - b.id);
 
@@ -135,7 +135,7 @@ export default function Users() {
     actions: "",
   };
 
-  const [user, setUser] = useState(clearForm);
+  const [user, setUser] = useState<Data>(clearForm);
   const { t, i18n } = useTranslation();
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -169,7 +169,7 @@ export default function Users() {
         const response = await deleteUserApi(id);
         if (response === 200) {
           getAllUsers()
-            .then((res) => {
+            .then((res: Data[]) => {
               const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
               setUserList(sortedusers);
 

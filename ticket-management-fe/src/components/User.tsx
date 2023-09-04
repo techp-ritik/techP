@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
 
 import { Data } from "./Users";
+import { TicketList } from "./Tickets/TicketBoard";
 
 const style = {
   position: "absolute" as "absolute",
@@ -43,25 +44,25 @@ export interface list {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const User=React.memo(
+const User = React.memo(
   ({
     setUserList,
-   
+
     openModal,
     setOpenModal,
     user,
     setUser,
-  }: list) =>{
+  }: list) => {
     const clearForm = {
       id: 0,
       name: "",
       email: "",
       role: "Select Role*",
       phone: 0,
-  
+
       actions: "",
     };
-  
+
     const handleSubmit = async () => {
       if (!user.name || !user.email || !user.phone || !user.role) {
         toast.error("Fields cannot be empty", {
@@ -80,9 +81,9 @@ const User=React.memo(
         });
         return;
       }
-  
+
       const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(com)$/i;
-  
+
       if (!emailPattern.test(user.email)) {
         toast.error("Invalid email format", {
           theme: "light",
@@ -91,7 +92,7 @@ const User=React.memo(
         });
         return;
       }
-  
+
       if (user.role === "Select Role*") {
         toast.error("Select User Role", {
           theme: "light",
@@ -100,7 +101,7 @@ const User=React.memo(
         });
         return;
       }
-  
+
       if (
         user.phone.toString().length > 10 ||
         user.phone.toString().length < 10
@@ -112,24 +113,24 @@ const User=React.memo(
         });
         return;
       }
-  
+
       const userData = {
         name: user.name,
         email: user.email,
         role: user.role,
         phone: user.phone,
       };
-  
+
       if (user.id === 0) {
         try {
           const response = await createUser(userData);
-  
+
           if (response === 200) {
             getAllUsers()
-              .then((res) => {
+              .then((res: Data[]) => {
                 const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
                 setUserList(sortedusers);
-  
+
                 toast("New User Created Successfully", {
                   theme: "light",
                   autoClose: 1500,
@@ -140,15 +141,15 @@ const User=React.memo(
               .catch((error) => {
                 console.error("Error in creating user :", error);
               });
-  
+
             return;
           }
-  
+
           if (response === 401) {
             toast("Unauthorized");
             return;
           }
-  
+
           if (response === 403) {
             toast("Access Denied");
             return;
@@ -174,13 +175,13 @@ const User=React.memo(
       } else {
         try {
           const response = await editUser(userData, user.id);
-  
+
           if (response === 200) {
             getAllUsers()
-              .then((res) => {
+              .then((res: Data[]) => {
                 const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
                 setUserList(sortedusers);
-  
+
                 toast("User Updated Successfully", {
                   theme: "light",
                   autoClose: 1500,
@@ -191,10 +192,10 @@ const User=React.memo(
               .catch((error) => {
                 console.error("Error in updating user data:", error);
               });
-  
+
             return;
           }
-  
+
           if (response === 401) {
             toast("Unauthorized");
             return;
@@ -203,7 +204,7 @@ const User=React.memo(
             toast("Enter valid Email Address");
             return;
           }
-  
+
           if (response === 403) {
             toast("Access Denied");
             return;
@@ -221,7 +222,7 @@ const User=React.memo(
       }
       setUser(clearForm);
     };
-    
+
     return (
       <div>
         <Modal
@@ -265,7 +266,7 @@ const User=React.memo(
                     }}
                     defaultValue=""
                   />
-  
+
                   {user.id === 0 && (
                     <TextField
                       required
@@ -279,7 +280,7 @@ const User=React.memo(
                       defaultValue=""
                     />
                   )}
-  
+
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
@@ -305,7 +306,7 @@ const User=React.memo(
                     <MenuItem value={"admin"}>admin</MenuItem>
                     <MenuItem value={"user"}>user</MenuItem>
                   </Select>
-  
+
                   <TextField
                     required
                     id="outlined-required"
@@ -350,6 +351,5 @@ const User=React.memo(
       </div>
     );
   }
-  
-)
+);
 export default User;

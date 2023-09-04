@@ -29,8 +29,14 @@ import { getAllTickets } from "../../api/baseapi";
 interface TicketProps {
   id: number;
   selectedTicket: any;
-  setShowTicket: any;
+
+  setShowTicket: React.Dispatch<React.SetStateAction<boolean>>;
+
   setNewTicketId: any;
+}
+export interface User {
+  id: number;
+  name: string;
 }
 interface Attachment {
   id: number;
@@ -48,25 +54,25 @@ interface TicketProps {
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
- const Ticket=React.memo(
+const Ticket = React.memo(
   ({
     id,
     selectedTicket,
     setShowTicket,
     setNewTicketId,
     setLocaltickets,
-  }: TicketProps)=> {
+  }: TicketProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-   
+
     const handleOpenModal = () => {
-      getAllCategories().then((res) => {
+      getAllCategories().then((res: Category[]) => {
         if (res && res.length > 0) {
           setCategories(res);
         } else {
           setCategories([]);
         }
       });
-      getAllAssignees().then((res) => {
+      getAllAssignees().then((res: User[]) => {
         if (res && res.length > 0) {
           setAssignee(res);
         } else {
@@ -75,7 +81,7 @@ interface TicketProps {
       });
       setIsModalOpen(true);
     };
-  
+
     const handleCloseModal = () => {
       setticketInformation({
         title: "",
@@ -83,14 +89,14 @@ interface TicketProps {
         category_id: 0,
         priority: "",
         assignee: 0,
-  
+
         file: [],
         filepath: [],
         created_by: 0,
       });
       setShowTicket(false);
       setIsModalOpen(false);
-      setNewTicketId(null);
+      setNewTicketId(0);
     };
     interface Category {
       description: string;
@@ -111,7 +117,7 @@ interface TicketProps {
       assignee: number | string;
       created_by: number;
       filepath: string[];
-  
+
       file: File[];
     }>({
       title: "",
@@ -123,13 +129,13 @@ interface TicketProps {
       created_by: 1,
       file: [],
     });
-  
+
     const [ticketUrl, setticketUrl] = useState<{
       fileurl: string[];
     }>({
       fileurl: [],
     });
-  
+
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;
       if (files) {
@@ -139,34 +145,36 @@ interface TicketProps {
           ...ticketInformation,
           file: [...ticketInformation.file, ...fileArray],
         });
-  
+
         setticketUrl({
           ...ticketUrl,
           fileurl: [...ticketUrl.fileurl, ...urls],
         });
       }
     };
-  
+
     const handleEdit = () => {
-      setticketInformation({
-        title: selectedTicket.title,
-        description: selectedTicket.description,
-        category_id: selectedTicket.category.id,
-  
-        filepath: selectedTicket.attachments.map(
-          (attachment: Attachment) => attachment.filepath
-        ),
-  
-        priority: selectedTicket.priority,
-  
-        created_by: selectedTicket.created_by,
-        assignee: selectedTicket.assigned_to.id,
-        file: [],
-      });
-  
-      handleOpenModal();
+      if (selectedTicket) {
+        setticketInformation({
+          title: selectedTicket.title,
+          description: selectedTicket.description,
+          category_id: selectedTicket.category.id,
+
+          filepath: selectedTicket.attachments.map(
+            (attachment: Attachment) => attachment.filepath
+          ),
+
+          priority: selectedTicket.priority,
+
+          created_by: selectedTicket.created_by,
+          assignee: selectedTicket.assigned_to.id,
+          file: [],
+        });
+
+        handleOpenModal();
+      }
     };
-  
+
     useEffect(() => {
       if (id === null || id === 0) {
         handleOpenModal();
@@ -188,7 +196,7 @@ interface TicketProps {
         ),
       }));
     };
-  
+
     const handleSubmit = async () => {
       if (
         !ticketInformation.title ||
@@ -202,27 +210,27 @@ interface TicketProps {
           autoClose: 1500,
           position: "top-right",
         });
-  
+
         return;
       }
-  
+
       const formData = new FormData();
-  
+
       formData.append("title", ticketInformation.title);
       formData.append("description", ticketInformation.description);
       formData.append("category_id", ticketInformation.category_id.toString());
       formData.append("priority", ticketInformation.priority);
       formData.append("assignee", ticketInformation.assignee.toString());
       formData.append("created_by", ticketInformation.created_by?.toString());
-  
+
       ticketInformation.file.forEach((file) => {
         formData.append("files", file);
       });
-  
+
       if (id === 0) {
         try {
           let createResponse = await createTicket(formData);
-  
+
           if (createResponse === 201) {
             toast("Ticket created successfully.", {
               theme: "light",
@@ -232,6 +240,8 @@ interface TicketProps {
             getAllTickets().then((res) => {
               setLocaltickets(res);
             });
+
+            // setLocaltickets(res);
             handleCloseModal();
             return;
           }
@@ -261,7 +271,7 @@ interface TicketProps {
         } catch (error) {}
       } else {
         let editResponse = await updateTicket(id, formData);
-  
+
         if (editResponse === 200) {
           toast("Ticket Updated successfully.", {
             theme: "light",
@@ -288,11 +298,11 @@ interface TicketProps {
         }
       }
     };
-  
+
     const deleteTicketHandler = async (id: number) => {
       try {
         await deleteTicket(id);
-        const updatedTickets = await getAllTickets();
+        const updatedTickets: TicketList[] = await getAllTickets();
         setLocaltickets(updatedTickets);
         handleCloseModal();
         toast(`Ticket#${id} Deleted Successfully`, {
@@ -301,14 +311,17 @@ interface TicketProps {
           position: "top-right",
         });
       } catch (error) {
-        toast("An error occurred while deleting the ticket. Please try again.", {
-          theme: "light",
-          autoClose: 1500,
-          position: "top-right",
-        });
+        toast(
+          "An error occurred while deleting the ticket. Please try again.",
+          {
+            theme: "light",
+            autoClose: 1500,
+            position: "top-right",
+          }
+        );
       }
     };
-    
+
     return (
       <div>
         <Dialog
@@ -321,7 +334,7 @@ interface TicketProps {
             <DialogTitle>
               {id ? "TICKET DETAILS" : "CREATE NEW TICKET"}
             </DialogTitle>
-  
+
             <DialogContent>
               <TextField
                 value={ticketInformation.title}
@@ -359,7 +372,7 @@ interface TicketProps {
                 rows={2}
                 sx={{ marginBottom: "20px" }}
               />
-  
+
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -381,14 +394,14 @@ interface TicketProps {
                 <MenuItem value={"Select Category*"} disabled>
                   Select Category*
                 </MenuItem>
-  
+
                 {categories.map((category) => (
                   <MenuItem key={category.id} value={category.id}>
                     {category.name}
                   </MenuItem>
                 ))}
               </Select>
-  
+
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -410,14 +423,14 @@ interface TicketProps {
                 <MenuItem value={"Select Assignee*"} disabled>
                   Select Assignee*
                 </MenuItem>
-  
+
                 {assignees.map((assigned_to) => (
                   <MenuItem key={assigned_to.id} value={assigned_to.id}>
                     {assigned_to.name}
                   </MenuItem>
                 ))}
               </Select>
-  
+
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -480,7 +493,11 @@ interface TicketProps {
                             alignItems: "center",
                           }}
                         >
-                          <img src={url} alt={`Uploaded ${index}`} height="60" />{" "}
+                          <img
+                            src={url}
+                            alt={`Uploaded ${index}`}
+                            height="60"
+                          />{" "}
                           <IconButton
                             onClick={() => handleDeleteAttachment(index)}
                             size="small"
@@ -523,7 +540,7 @@ interface TicketProps {
                       )}
                     </React.Fragment>
                   ))}
-  
+
                   {ticketInformation.filepath.map((path, index) => (
                     <div
                       key={index}
@@ -573,7 +590,7 @@ interface TicketProps {
                     DELETE TICKET
                   </Button>
                 ) : null}
-  
+
                 <div
                   style={{ display: "flex", gap: "10px", alignItems: "center" }}
                 >
@@ -581,7 +598,11 @@ interface TicketProps {
                     Cancel
                   </Button>
                   <div style={{ flexGrow: 1 }}></div>{" "}
-                  <Button variant="contained" onClick={handleSubmit} size="small">
+                  <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    size="small"
+                  >
                     {id ? "EDIT TICKET" : "CREATE NEW TICKET"}
                   </Button>
                 </div>
@@ -592,7 +613,6 @@ interface TicketProps {
       </div>
     );
   }
- )
- 
- 
+);
+
 export default Ticket;
