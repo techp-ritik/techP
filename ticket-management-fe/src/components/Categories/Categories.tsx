@@ -5,13 +5,13 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { getAllCategories } from "../../api/baseapi";
 import TableCell from "@mui/material/TableCell";
-import CategoryComponent from "./Category";
+import CategoryModal from "./Category";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { Button, Typography, InputAdornment } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { Usercontext } from "../../App";
@@ -82,7 +82,7 @@ export default function Categories() {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setCategory({
       name: "",
       description: "",
@@ -90,7 +90,7 @@ export default function Categories() {
     });
 
     setIsModalOpen(false);
-  };
+  }, []);
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -140,7 +140,7 @@ export default function Categories() {
   return (
     <>
       {" "}
-      {User?.role !== "admin" && <Navigate to={"/dashboard"} replace />}
+      {User.role !== "admin" && <Navigate to={"/dashboard"} replace />}
       <div
         style={{
           textAlign: "end",
@@ -268,7 +268,7 @@ export default function Categories() {
           />
         </TableContainer>
       </Typography>
-      <CategoryComponent
+      <CategoryModal
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}
         category={category}

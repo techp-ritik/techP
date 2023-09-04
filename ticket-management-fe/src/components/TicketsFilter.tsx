@@ -17,17 +17,17 @@ import styled from "styled-components";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Usercontext } from "../App";
-import { useState, useContext } from "react";
+import { useState, useContext,useMemo } from "react";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
 
-export default function TicketsFilter({ setLocalTickets }: props) {
+const TicketFilter=({ setLocalTickets }: props)=> {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const { user } = useContext(Usercontext).user;
+ 
 
   const [params, setParams] = useState({
     priority: "",
@@ -80,38 +80,43 @@ export default function TicketsFilter({ setLocalTickets }: props) {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  React.useEffect(() => {
-    getAllCategories().then((res) => {
-      if (res && res.length > 0) {
-        setCategories(res);
-      } else {
-        setCategories([]);
-      }
-    });
-    getAllUsers().then((res) => {
-      if (res && res.length > 0) {
-        setUserList(res);
-      } else {
-        setUserList([]);
-      }
-    });
-    filterTickets(filters).then((res) => {
-      if (res && res.length > 0) {
-        setLocalTickets(res);
-      } else {
-        setLocalTickets([]);
-      }
-    });
-  }, [params]);
+
+    useMemo(()=>{
+      getAllCategories().then((res) => {
+        
+        if (res && res.length > 0) {
+          setCategories(res);
+        } else {
+          setCategories([]);
+        }
+      });
+      getAllUsers().then((res) => {
+        if (res && res.length > 0) {
+          setUserList(res);
+        } else {
+          setUserList([]);
+        }
+      });
+      filterTickets(filters).then((res) => {
+        if (res && res.length > 0) {
+         
+          setLocalTickets(res);
+        } else {
+          setLocalTickets([]);
+        }
+      });
+    },[params])
+    
+ 
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  console.log(user);
+  
   return (
     <div>
       <FilterIcon onClick={handleClick}>
@@ -211,7 +216,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                   })}
               </Select>
             </FormControl>
-            {user.role == "admin" && (
+       
               <>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 100 }}>
                   {" "}
@@ -233,7 +238,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
                     {userList.length > 0 &&
                       userList.map((item: any) => {
-                        console.log(item);
+                       
                         return (
                           <MenuItem value={item.id}>
                             {item?.name.toUpperCase()}
@@ -262,7 +267,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
 
                     {userList.length > 0 &&
                       userList.map((item: any) => {
-                        console.log(item);
+                       
                         return (
                           <MenuItem value={item.id}>
                             {item?.name.toUpperCase()}
@@ -273,7 +278,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
                 </FormControl>
                
               </>
-            )}
+           
 
             <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
               <label
@@ -359,6 +364,7 @@ export default function TicketsFilter({ setLocalTickets }: props) {
     </div>
   );
 }
+export default React.memo(TicketFilter)
 const FilterIcon = styled.span`
   cursor: pointer;
   padding: 5px;
