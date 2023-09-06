@@ -1,4 +1,4 @@
-export const baseUrl = "https://a6ff-210-16-94-101.ngrok-free.app/v1/";
+export const baseUrl = "https://0928-103-177-83-247.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
@@ -61,10 +61,11 @@ export const deleteTicket = async (id: number): Promise<void> => {
       "DELETE",
       defaultHeaders
     );
-
+   
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
+    return response.json()
   } catch (err) {
     console.log(err);
   }
@@ -151,7 +152,7 @@ export const createTicket = async (formData: FormData) => {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const createdata = await response.status;
+    const createdata = await response.json();
     return createdata;
   } catch (error) {
     return error;
@@ -172,7 +173,7 @@ export const updateTicket = async (
                 formData
               );
         
-              return response.status;
+              return response.json();
             } else {
               console.log("nochange", id);
             }
@@ -264,9 +265,7 @@ export const deleteUser = async (id: number) => {
       defaultHeaders
     );
 
-    const deleteuser = await response.status;
-
-    return deleteuser;
+ return response.json();
   } catch (err) {
     console.log(err);
   }
@@ -277,9 +276,9 @@ export const createUser = async (userData: any) => {
     const response = await createFetchInstance(`${baseUrl}users/`,"POST",defaultHeaders,JSON.stringify(userData))
 
 
-    const createUserStatus = response.status;
+    
 
-    return createUserStatus;
+    return response.json();
   } catch (error) {
     return error;
   }
@@ -289,8 +288,8 @@ export const editUser = async (userData: any, id: number) => {
   try {
     const response = await createFetchInstance(`${baseUrl}users/${id}`,"PUT",defaultHeaders,JSON.stringify(userData))
    
-    const editData =  response.status;
-    return editData;
+  
+    return response.json()
   } catch (error) {
     return error;
   }

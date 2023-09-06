@@ -29,6 +29,7 @@ import UserComponent from "./User";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery, useMutation } from "@tanstack/react-query";
 interface Column {
   id: "name" | "id" | "email" | "role" | "phone";
 
@@ -68,18 +69,36 @@ export default function Users() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const [Userlist, setUserList] = useState<Data[]>([]);
-
+  const {
+    data: Users,
+    isLoading,
+    isError,
+    error,
+    status,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getAllUsers(),
+  });
+  console.log(Users);
   useEffect(() => {
-    getAllUsers().then((res) => {
-      if (res && res.length > 0) {
-        const sortedUsers = res.sort((a: Data, b: Data) => a.id - b.id);
-
+    switch (status) {
+      case "success":
+        const sortedUsers = Users.sort((a: Data, b: Data) => a.id - b.id);
         setUserList(sortedUsers);
-      } else {
+
+        break;
+
+      case "error":
         setUserList([]);
-      }
-    });
-  }, []);
+
+        toast.error("Error While Fetching User List . Try Again", {
+          autoClose: 1500,
+          position: "top-center",
+        });
+
+        break;
+    }
+  }, [status]);
 
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
@@ -163,33 +182,33 @@ export default function Users() {
     const handleClose = () => {
       setOpen(false);
     };
+    const deleteUserMutation = useMutation({
+      mutationFn: deleteUserApi,
+      onSuccess(data: any, variables, context) {
+        toast(JSON.stringify(data), {
+          theme: "light",
+          autoClose: 2000,
+          position: "top-right",
+        });
 
+        getAllUsers().then((res) => {
+          const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
+          setUserList(sortedusers);
+
+          handleClose();
+        });
+      },
+      onError(error: any) {
+        toast(error, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+      },
+    });
     const deleteUser = async (id: number) => {
       try {
-        const response = await deleteUserApi(id);
-        if (response === 200) {
-          getAllUsers()
-            .then((res) => {
-              const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
-              setUserList(sortedusers);
-
-              toast(t("toast_user_deleted"), {
-                theme: "light",
-                autoClose: 1500,
-                position: "top-right",
-              });
-              handleClose();
-            })
-            .catch((error) => {
-              console.error("Error deleting user:", error);
-            });
-        } else if (response === 404) {
-          toast("Invalid Id", {
-            theme: "light",
-            autoClose: 1500,
-            position: "top-right",
-          });
-        }
+        await deleteUserMutation.mutate(id);
       } catch (error) {
         throw error;
       }
@@ -315,7 +334,16 @@ export default function Users() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Userlist.length === 0 ? (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="left">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : (
+                ""
+              )}
+              {!isLoading && Userlist.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="left">
                     {t("no_user_mesage")}

@@ -8,10 +8,10 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { toast } from "react-toastify";
-import { editUser } from "../api/baseapi";
+import { deleteUser, editUser } from "../api/baseapi";
 import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
-
+import { useMutation } from "@tanstack/react-query";
 import { Data } from "./Users";
 
 const style = {
@@ -43,25 +43,78 @@ export interface list {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const User=React.memo(
+const User = React.memo(
   ({
     setUserList,
-   
+
     openModal,
     setOpenModal,
     user,
     setUser,
-  }: list) =>{
+  }: list) => {
     const clearForm = {
       id: 0,
       name: "",
       email: "",
       role: "Select Role*",
       phone: 0,
-  
+
       actions: "",
     };
-  
+    const createUserMutation = useMutation({
+      mutationFn: createUser,
+      onSuccess(data: any, variables, context) {
+        toast(JSON.stringify(data), {
+          theme: "light",
+          autoClose: 2000,
+          position: "top-right",
+        });
+
+        getAllUsers()
+          .then((res) => {
+            const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
+            setUserList(sortedusers);
+          })
+          .catch((error) => {
+            console.error("Error in creating user :", error);
+          });
+      },
+      onError(error: any) {
+        console.log(error);
+        toast(error, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+      },
+    });
+    const editUserMutation = useMutation({
+      // mutationFn: editUser,
+      onSuccess(data: any) {
+        toast(JSON.stringify(data), {
+          theme: "light",
+          autoClose: 2000,
+          position: "top-right",
+        });
+
+        getAllUsers()
+          .then((res) => {
+            const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
+            setUserList(sortedusers);
+          })
+          .catch((error) => {
+            console.error("Error in creating user :", error);
+          });
+      },
+      onError(error: any) {
+        console.log(error);
+        toast(error, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+      },
+    });
     const handleSubmit = async () => {
       if (!user.name || !user.email || !user.phone || !user.role) {
         toast.error("Fields cannot be empty", {
@@ -80,9 +133,9 @@ const User=React.memo(
         });
         return;
       }
-  
+
       const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(com)$/i;
-  
+
       if (!emailPattern.test(user.email)) {
         toast.error("Invalid email format", {
           theme: "light",
@@ -91,7 +144,7 @@ const User=React.memo(
         });
         return;
       }
-  
+
       if (user.role === "Select Role*") {
         toast.error("Select User Role", {
           theme: "light",
@@ -100,7 +153,7 @@ const User=React.memo(
         });
         return;
       }
-  
+
       if (
         user.phone.toString().length > 10 ||
         user.phone.toString().length < 10
@@ -112,75 +165,31 @@ const User=React.memo(
         });
         return;
       }
-  
+
       const userData = {
         name: user.name,
         email: user.email,
         role: user.role,
         phone: user.phone,
       };
-  
+
       if (user.id === 0) {
         try {
-          const response = await createUser(userData);
-  
-          if (response === 200) {
-            getAllUsers()
-              .then((res) => {
-                const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
-                setUserList(sortedusers);
-  
-                toast("New User Created Successfully", {
-                  theme: "light",
-                  autoClose: 1500,
-                  position: "top-right",
-                });
-                setOpenModal(false);
-              })
-              .catch((error) => {
-                console.error("Error in creating user :", error);
-              });
-  
-            return;
-          }
-  
-          if (response === 401) {
-            toast("Unauthorized");
-            return;
-          }
-  
-          if (response === 403) {
-            toast("Access Denied");
-            return;
-          }
-          if (response === 422) {
-            toast.error("Enter valid email address ", {
-              theme: "light",
-              autoClose: 1500,
-              position: "top-right",
-            });
-            return;
-          }
-          if (response === 400) {
-            toast("User with the given email already exists");
-            return;
-          } else {
-            toast("An error occurred while creating the categoy .");
-            return;
-          }
+          await createUserMutation.mutate(userData);
+          setOpenModal(false);
         } catch (error) {
           throw error;
         }
       } else {
         try {
           const response = await editUser(userData, user.id);
-  
+
           if (response === 200) {
             getAllUsers()
               .then((res) => {
                 const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
                 setUserList(sortedusers);
-  
+
                 toast("User Updated Successfully", {
                   theme: "light",
                   autoClose: 1500,
@@ -191,28 +200,22 @@ const User=React.memo(
               .catch((error) => {
                 console.error("Error in updating user data:", error);
               });
-  
+
             return;
-          }
-  
-          if (response === 401) {
+          } else if (response === 401) {
             toast("Unauthorized");
             return;
-          }
-          if (response === 422) {
+          } else if (response === 422) {
             toast("Enter valid Email Address");
             return;
-          }
-  
-          if (response === 403) {
+          } else if (response === 403) {
             toast("Access Denied");
             return;
-          }
-          if (response === 400) {
+          } else if (response === 400) {
             toast("User with the given credentials already exists");
             return;
           } else {
-            toast("An error occurred while creating the categoy .");
+            toast(response);
             return;
           }
         } catch (error) {
@@ -221,7 +224,7 @@ const User=React.memo(
       }
       setUser(clearForm);
     };
-    
+
     return (
       <div>
         <Modal
@@ -265,7 +268,7 @@ const User=React.memo(
                     }}
                     defaultValue=""
                   />
-  
+
                   {user.id === 0 && (
                     <TextField
                       required
@@ -279,7 +282,7 @@ const User=React.memo(
                       defaultValue=""
                     />
                   )}
-  
+
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
@@ -305,7 +308,7 @@ const User=React.memo(
                     <MenuItem value={"admin"}>admin</MenuItem>
                     <MenuItem value={"user"}>user</MenuItem>
                   </Select>
-  
+
                   <TextField
                     required
                     id="outlined-required"
@@ -350,6 +353,5 @@ const User=React.memo(
       </div>
     );
   }
-  
-)
+);
 export default User;
