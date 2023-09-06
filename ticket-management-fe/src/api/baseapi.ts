@@ -14,7 +14,7 @@ const token = JSON.parse(
     value : string | boolean | number
   }
 
-  interface PasswordResetLink{
+  export interface PasswordResetLink{
 email : string
   }
   interface PasswordReset{
@@ -333,14 +333,18 @@ export const signIn = async (formdata: FormData) => {
       loginHeader,
       formdata
     );
-
+const signinresponse = response.json();
     if (!response.ok) {
-      return response.status;
+    await signinresponse.then((res)=>{
+    
+      throw res.detail;
+    })
     
     }
-    return response.json();
+    return signinresponse;
   } catch (error) {
-    return error;
+
+   throw error
   }
 };
 
@@ -352,14 +356,19 @@ export const forgetpasswordlink = async (formdata: PasswordResetLink) => {
       header,
       JSON.stringify(formdata)
     );
-
+    const forgetpasswordresponse =  response.json();
     if (!response.ok) {
-      return response.status;
+
+      await forgetpasswordresponse.then((res) =>{
+        throw res.detail
+
+      })
+    return response.status;
       
     }
-    return response.json();
+    return forgetpasswordresponse;
   } catch (error) {
-    return error;
+  throw error
   }
 };
 
@@ -371,14 +380,21 @@ export const forgetpasswordreset = async (formdata: PasswordReset, email: string
       header,
       JSON.stringify(formdata)
     );
-
+const passwordresetresponse = response.json();
     if (!response.ok) {
-      return response.status;
+    await passwordresetresponse.then((res) =>{
+      if(res.detail[0].msg){
+        throw res.detail[0].msg;
+      }
+      else{
+        throw res.detail
+      }
+    })
    
     }
-    return response.json();
+    return passwordresetresponse;
   } catch (error) {
-    return error;
+   throw error;
   }
 };
 
