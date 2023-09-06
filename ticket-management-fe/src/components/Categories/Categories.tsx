@@ -2,21 +2,24 @@ import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
+
+import { useQuery } from "react-query";
 import SearchIcon from "@mui/icons-material/Search";
 import { getAllCategories } from "../../api/baseapi";
 import TableCell from "@mui/material/TableCell";
-import CategoryComponent from "./Category";
+import CategoryModal from "./Category";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { Button, Typography, InputAdornment } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { Usercontext } from "../../App";
 import { Navigate } from "react-router-dom";
-
+import { Toast } from "react-toastify/dist/components";
+import { toast } from "react-toastify";
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -33,28 +36,27 @@ export interface Category {
   name: string;
   id: number;
 }
-
 export default function Categories() {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [categories, setCategories] = useState<Category[]>([]);
   const { user } = React.useContext(Usercontext);
   let User = user?.user;
+  const { data: CategoriesData } = useQuery("allCategories", getAllCategories, {
+    cacheTime: 120000,
+  });
 
   useEffect(() => {
-    getAllCategories().then((res: Category[]) => {
-      if (res && res.length > 0) {
-        const sortedCategories: Category[] = res.sort(
-          (a: Category, b: Category) => a.id - b.id
-        );
+    if (CategoriesData) {
+      const sortedCategories: Category[] = CategoriesData.sort(
+        (a: Category, b: Category) => a.id - b.id
+      );
 
-        setCategories(sortedCategories);
-      } else {
-        setCategories([]);
-      }
-    });
-  }, []);
+      setCategories(sortedCategories);
+    } else {
+      setCategories([]);
+    }
+  }, [CategoriesData]);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -83,7 +85,7 @@ export default function Categories() {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setCategory({
       name: "",
       description: "",
@@ -91,7 +93,7 @@ export default function Categories() {
     });
 
     setIsModalOpen(false);
-  };
+  }, []);
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -141,7 +143,7 @@ export default function Categories() {
   return (
     <>
       {" "}
-      {User?.role !== "admin" && <Navigate to={"/dashboard"} replace />}
+      {User.role !== "admin" && <Navigate to={"/dashboard"} replace />}
       <div
         style={{
           textAlign: "end",
@@ -269,7 +271,7 @@ export default function Categories() {
           />
         </TableContainer>
       </Typography>
-      <CategoryComponent
+      <CategoryModal
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}
         category={category}

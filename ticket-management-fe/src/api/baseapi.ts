@@ -1,4 +1,6 @@
-export const baseUrl = "https://a6ff-210-16-94-101.ngrok-free.app/v1/";
+import { error } from 'console';
+import { useQuery } from 'react-query';
+export const baseUrl = "https://0928-103-177-83-247.ngrok-free.app/v1/";
 
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
@@ -163,9 +165,11 @@ export const updateTicket = async (
 
 ) => {
   try {
+  
             if (id !== "") {
+           
               const response = await createFetchInstance(
-                `${baseUrl}ticket/?id=${id}`,
+                `${baseUrl}ticket/${id}`,
                 "PUT",
                 ticketHeader,
                 formData
@@ -196,13 +200,16 @@ export const createCategory = async (categoryData: CategoryData) => {
 
 
     );
+    const createCategory = await response.json();
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      await createCategory.then((res : any) =>{
+        throw res.detail
+      })
     }
-    const createCategory = await response.status;
+  
     return createCategory;
   } catch (error) {
-    return error;
+throw error
   }
 };
 export const getAllCategories = async () => {
@@ -230,10 +237,13 @@ export const editCategory = async (id: number, categoryData: CategoryData) => {
 
       defaultHeaders,JSON.stringify(categoryData)
     );
+    const editData = await response.json();
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+ await editData.then((res : any) =>{
+throw res.detail
+ })
     }
-    const editData = await response.status;
+  
     return editData;
   } catch (err) {
     throw(err);
@@ -263,8 +273,13 @@ export const deleteUser = async (id: number) => {
       defaultHeaders
     );
 
-    const deleteuser = await response.status;
+    const deleteuser = await response.json();
+if(!response.ok){
 
+await deleteuser.then((res : any) =>{
+  throw res.detail
+})
+}
     return deleteuser;
   } catch (err) {
     throw(err);
@@ -276,11 +291,20 @@ export const createUser = async (userData: UserData) => {
     const response = await createFetchInstance(`${baseUrl}users/`,"POST",defaultHeaders,JSON.stringify(userData))
 
 
-    const createUserStatus = response.status;
+    const createUserStatus = response.json();
+    if(!response.ok){
+   
+    
+      await  createUserStatus.then((res) =>{
+      throw res.detail;
+      });
+    }
+  
 
     return createUserStatus;
   } catch (error) {
-    return error;
+  
+    throw error
   }
 };
 
@@ -288,10 +312,17 @@ export const editUser = async (userData: UserData, id: number) => {
   try {
     const response = await createFetchInstance(`${baseUrl}users/${id}`,"PUT",defaultHeaders,JSON.stringify(userData))
    
-    const editData =  response.status;
+    const editData =  response.json();
+   
+
+    if(!response.ok){
+      await editData.then((res) =>{
+        throw res.detail
+      })
+    }
     return editData;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
