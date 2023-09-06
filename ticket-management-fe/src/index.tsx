@@ -13,9 +13,6 @@ import {
 import "./i18";
 
 import { QueryClient, QueryClientProvider } from "react-query";
-
-import { ToastContainer } from "react-toastify";
-
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -26,7 +23,7 @@ root.render(
     <ThemeProvider theme={TicketTheme}>
       <QueryClientProvider client={queryClient}>
         <App />
-        {/* <ReactQueryDevtools/> */}
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </ThemeProvider>
   </BrowserRouter>

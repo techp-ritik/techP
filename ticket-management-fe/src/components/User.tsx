@@ -10,13 +10,10 @@ import Select from "@mui/material/Select";
 import { toast } from "react-toastify";
 import { editUser } from "../api/baseapi";
 import "react-toastify/dist/ReactToastify.css";
-import { createUser, getAllUsers } from "../api/baseapi";
-
+import { createUser } from "../api/baseapi";
 import { Data } from "./Users";
-import { TicketList } from "./Tickets/TicketBoard";
 import { useMutation } from "react-query";
 import { queryClient } from "..";
-import Categories from "./Categories/Categories";
 
 const style = {
   position: "absolute" as "absolute",

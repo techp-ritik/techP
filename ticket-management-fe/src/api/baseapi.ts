@@ -1,5 +1,3 @@
-import { error } from 'console';
-import { useQuery } from 'react-query';
 export const baseUrl = "https://0928-103-177-83-247.ngrok-free.app/v1/";
 
 const token = JSON.parse(

@@ -30,7 +30,6 @@ import UserComponent from "./User";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { User } from "./Tickets/Ticket";
 import { queryClient } from "..";
 interface Column {
   id: "name" | "id" | "email" | "role" | "phone";

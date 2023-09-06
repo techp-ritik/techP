@@ -5,17 +5,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { useQuery } from "react-query";
 import { toast } from "react-toastify";
-import { memo } from "react";
-import {
-  editCategory,
-  getAllCategories,
-  createCategory,
-} from "../../api/baseapi";
+import { editCategory, createCategory } from "../../api/baseapi";
 import { useMutation } from "react-query";
 import { queryClient } from "../..";
-import { error } from "console";
+
 export interface TicketProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
