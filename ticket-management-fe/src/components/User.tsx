@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { createUser, getAllUsers } from "../api/baseapi";
 import { useMutation } from "@tanstack/react-query";
 import { Data } from "./Users";
+import { TicketList } from "./Tickets/TicketBoard";
 
 const style = {
   position: "absolute" as "absolute",
@@ -186,7 +187,7 @@ const User = React.memo(
 
           if (response === 200) {
             getAllUsers()
-              .then((res) => {
+              .then((res: Data[]) => {
                 const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
                 setUserList(sortedusers);
 

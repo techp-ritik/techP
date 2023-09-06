@@ -134,7 +134,7 @@ export default function TicketBoard() {
         let res = updateTicketStatus(draggableId, formData);
         res.then((response) => {
           if (response === 200) {
-            getAllTickets().then((res) => {
+            getAllTickets().then((res: TicketList[]) => {
               setTickets(res);
               setLocalTickets(res);
               toast(t("toast_ticketstatus_update"), {

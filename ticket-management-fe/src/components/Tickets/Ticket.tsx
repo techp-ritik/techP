@@ -30,8 +30,14 @@ import { any } from "prop-types";
 interface TicketProps {
   id: number;
   selectedTicket: any;
-  setShowTicket: any;
+
+  setShowTicket: React.Dispatch<React.SetStateAction<boolean>>;
+
   setNewTicketId: any;
+}
+export interface User {
+  id: number;
+  name: string;
 }
 interface Attachment {
   id: number;
@@ -60,14 +66,14 @@ const Ticket = React.memo(
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = () => {
-      getAllCategories().then((res) => {
+      getAllCategories().then((res: Category[]) => {
         if (res && res.length > 0) {
           setCategories(res);
         } else {
           setCategories([]);
         }
       });
-      getAllAssignees().then((res) => {
+      getAllAssignees().then((res: User[]) => {
         if (res && res.length > 0) {
           setAssignee(res);
         } else {
@@ -91,7 +97,7 @@ const Ticket = React.memo(
       });
       setShowTicket(false);
       setIsModalOpen(false);
-      setNewTicketId(null);
+      setNewTicketId(0);
     };
     interface Category {
       description: string;
@@ -149,23 +155,25 @@ const Ticket = React.memo(
     };
 
     const handleEdit = () => {
-      setticketInformation({
-        title: selectedTicket.title,
-        description: selectedTicket.description,
-        category_id: selectedTicket.category.id,
+      if (selectedTicket) {
+        setticketInformation({
+          title: selectedTicket.title,
+          description: selectedTicket.description,
+          category_id: selectedTicket.category.id,
 
-        filepath: selectedTicket.attachments.map(
-          (attachment: Attachment) => attachment.filepath
-        ),
+          filepath: selectedTicket.attachments.map(
+            (attachment: Attachment) => attachment.filepath
+          ),
 
-        priority: selectedTicket.priority,
+          priority: selectedTicket.priority,
 
-        created_by: selectedTicket.created_by,
-        assignee: selectedTicket.assigned_to.id,
-        file: [],
-      });
+          created_by: selectedTicket.created_by,
+          assignee: selectedTicket.assigned_to.id,
+          file: [],
+        });
 
-      handleOpenModal();
+        handleOpenModal();
+      }
     };
 
     useEffect(() => {

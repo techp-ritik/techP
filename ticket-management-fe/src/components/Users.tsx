@@ -54,7 +54,7 @@ export type Data = {
   role: string;
   phone: number;
 
-  actions: any;
+  actions: string;
 };
 
 export default function Users() {
@@ -154,7 +154,7 @@ export default function Users() {
     actions: "",
   };
 
-  const [user, setUser] = useState(clearForm);
+  const [user, setUser] = useState<Data>(clearForm);
   const { t, i18n } = useTranslation();
 
   const handleChangePage = (event: unknown, newPage: number) => {
