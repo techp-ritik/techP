@@ -1,4 +1,4 @@
-export const baseUrl = "https://0928-103-177-83-247.ngrok-free.app/v1/";
+export const baseUrl = "https://b595-210-16-94-101.ngrok-free.app/v1/";
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
@@ -73,7 +73,7 @@ export const getAllTickets = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-throw(err);
+    console.log(err);
   }
 };
 export const deleteTicket = async (id: number): Promise<void> => {
@@ -89,7 +89,7 @@ export const deleteTicket = async (id: number): Promise<void> => {
     }
     return response.json()
   } catch (err) {
-throw(err);
+    console.log(err);
   }
 };
 export const getTicket = async (id: number): Promise<void> => {
@@ -106,7 +106,7 @@ export const getTicket = async (id: number): Promise<void> => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -134,7 +134,7 @@ export const filterTickets = async (params: TicketParams[]) => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 export const createTicket = async (formData: FormData) => {
@@ -218,7 +218,7 @@ export const getAllCategories = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 export const editCategory = async (id: number, categoryData: CategoryData) => {
@@ -236,7 +236,7 @@ export const editCategory = async (id: number, categoryData: CategoryData) => {
     const editData = await response.status;
     return editData;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -251,7 +251,7 @@ export const getAllUsers = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -265,7 +265,7 @@ export const deleteUser = async (id: number) => {
 
  return response.json();
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
