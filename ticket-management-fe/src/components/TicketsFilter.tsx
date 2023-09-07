@@ -6,7 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { filterTickets, getAllUsers } from "../api/baseapi";
+import { filterTickets, getAllAssignees } from "../api/baseapi";
 import { TicketList } from "./Tickets/TicketBoard";
 import { getAllCategories } from "../api/baseapi";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -14,12 +14,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import styled from "styled-components";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import { Usercontext } from "../App";
-import { useState, useContext, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Category } from "./Categories/Categories";
 import { User } from "./Tickets/Ticket";
+import { useQuery } from "react-query";
 
 interface props {
   setLocalTickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
@@ -32,7 +30,6 @@ export interface params {
   query: string;
   user: string;
   assignee: string;
-  admin_data: boolean;
 }
 
 const TicketFilter = ({ setLocalTickets }: props) => {
@@ -48,7 +45,6 @@ const TicketFilter = ({ setLocalTickets }: props) => {
     query: "",
     user: "",
     assignee: "",
-    admin_data: false,
   });
   let filters = [
     {
@@ -71,10 +67,7 @@ const TicketFilter = ({ setLocalTickets }: props) => {
       key: "query",
       value: params.query,
     },
-    {
-      key: "admin_data",
-      value: params.admin_data,
-    },
+
     {
       key: "user",
       value: params.user,
@@ -95,30 +88,30 @@ const TicketFilter = ({ setLocalTickets }: props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const { data: CategoriesData } = useQuery("allCatcegories", getAllCategories);
+  const { data: UserData } = useQuery("allUsers", getAllAssignees);
+  const { data: TicketsData } = useQuery(["filteredTickets", filters], () =>
+    filterTickets(filters)
+  );
   useMemo(() => {
-    getAllCategories().then((res: Category[]) => {
-      if (res && res.length > 0) {
-        setCategories(res);
-      } else {
-        setCategories([]);
-      }
-    });
-    getAllUsers().then((res: User[]) => {
-      if (res && res.length > 0) {
-        setUserList(res);
-      } else {
-        setUserList([]);
-      }
-    });
-    filterTickets(filters).then((res: TicketList[]) => {
-      if (res && res.length > 0) {
-        setLocalTickets(res);
-      } else {
-        setLocalTickets([]);
-      }
-    });
-  }, [params]);
+    if (CategoriesData) {
+      setCategories(CategoriesData);
+    } else {
+      setCategories([]);
+    }
+
+    if (UserData) {
+      setUserList(UserData);
+    } else {
+      setUserList([]);
+    }
+
+    if (TicketsData) {
+      setLocalTickets(TicketsData);
+    } else {
+      setLocalTickets([]);
+    }
+  }, [CategoriesData, UserData, TicketsData]);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -336,7 +329,7 @@ const TicketFilter = ({ setLocalTickets }: props) => {
                     created_at: "",
                     completed_at: "",
                     query: "",
-                    admin_data: false,
+
                     assignee: "",
                     user: "",
                   });

@@ -6,12 +6,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
-import { memo } from "react";
-import {
-  editCategory,
-  getAllCategories,
-  createCategory,
-} from "../../api/baseapi";
+import { editCategory, createCategory } from "../../api/baseapi";
+import { useMutation } from "react-query";
+import { queryClient } from "../..";
+
 export interface TicketProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -33,6 +31,32 @@ const CategoryModal = React.memo(
     setCategory,
     setCategories,
   }: TicketProps) => {
+    const editCategoryMutation = useMutation(
+      (params: { userId: number; categoryData: any }) =>
+        editCategory(params.userId, params.categoryData),
+
+      {
+        onSuccess: (data, variables, context) => {
+          queryClient.invalidateQueries("allCategories");
+          handleCloseModal();
+          toast(data);
+        },
+        onError: (error) => {
+          toast.error("" + error);
+        },
+      }
+    );
+    const createCategoryMutation = useMutation(createCategory, {
+      onSuccess: (data, variables, context) => {
+        toast(data);
+
+        queryClient.invalidateQueries("allCategories");
+      },
+      onError: (error) => {
+        toast.error("" + error);
+      },
+    });
+
     const handleSubmit = async () => {
       if (!category.name || !category.description) {
         toast.error("Fields cannot be empty");
@@ -46,32 +70,8 @@ const CategoryModal = React.memo(
       };
       if (category.id) {
         try {
-          let editResponse = await editCategory(category.id, categoryData);
-
-          if (editResponse === 200) {
-            toast("Category Updated successfully.");
-            handleCloseModal();
-            getAllCategories().then((res: Category[]) => {
-              const sortedCategories: Category[] = res.sort(
-                (a: Category, b: Category) => a.id - b.id
-              );
-
-              setCategories(sortedCategories);
-            });
-
-            return;
-          }
-          if (editResponse === 401) {
-            toast("Unauthorized");
-          }
-          if (editResponse === 422) {
-            toast("Category Name too long");
-          }
-          if (editResponse === 404) {
-            toast("Validation error: invalid data format.");
-          } else {
-            toast("An error occurred while creating the categoy .");
-          }
+          let userId = category.id;
+          editCategoryMutation.mutate({ userId, categoryData });
         } catch (error) {
           toast("An error occured while creating category");
         }
@@ -83,36 +83,7 @@ const CategoryModal = React.memo(
         }
 
         try {
-          let createCategoryResponse = await createCategory(categoryData);
-
-          if (createCategoryResponse === 201) {
-            toast("Category created successfully.");
-            handleCloseModal();
-            getAllCategories().then((res: Category[]) => {
-              const sortedCategories: Category[] = res.sort(
-                (a: Category, b: Category) => a.id - b.id
-              );
-
-              setCategories(sortedCategories);
-            });
-            return;
-          }
-          if (createCategoryResponse === 401) {
-            toast("Unauthorized");
-          }
-          if (createCategoryResponse === 422) {
-            toast("Category Name too long");
-          }
-          if (createCategoryResponse === 400) {
-            toast(
-              "Integrity Error: duplicate key value violates unique constraint"
-            );
-          }
-          if (createCategoryResponse === 404) {
-            toast("Validation error: invalid data format.");
-          } else {
-            toast("An error occurred while creating the categoy .");
-          }
+          createCategoryMutation.mutate(categoryData);
         } catch (error) {}
       }
 

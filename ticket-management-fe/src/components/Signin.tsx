@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Usercontext } from "../App";
 import { useTranslation } from "react-i18next";
+import { useMutation } from "react-query";
 
 export default function SignIn() {
   const [loader, setLoader] = useState(false);
@@ -25,6 +26,29 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(Usercontext);
   const { t, i18n } = useTranslation();
+
+  const signinMutation = useMutation(
+    (params: { formdata: FormData }) => signIn(params.formdata),
+
+    {
+      onSuccess: (data, variables, context) => {
+        navigate("/dashboard");
+        localStorage.setItem("access_token", JSON.stringify(data));
+        let retrievedObject = JSON.parse(
+          localStorage.getItem("access_token") || "{}"
+        );
+        setUser(retrievedObject);
+
+        localStorage.setItem("Access Token", data.access_token);
+        window.location.reload();
+      },
+      onError: (error) => {
+        toast.error("" + error);
+
+        setLoader(false);
+      },
+    }
+  );
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setLoader(true);
     event.preventDefault();
@@ -40,28 +64,7 @@ export default function SignIn() {
     const formdata = new FormData();
     formdata.append("username", credentials.username);
     formdata.append("password", credentials.password);
-
-    signIn(formdata).then((res) => {
-      if (res.user) {
-        navigate("/dashboard");
-        localStorage.setItem("access_token", JSON.stringify(res));
-        let retrievedObject = JSON.parse(
-          localStorage.getItem("access_token") || "{}"
-        );
-        setUser(retrievedObject);
-
-        localStorage.setItem("Access Token", res.access_token);
-        window.location.reload(); 
-      } else {
-        toast.error("Invalid credentials or user does not exists. Try Again.", {
-          theme: "dark",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setLoader(false);
-      }
-    });
-
+    signinMutation.mutate({ formdata });
   };
 
   return (

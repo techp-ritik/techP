@@ -2,6 +2,7 @@ import * as React from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Table from "@mui/material/Table";
+import { useMutation, useQuery } from "react-query";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -29,6 +30,7 @@ import UserComponent from "./User";
 import { Usercontext } from "../App";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { queryClient } from "..";
 interface Column {
   id: "name" | "id" | "email" | "role" | "phone";
 
@@ -69,17 +71,33 @@ export default function Users() {
 
   const [Userlist, setUserList] = useState<Data[]>([]);
 
-  useEffect(() => {
-    getAllUsers().then((res: Data[]) => {
-      if (res && res.length > 0) {
-        const sortedUsers = res.sort((a: Data, b: Data) => a.id - b.id);
+  const { data: UsersData } = useQuery("allUsers", getAllUsers, {
+    cacheTime: 120000,
+  });
 
-        setUserList(sortedUsers);
-      } else {
-        setUserList([]);
-      }
-    });
-  }, []);
+  const deleteuserMutation = useMutation(
+    (params: { userId: number }) => deleteUserApi(params.userId),
+
+    {
+      onSuccess: (data, variables, context) => {
+        toast(data);
+        queryClient.invalidateQueries("allUsers");
+      },
+      onError: (error) => {
+        toast("" + error);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (UsersData) {
+      const sortedUsers = UsersData.sort((a: Data, b: Data) => a.id - b.id);
+
+      setUserList(sortedUsers);
+    } else {
+      setUserList([]);
+    }
+  }, [UsersData]);
 
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
@@ -166,30 +184,9 @@ export default function Users() {
 
     const deleteUser = async (id: number) => {
       try {
-        const response = await deleteUserApi(id);
-        if (response === 200) {
-          getAllUsers()
-            .then((res: Data[]) => {
-              const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
-              setUserList(sortedusers);
-
-              toast(t("toast_user_deleted"), {
-                theme: "light",
-                autoClose: 1500,
-                position: "top-right",
-              });
-              handleClose();
-            })
-            .catch((error) => {
-              console.error("Error deleting user:", error);
-            });
-        } else if (response === 404) {
-          toast("Invalid Id", {
-            theme: "light",
-            autoClose: 1500,
-            position: "top-right",
-          });
-        }
+        let userId = id;
+        deleteuserMutation.mutate({ userId });
+        handleClose();
       } catch (error) {
         throw error;
       }
