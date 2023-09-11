@@ -75,6 +75,7 @@
     "@storybook/react-webpack5": "^7.3.2",
     "@storybook/testing-library": "^0.2.0",
     "@tanstack/eslint-plugin-query": "^4.34.1",
+    "@tanstack/react-query-devtools": "^4.35.0",
     "babel-jest": "^29.6.2",
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint-plugin-storybook": "^0.6.13",

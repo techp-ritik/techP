@@ -1,4 +1,5 @@
-export const baseUrl = "https://b595-210-16-94-101.ngrok-free.app/v1/";
+export const baseUrl = "https://ee47-103-177-83-247.ngrok-free.app/v1/";
+
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
 ).access_token;
@@ -13,7 +14,7 @@ const token = JSON.parse(
     value : string | boolean | number
   }
 
-  interface PasswordResetLink{
+  export interface PasswordResetLink{
 email : string
   }
   interface PasswordReset{
@@ -56,6 +57,7 @@ const createFetchInstance = (
     body,
   });
 };
+
 export const getAllTickets = async () => {
   try {
     const response =  await fetch( 
@@ -162,9 +164,11 @@ export const updateTicket = async (
 
 ) => {
   try {
+  
             if (id !== "") {
+           
               const response = await createFetchInstance(
-                `${baseUrl}ticket/?id=${id}`,
+                `${baseUrl}ticket/${id}`,
                 "PUT",
                 ticketHeader,
                 formData
@@ -195,13 +199,16 @@ export const createCategory = async (categoryData: CategoryData) => {
 
 
     );
+    const createCategory = await response.json();
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      await createCategory.then((res : any) =>{
+        throw res.detail
+      })
     }
-    const createCategory = await response.status;
+  
     return createCategory;
   } catch (error) {
-    return error;
+throw error
   }
 };
 
@@ -230,10 +237,13 @@ export const editCategory = async (id: number, categoryData: CategoryData) => {
 
       defaultHeaders,JSON.stringify(categoryData)
     );
+    const editData = await response.json();
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+ await editData.then((res : any) =>{
+throw res.detail
+ })
     }
-    const editData = await response.status;
+  
     return editData;
   } catch (err) {
     console.log(err);
@@ -263,7 +273,14 @@ export const deleteUser = async (id: number) => {
       defaultHeaders
     );
 
- return response.json();
+    const deleteuser = await response.json();
+if(!response.ok){
+
+await deleteuser.then((res : any) =>{
+  throw res.detail
+})
+}
+    return deleteuser;
   } catch (err) {
     console.log(err);
   }
@@ -274,11 +291,20 @@ export const createUser = async (userData: UserData) => {
     const response = await createFetchInstance(`${baseUrl}users/`,"POST",defaultHeaders,JSON.stringify(userData))
 
 
+    const createUserStatus = response.json();
+    if(!response.ok){
+   
     
+      await  createUserStatus.then((res) =>{
+      throw res.detail;
+      });
+    }
+  
 
     return response.json();
   } catch (error) {
-    return error;
+  
+    throw error
   }
 };
 
@@ -286,10 +312,17 @@ export const editUser = async (userData: UserData, id: number) => {
   try {
     const response = await createFetchInstance(`${baseUrl}users/${id}`,"PUT",defaultHeaders,JSON.stringify(userData))
    
-  
-    return response.json()
+    const editData =  response.json();
+   
+
+    if(!response.ok){
+      await editData.then((res) =>{
+        throw res.detail
+      })
+    }
+    return editData;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -301,14 +334,18 @@ export const signIn = async (formdata: FormData) => {
       loginHeader,
       formdata
     );
-
+const signinresponse = response.json();
     if (!response.ok) {
-      return response.status;
+    await signinresponse.then((res)=>{
+    
+      throw res.detail;
+    })
     
     }
-    return response.json();
+    return signinresponse;
   } catch (error) {
-    return error;
+
+   throw error
   }
 };
 
@@ -320,14 +357,19 @@ export const forgetpasswordlink = async (formdata: PasswordResetLink) => {
       header,
       JSON.stringify(formdata)
     );
-
+    const forgetpasswordresponse =  response.json();
     if (!response.ok) {
-      return response.status;
+
+      await forgetpasswordresponse.then((res) =>{
+        throw res.detail
+
+      })
+    return response.status;
       
     }
-    return response.json();
+    return forgetpasswordresponse;
   } catch (error) {
-    return error;
+  throw error
   }
 };
 
@@ -339,14 +381,21 @@ export const forgetpasswordreset = async (formdata: PasswordReset, email: string
       header,
       JSON.stringify(formdata)
     );
-
+const passwordresetresponse = response.json();
     if (!response.ok) {
-      return response.status;
+    await passwordresetresponse.then((res) =>{
+      if(res.detail[0].msg){
+        throw res.detail[0].msg;
+      }
+      else{
+        throw res.detail
+      }
+    })
    
     }
-    return response.json();
+    return passwordresetresponse;
   } catch (error) {
-    return error;
+   throw error;
   }
 };
 

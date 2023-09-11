@@ -13,8 +13,9 @@ import Alert from "@mui/material/Alert";
 import { forgetpasswordlink, forgetpasswordreset } from "../api/baseapi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import { useTranslation } from "react-i18next";
+import { useMutation } from "react-query";
+import { PasswordResetLink } from "../api/baseapi";
 
 export default function Forgetpassword() {
   const [loader, setLoader] = useState(false);
@@ -24,8 +25,47 @@ export default function Forgetpassword() {
     password: "",
     otp: "",
   });
+
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const forgetPasswordMutation = useMutation(
+    (params: { request: PasswordResetLink }) =>
+      forgetpasswordlink(params.request),
+    {
+      onSuccess: (data, variables, context) => {
+        toast(data);
+        setFlag(true);
+        setLoader(false);
+      },
+      onError: (error) => {
+        toast.error("" + error);
+        setLoader(false);
+      },
+    }
+  );
+
+  const newPasswordCreateMutation = useMutation(
+    (params: { request: any; email: string }) =>
+      forgetpasswordreset(params.request, params.email),
+    {
+      onSuccess: (data, variables, context) => {
+        toast(data);
+
+        setFlag(true);
+        setLoader(false);
+        navigate("/login");
+        setCredentials({
+          email: "",
+          password: "",
+          otp: "",
+        });
+      },
+      onError: (error) => {
+        toast.error("" + error);
+        setLoader(false);
+      },
+    }
+  );
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setLoader(true);
     event.preventDefault();
@@ -34,38 +74,7 @@ export default function Forgetpassword() {
       email: credentials.email,
     };
 
-    forgetpasswordlink(request).then((res: number) => {
-      if (res === 422) {
-        toast.error("  Email Validation Error", {
-          theme: "dark",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setLoader(false);
-      }
-      if (res === 404) {
-        toast.error("Invalid email: Mail not found in the database.", {
-          theme: "dark",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setLoader(false);
-      } else if (res === 401) {
-        toast.error("Invalid credentials or user does not exists. Try Again.", {
-          theme: "dark",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setLoader(false);
-      } else {
-        toast(
-          "A password reset link was successfully sent to your registered email address.",
-          { theme: "light", autoClose: 1500, position: "top-right" }
-        );
-        setFlag(true);
-        setLoader(false);
-      }
-    });
+    forgetPasswordMutation.mutate({ request });
   };
   const handlepasswordsubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setLoader(true);
@@ -86,37 +95,7 @@ export default function Forgetpassword() {
     };
     const email = credentials.email;
 
-    forgetpasswordreset(request, email).then((res: number) => {
-      if (res === 400 || res === 401) {
-        toast.error("Invalid credentials. Check your otp code or expiry time", {
-          theme: "dark",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setLoader(false);
-      } else if (res === 422) {
-        toast.error("OTP code should have at most 6 characters", {
-          theme: "dark",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setLoader(false);
-      } else {
-        toast("Password has been successfully updated.", {
-          theme: "light",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        setFlag(true);
-        setLoader(false);
-        navigate("/login");
-        setCredentials({
-          email: "",
-          password: "",
-          otp: "",
-        });
-      }
-    });
+    newPasswordCreateMutation.mutate({ request, email });
   };
 
   return (

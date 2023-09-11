@@ -2,6 +2,7 @@ import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
+import { useQuery } from "react-query";
 import SearchIcon from "@mui/icons-material/Search";
 import { getAllCategories } from "../../api/baseapi";
 import TableCell from "@mui/material/TableCell";
@@ -11,13 +12,12 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { Button, Typography, InputAdornment } from "@mui/material";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Category } from "@mui/icons-material";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { Usercontext } from "../../App";
 import { Navigate } from "react-router-dom";
-import { Toast } from "react-toastify/dist/components";
-import { toast } from "react-toastify";
+
 interface Column {
   data: "description" | "name" | "id";
   label: string;
@@ -40,19 +40,21 @@ export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const { user } = React.useContext(Usercontext);
   let User = user?.user;
-  useEffect(() => {
-    getAllCategories().then((res: Category[]) => {
-      if (res && res.length > 0) {
-        const sortedCategories: Category[] = res.sort(
-          (a: Category, b: Category) => a.id - b.id
-        );
+  const { data: CategoriesData } = useQuery("allCategories", getAllCategories, {
+    cacheTime: 120000,
+  });
 
-        setCategories(sortedCategories);
-      } else {
-        setCategories([]);
-      }
-    });
-  }, []);
+  useEffect(() => {
+    if (CategoriesData) {
+      const sortedCategories: Category[] = CategoriesData.sort(
+        (a: Category, b: Category) => a.id - b.id
+      );
+
+      setCategories(sortedCategories);
+    } else {
+      setCategories([]);
+    }
+  }, [CategoriesData]);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 

@@ -8,12 +8,12 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { toast } from "react-toastify";
-import { deleteUser, editUser } from "../api/baseapi";
+import { editUser } from "../api/baseapi";
 import "react-toastify/dist/ReactToastify.css";
-import { createUser, getAllUsers } from "../api/baseapi";
-import { useMutation } from "@tanstack/react-query";
+import { createUser } from "../api/baseapi";
 import { Data } from "./Users";
-import { TicketList } from "./Tickets/TicketBoard";
+import { useMutation } from "react-query";
+import { queryClient } from "../index";
 
 const style = {
   position: "absolute" as "absolute",
@@ -53,6 +53,44 @@ const User = React.memo(
     user,
     setUser,
   }: list) => {
+    const userData = {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+    };
+    const createUserMutation = useMutation(
+      (params: { userData: any }) => createUser(params.userData),
+
+      {
+        onSuccess(data, variables, context) {
+          setOpenModal(false);
+          queryClient.invalidateQueries("allUsers");
+          toast(data);
+        },
+
+        onError(error) {
+          toast.error("" + error);
+        },
+      }
+    );
+
+    const editUserMutation = useMutation(
+      (params: { userId: number; userData: any }) =>
+        editUser(params.userData, params.userId),
+      {
+        onSuccess: (data, variables, context) => {
+          toast(data);
+          queryClient.invalidateQueries("allUsers");
+          setOpenModal(false);
+          setUser(clearForm);
+        },
+        onError: (error) => {
+          toast.error("" + error);
+        },
+      }
+    );
+
     const clearForm = {
       id: 0,
       name: "",
@@ -62,60 +100,7 @@ const User = React.memo(
 
       actions: "",
     };
-    const createUserMutation = useMutation({
-      mutationFn: createUser,
-      onSuccess(data: any, variables, context) {
-        toast(JSON.stringify(data), {
-          theme: "light",
-          autoClose: 2000,
-          position: "top-right",
-        });
 
-        getAllUsers()
-          .then((res) => {
-            const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
-            setUserList(sortedusers);
-          })
-          .catch((error) => {
-            console.error("Error in creating user :", error);
-          });
-      },
-      onError(error: any) {
-        console.log(error);
-        toast(error, {
-          theme: "light",
-          autoClose: 1500,
-          position: "top-right",
-        });
-      },
-    });
-    const editUserMutation = useMutation({
-      // mutationFn: editUser,
-      onSuccess(data: any) {
-        toast(JSON.stringify(data), {
-          theme: "light",
-          autoClose: 2000,
-          position: "top-right",
-        });
-
-        getAllUsers()
-          .then((res) => {
-            const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
-            setUserList(sortedusers);
-          })
-          .catch((error) => {
-            console.error("Error in creating user :", error);
-          });
-      },
-      onError(error: any) {
-        console.log(error);
-        toast(error, {
-          theme: "light",
-          autoClose: 1500,
-          position: "top-right",
-        });
-      },
-    });
     const handleSubmit = async () => {
       if (!user.name || !user.email || !user.phone || !user.role) {
         toast.error("Fields cannot be empty", {
@@ -167,63 +152,20 @@ const User = React.memo(
         return;
       }
 
-      const userData = {
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone,
-      };
-
       if (user.id === 0) {
         try {
-          await createUserMutation.mutate(userData);
-          setOpenModal(false);
+          createUserMutation.mutate({ userData });
         } catch (error) {
           throw error;
         }
       } else {
         try {
-          const response = await editUser(userData, user.id);
-
-          if (response === 200) {
-            getAllUsers()
-              .then((res: Data[]) => {
-                const sortedusers = res.sort((a: Data, b: Data) => a.id - b.id);
-                setUserList(sortedusers);
-
-                toast("User Updated Successfully", {
-                  theme: "light",
-                  autoClose: 1500,
-                  position: "top-right",
-                });
-                setOpenModal(false);
-              })
-              .catch((error) => {
-                console.error("Error in updating user data:", error);
-              });
-
-            return;
-          } else if (response === 401) {
-            toast("Unauthorized");
-            return;
-          } else if (response === 422) {
-            toast("Enter valid Email Address");
-            return;
-          } else if (response === 403) {
-            toast("Access Denied");
-            return;
-          } else if (response === 400) {
-            toast("User with the given credentials already exists");
-            return;
-          } else {
-            toast(response);
-            return;
-          }
+          let userId = user.id;
+          editUserMutation.mutate({ userId, userData });
         } catch (error) {
           throw error;
         }
       }
-      setUser(clearForm);
     };
 
     return (

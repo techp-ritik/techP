@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import TicketsFilter from "../TicketsFilter";
 import Ticket from "./Ticket";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "react-query";
 
 
 export type TicketList = {
