@@ -146,8 +146,6 @@ const User = React.memo(
         return;
       }
 
-      userData.phone = counterycode + user.phone;
-
       if (user.id === 0) {
         try {
           createUserMutation.mutate({ userData });
