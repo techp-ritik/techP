@@ -6,6 +6,8 @@ import TextField from "@mui/material/TextField";
 import { DialogTitle } from "@mui/material";
 import React from "react";
 import MenuItem from "@mui/material/MenuItem";
+import { countries } from "./CountryCodes";
+import { useState } from "react";
 import Select from "@mui/material/Select";
 import { toast } from "react-toastify";
 import { editUser } from "../api/baseapi";
@@ -13,7 +15,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { createUser } from "../api/baseapi";
 import { Data } from "./Users";
 import { useMutation } from "react-query";
-import { queryClient } from "..";
+import { queryClient } from "../";
+import { Phone } from "@mui/icons-material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -29,6 +32,7 @@ const style = {
 export interface list {
   UserList: Data[];
   setUserList: React.Dispatch<React.SetStateAction<Data[]>>;
+
   user: Data;
   setUser: React.Dispatch<
     React.SetStateAction<{
@@ -36,8 +40,8 @@ export interface list {
       name: string;
       email: string;
       role: string;
-      phone: number;
-
+      phone: string;
+      // country_code : string;
       actions: string;
     }>
   >;
@@ -58,7 +62,9 @@ const User = React.memo(
       email: user.email,
       role: user.role,
       phone: user.phone,
+      // country_code : user.country_code;
     };
+    const [counterycode, setContryCode] = useState("Select Code*");
     const createUserMutation = useMutation(
       (params: { userData: any }) => createUser(params.userData),
 
@@ -96,8 +102,8 @@ const User = React.memo(
       name: "",
       email: "",
       role: "Select Role*",
-      phone: 0,
-
+      phone: "",
+      counterycode: "Select Code*",
       actions: "",
     };
 
@@ -140,23 +146,13 @@ const User = React.memo(
         return;
       }
 
-      if (
-        user.phone.toString().length > 10 ||
-        user.phone.toString().length < 10
-      ) {
-        toast.error("Contact Number must be exactly 10 digits", {
-          theme: "light",
-          autoClose: 1500,
-          position: "top-right",
-        });
-        return;
-      }
+      userData.phone = counterycode + user.phone;
 
       if (user.id === 0) {
         try {
           createUserMutation.mutate({ userData });
         } catch (error) {
-          throw error;
+          toast("ërror check");
         }
       } else {
         try {
@@ -174,6 +170,7 @@ const User = React.memo(
           open={openModal}
           onClose={() => {
             setOpenModal(false);
+            setContryCode("Select Code*");
           }}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
@@ -251,29 +248,67 @@ const User = React.memo(
                     <MenuItem value={"admin"}>admin</MenuItem>
                     <MenuItem value={"user"}>user</MenuItem>
                   </Select>
+                  <div
+                    style={{
+                      display: "flex",
+                      marginBottom: "10px",
 
-                  <TextField
-                    required
-                    id="outlined-required"
-                    type="number"
-                    label="Phone"
-                    error={user.phone.toString().length !== 10}
-                    helperText={
-                      user.phone.toString().length !== 10
-                        ? "Contact number must be exactly 10 digits"
-                        : ""
-                    }
-                    value={user.phone === 0 ? "" : user.phone}
-                    onChange={(e) => {
-                      setUser({ ...user, phone: parseInt(e.target.value) });
+                      marginTop: "10px",
+                      marginLeft: "15px",
+                      textAlign: "center",
+                      marginRight: "10px",
                     }}
-                  />
+                  >
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      required
+                      defaultValue="Select COuntryCode*"
+                      autoFocus
+                      name="code"
+                      type="text"
+                      sx={{
+                        marginBottom: "10px",
+                        width: "100px",
+                        marginTop: "10px",
+                        textAlign: "left",
+                      }}
+                      onChange={(e) => {
+                        setContryCode(e.target.value);
+                      }}
+                      renderValue={() => counterycode}
+                    >
+                      <MenuItem value={"Select Code*"} disabled>
+                        Select Code*
+                      </MenuItem>
+
+                      {countries.map((countrycode) => (
+                        <MenuItem
+                          key={countrycode.code}
+                          value={countrycode.code}
+                        >
+                          {countrycode.code} - {countrycode.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <TextField
+                      required
+                      id="outlined-required"
+                      type="number"
+                      label="Phone"
+                      value={user.phone === "" ? "" : user.phone}
+                      onChange={(e) => {
+                        setUser({ ...user, phone: e.target.value });
+                      }}
+                    />
+                  </div>
                   <div style={{ textAlign: "end", marginRight: "15px" }}>
                     <Button
                       style={{ marginTop: "10px" }}
                       size="large"
                       onClick={() => {
                         setOpenModal(false);
+                        setContryCode("Select Code*");
                       }}
                       variant="text"
                     >
