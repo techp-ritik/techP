@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { createUser } from "../api/baseapi";
 import { Data } from "./Users";
 import { useMutation } from "react-query";
-import { queryClient } from "..";
+import { queryClient } from "../index";
 
 const style = {
   position: "absolute" as "absolute",

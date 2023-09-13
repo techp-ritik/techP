@@ -6,10 +6,6 @@ import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter } from "react-router-dom";
 import TicketTheme from "./components/TicketTheme";
-import {
-  ReactQueryDevtools,
-  ReactQueryDevtoolsPanel,
-} from "@tanstack/react-query-devtools";
 import "./i18";
 
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -21,7 +17,7 @@ export const queryClient = new QueryClient();
 root.render(
   <BrowserRouter>
     <ThemeProvider theme={TicketTheme}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider  client={queryClient}>
         <App />
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>

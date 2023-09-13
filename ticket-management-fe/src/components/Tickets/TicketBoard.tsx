@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Tickets from "./Tickets";
 import Grid from "@mui/material/Grid";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import { useState, useEffect,useRef,useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getAllTickets } from "../../api/baseapi";
 import { updateTicket as updateTicketStatus } from "../../api/baseapi";
 import { toast } from "react-toastify";
@@ -15,6 +15,8 @@ import "react-toastify/dist/ReactToastify.css";
 import TicketsFilter from "../TicketsFilter";
 import Ticket from "./Ticket";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+
 
 export type TicketList = {
   id: string;
@@ -35,20 +37,29 @@ const formData = new FormData();
 
 export default function TicketBoard() {
   const [newTicketId, setNewTicketId] = useState<number | null>(null);
-  const butRef=useRef(null)
+  const butRef = useRef(null);
   const [showTicket, setShowTicket] = useState(false);
   const handleCreateNewTicket = useCallback(() => {
-    
     setShowTicket(true);
     setNewTicketId(0);
-  },[])
-  
+  }, []);
 
-
+  const {
+    data: ticketsALL,
+    isLoading,
+    isError,
+    error,
+    status,
+  } = useQuery({
+    queryKey: ["ticket"],
+    queryFn: () => getAllTickets(),
+  });
+  // console.log(status);
   let data: TicketList[] = [];
-
-  const [tickets, setTickets] = useState<TicketList[]>(data);
-  const [localtickets, setLocalTickets] = useState<TicketList[]>(data);
+ 
+ 
+  const [tickets, setTickets] = useState(ticketsALL);
+  const [localtickets, setLocalTickets] = useState(data);
   const { t, i18n } = useTranslation();
   const getTicketsLength = (status: String) => {
     return 1;
@@ -59,20 +70,36 @@ export default function TicketBoard() {
     blocked: getTicketsLength("blocked"),
     completed: getTicketsLength("completed"),
   });
-
+  // console.log(ticketsALL, status, error);
   useEffect(() => {
-    getAllTickets().then((res: TicketList[]) => {
-      if (res && res.length > 0) {
-        setTickets(res);
+    // getAllTickets().then((res) => {
+    //   if (res && res.length > 0) {
+    //     setTickets(res);
 
-        setLocalTickets(res);
-      } else {
-        setTickets([]);
+    //     setLocalTickets(res);
+    //   } else {
+    //     setTickets([]);
+    //     setLocalTickets([]);
+    //   }
+    // });
+    switch (status) {
+      case "success":
+        setLocalTickets(ticketsALL);
+        setTickets(ticketsALL);
+        break;
+      
+      case "error":
         setLocalTickets([]);
-      }
-    });
-  }, []);
-  
+        setTickets([]);
+        toast.error("Error While Fetching Tickets . Try Again", {
+          autoClose: 1500,
+          position: "top-center",
+        });
+        
+        break;
+    }
+  }, [status]);
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
 
@@ -226,6 +253,8 @@ export default function TicketBoard() {
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         <Tickets
+                          isLoading={isLoading}
+                          isError={isError}
                           setLocaltickets={setLocalTickets}
                           getTickets={localtickets?.filter((item) => {
                             return item.status === status.toLowerCase();
