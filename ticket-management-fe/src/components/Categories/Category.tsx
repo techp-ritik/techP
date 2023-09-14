@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 import { editCategory, createCategory } from "../../api/baseapi";
 import { useMutation } from "react-query";
-import { queryClient } from "../..";
+import { queryClient } from "../../index";
 
 export interface TicketProps {
   isModalOpen: boolean;

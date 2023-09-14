@@ -8,7 +8,7 @@ import { useState } from "react";
 import { getAllAssignees, getTicket } from "../../api/baseapi";
 import { getAllCategories } from "../../api/baseapi";
 import { baseUrl } from "../../api/baseapi";
-
+import { useMutation } from "@tanstack/react-query";
 import {
   Dialog,
   DialogTitle,
@@ -25,6 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { TicketList } from "./TicketBoard";
 import { useEffect } from "react";
 import { getAllTickets } from "../../api/baseapi";
+import { any } from "prop-types";
 
 interface TicketProps {
   id: number;
@@ -197,6 +198,72 @@ const Ticket = React.memo(
       }));
     };
 
+    const createTicketmutation = useMutation({
+      mutationFn: createTicket,
+      onSuccess(data, variables, context) {
+        console.log(data, variables);
+        toast(data, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+        getAllTickets().then((res) => {
+          setLocaltickets(res);
+        });
+        handleCloseModal();
+      },
+      onError(error: any) {
+        console.log(error)
+        toast(error, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+      },
+    });
+    const deleteTicketMutation = useMutation({
+      mutationFn: deleteTicket,
+      onSuccess(data: any) {
+        toast(data, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+        getAllTickets().then((res) => {
+          setLocaltickets(res);
+        });
+        handleCloseModal();
+      },
+      onError(error: any) {
+        toast(error, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+      },
+    });
+    const updateTicketMutation = useMutation({
+      
+      mutationFn : updateTicket,
+      onSuccess(data: any) {
+        toast(data, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+        getAllTickets().then((res) => {
+          setLocaltickets(res);
+        });
+        handleCloseModal();
+      },
+      onError(error: any) {
+        toast(error, {
+          theme: "light",
+          autoClose: 1500,
+          position: "top-right",
+        });
+      },
+    });
     const handleSubmit = async () => {
       if (
         !ticketInformation.title ||
@@ -229,49 +296,36 @@ const Ticket = React.memo(
 
       if (id === 0) {
         try {
-          let createResponse = await createTicket(formData);
+          // let createResponse = await createTicket(formData);
+          await createTicketmutation.mutate(formData);
 
-          if (createResponse === 201) {
-            toast("Ticket created successfully.", {
-              theme: "light",
-              autoClose: 1500,
-              position: "top-right",
-            });
-            getAllTickets().then((res) => {
-              setLocaltickets(res);
-            });
-
-            // setLocaltickets(res);
-            handleCloseModal();
-            return;
-          }
-          if (createResponse === 401) {
-            toast("Unauthorized", {
-              theme: "light",
-              autoClose: 1500,
-              position: "top-right",
-            });
-          }
-          if (createResponse === 404) {
-            toast("Validation error: invalid data format.", {
-              theme: "light",
-              autoClose: 1500,
-              position: "top-right",
-            });
-          } else {
-            toast(
-              "An error occurred while submitting the form. Please try again ",
-              {
-                theme: "light",
-                autoClose: 1500,
-                position: "top-right",
-              }
-            );
-          }
+          // if (createTicketmutation.data==401) {
+          //   toast("Unauthorized", {
+          //     theme: "light",
+          //     autoClose: 1500,
+          //     position: "top-right",
+          //   });
+          // }
+          // if (createTicketmutation.data==404) {
+          //   toast("Validation error: invalid data format.", {
+          //     theme: "light",
+          //     autoClose: 1500,
+          //     position: "top-right",
+          //   });
+          // } else {
+          //   toast(
+          //     "An error occurred while submitting the form. Please try again ",
+          //     {
+          //       theme: "light",
+          //       autoClose: 1500,
+          //       position: "top-right",
+          //     }
+          //   );
+          // }
         } catch (error) {}
       } else {
         let editResponse = await updateTicket(id, formData);
-
+        //  updateTicketMutation.mutate(id,formData)
         if (editResponse === 200) {
           toast("Ticket Updated successfully.", {
             theme: "light",
@@ -301,15 +355,7 @@ const Ticket = React.memo(
 
     const deleteTicketHandler = async (id: number) => {
       try {
-        await deleteTicket(id);
-        const updatedTickets: TicketList[] = await getAllTickets();
-        setLocaltickets(updatedTickets);
-        handleCloseModal();
-        toast(`Ticket#${id} Deleted Successfully`, {
-          theme: "light",
-          autoClose: 1500,
-          position: "top-right",
-        });
+        await deleteTicketMutation.mutate(id);
       } catch (error) {
         toast(
           "An error occurred while deleting the ticket. Please try again.",

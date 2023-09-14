@@ -41,7 +41,7 @@ export interface list {
       email: string;
       role: string;
       phone: string;
-      // country_code : string;
+      country_code: string;
       actions: string;
     }>
   >;
@@ -62,7 +62,7 @@ const User = React.memo(
       email: user.email,
       role: user.role,
       phone: user.phone,
-      // country_code : user.country_code;
+      country_code: user.country_code,
     };
     const [counterycode, setContryCode] = useState("Select Code*");
     const createUserMutation = useMutation(
@@ -103,7 +103,7 @@ const User = React.memo(
       email: "",
       role: "Select Role*",
       phone: "",
-      counterycode: "Select Code*",
+      country_code: "Select CountryCode*",
       actions: "",
     };
 
@@ -261,9 +261,10 @@ const User = React.memo(
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       required
-                      defaultValue="Select COuntryCode*"
                       autoFocus
-                      name="code"
+                      name="country_code"
+                      value={user.country_code}
+                      defaultValue="Select CountryCode*"
                       type="text"
                       sx={{
                         marginBottom: "10px",
@@ -271,10 +272,15 @@ const User = React.memo(
                         marginTop: "10px",
                         textAlign: "left",
                       }}
+                      // onChange={(e) => {
+                      //   setContryCode(e.target.value);
+                      // }}
                       onChange={(e) => {
-                        setContryCode(e.target.value);
+                        setUser({ ...user, country_code: e.target.value });
+
+                        console.log(e.target.value);
                       }}
-                      renderValue={() => counterycode}
+                      // renderValue={() => counterycode}
                     >
                       <MenuItem value={"Select Code*"} disabled>
                         Select Code*

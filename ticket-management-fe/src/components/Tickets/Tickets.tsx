@@ -25,6 +25,8 @@ export interface TicketDetails {
   user: { id: number; name: string };
 }
 interface list {
+  isError:boolean
+  isLoading:boolean
   getTickets: {}[];
   setLocaltickets: React.Dispatch<React.SetStateAction<TicketList[]>>;
 }
@@ -65,11 +67,16 @@ const Tickets = React.memo((props: list) => {
 
   return (
     <MainBoard>
-      {props.getTickets?.length === 0 || undefined ? (
+      {props.isError && <NoTickets>Error while fetching Tickets</NoTickets>}
+      {props.isLoading ? (
+        
         <NoTickets>
-          <>{t("no_tickets")}</>
+         
+          <>Loading...</>
         </NoTickets>
-      ) : (
+      ) : 
+      (
+       !props.isError &&  props.getTickets.length===0? <NoTickets>No Tickets</NoTickets> :
         props.getTickets?.map((list: any, index: number) => {
           let priorityColor = "";
           switch (list.priority) {

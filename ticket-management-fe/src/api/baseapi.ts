@@ -1,4 +1,4 @@
-export const baseUrl = "https://0928-103-177-83-247.ngrok-free.app/v1/";
+export const baseUrl = "https://ee47-103-177-83-247.ngrok-free.app/v1/";
 
 const token = JSON.parse(
   localStorage.getItem("access_token") || "{}"
@@ -75,7 +75,7 @@ export const getAllTickets = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-throw(err);
+    console.log(err);
   }
 };
 export const deleteTicket = async (id: number): Promise<void> => {
@@ -85,12 +85,13 @@ export const deleteTicket = async (id: number): Promise<void> => {
       "DELETE",
       defaultHeaders
     );
-
+   
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
+    return response.json()
   } catch (err) {
-throw(err);
+    console.log(err);
   }
 };
 export const getTicket = async (id: number): Promise<void> => {
@@ -107,7 +108,7 @@ export const getTicket = async (id: number): Promise<void> => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -135,7 +136,7 @@ export const filterTickets = async (params: TicketParams[]) => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 export const createTicket = async (formData: FormData) => {
@@ -150,7 +151,7 @@ export const createTicket = async (formData: FormData) => {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const createdata = await response.status;
+    const createdata = await response.json();
     return createdata;
   } catch (error) {
     return error;
@@ -173,7 +174,7 @@ export const updateTicket = async (
                 formData
               );
         
-              return response.status;
+              return response.json();
             } else {
               console.log("nochange", id);
             }
@@ -224,7 +225,7 @@ export const getAllCategories = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 export const editCategory = async (id: number, categoryData: CategoryData) => {
@@ -245,7 +246,7 @@ throw res.detail
   
     return editData;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -260,7 +261,7 @@ export const getAllUsers = async () => {
     const data = await response.json();
     return data;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -281,7 +282,7 @@ await deleteuser.then((res : any) =>{
 }
     return deleteuser;
   } catch (err) {
-    throw(err);
+    console.log(err);
   }
 };
 
@@ -300,7 +301,7 @@ export const createUser = async (userData: UserData) => {
     }
   
 
-    return createUserStatus;
+    return response.json();
   } catch (error) {
   
     throw error

@@ -20,6 +20,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getAllUsers } from "../api/baseapi";
+import { countries } from "./CountryCodes";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -53,8 +54,8 @@ export type Data = {
   name: string;
   email: string;
   role: string;
-  phone: number;
-
+  phone: string;
+  country_code: string;
   actions: string;
 };
 
@@ -148,8 +149,8 @@ export default function Users() {
     name: "",
     email: "",
     role: "Select Role*",
-    phone: 0,
-
+    phone: "",
+    country_code: "",
     actions: "",
   };
 
