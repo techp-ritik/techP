@@ -97,7 +97,7 @@ const Ticket = React.memo(
       });
       setShowTicket(false);
       setIsModalOpen(false);
-      setNewTicketId(0);
+      setNewTicketId(null);
     };
     interface Category {
       description: string;

@@ -17,7 +17,6 @@ import Ticket from "./Ticket";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 
-
 export type TicketList = {
   id: string;
   title: string;
@@ -56,8 +55,7 @@ export default function TicketBoard() {
   });
   // console.log(status);
   let data: TicketList[] = [];
- 
- 
+
   const [tickets, setTickets] = useState(ticketsALL);
   const [localtickets, setLocalTickets] = useState(data);
   const { t, i18n } = useTranslation();
@@ -87,7 +85,7 @@ export default function TicketBoard() {
         setLocalTickets(ticketsALL);
         setTickets(ticketsALL);
         break;
-      
+
       case "error":
         setLocalTickets([]);
         setTickets([]);
@@ -95,7 +93,7 @@ export default function TicketBoard() {
           autoClose: 1500,
           position: "top-center",
         });
-        
+
         break;
     }
   }, [status]);
